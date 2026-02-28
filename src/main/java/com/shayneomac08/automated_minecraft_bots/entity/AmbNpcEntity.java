@@ -66,6 +66,7 @@ public class AmbNpcEntity extends FakePlayer {
     // Navigation optimization
     private int pathCooldown = 0;
     private int stuckTimer = 0;
+    private int stuckCheckTimer = 0; // For smart unstick system
     private BlockPos lastPos = BlockPos.ZERO;
     private int obstacleAvoidanceCooldown = 0;
     private Vec3 avoidanceDirection = null;
@@ -228,6 +229,9 @@ public class AmbNpcEntity extends FakePlayer {
             pathCooldown = 15; // Set cooldown after collision jump
         }
 
+        // ===== SMART JUMP AND UNSTICK SYSTEM =====
+        attemptSmartJumpAndUnstick();
+
         // ===== FEATURE 2: AUTO DOOR OPENING =====
         attemptOpenDoors();
 
@@ -282,6 +286,34 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     // ==================== MOVEMENT CONTROL ====================
+
+    /**
+     * Smart jump and unstick system - FakePlayer compatible
+     * Detects when bot is stuck and helps it get free
+     */
+    private void attemptSmartJumpAndUnstick() {
+        stuckCheckTimer++;
+
+        // Check if we're stuck (not moving for a while)
+        if (horizontalCollision || stuckCheckTimer > 35) {
+            if (onGround()) {
+                // FakePlayer-safe jump
+                jumpFromGround();
+
+                // Add a small random direction change to help escape
+                if (moveTarget != null) {
+                    double offsetX = (random.nextDouble() - 0.5) * 2.0;
+                    double offsetZ = (random.nextDouble() - 0.5) * 2.0;
+                    moveTarget = moveTarget.add(offsetX, 0, offsetZ);
+                }
+
+                if (random.nextInt(4) == 0) {
+                    broadcastGroupChat("Ugh, got stuck again — jumping free!");
+                }
+            }
+            stuckCheckTimer = 0;
+        }
+    }
 
     /**
      * Set a movement target for the bot
@@ -859,6 +891,12 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     private void craft() {
+        // Auto-place crafting table if we have one but none nearby
+        if (!hasCraftingTableNearby() && getInventory().countItem(Items.CRAFTING_TABLE) > 0) {
+            placeCraftingTableIfNeeded();
+            return; // Wait for next tick to craft
+        }
+
         // ENFORCE PLAYER CRAFTING RULES - must be at crafting table
         if (!enforcePlayerCraftingRules()) {
             broadcastGroupChat("Need to be at a crafting table to craft!");
@@ -1432,6 +1470,48 @@ public class AmbNpcEntity extends FakePlayer {
     /**
      * Place a crafting table nearby (manual action - bot must have one in inventory)
      */
+    /**
+     * Check if there's a crafting table nearby
+     */
+    private boolean hasCraftingTableNearby() {
+        BlockPos pos = blockPosition();
+        for (int x = -5; x <= 5; x++) {
+            for (int y = -2; y <= 2; y++) {
+                for (int z = -5; z <= 5; z++) {
+                    BlockPos checkPos = pos.offset(x, y, z);
+                    if (level().getBlockState(checkPos).is(Blocks.CRAFTING_TABLE)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Auto-place crafting table if needed for crafting
+     * Called when bot wants to craft but doesn't have a table nearby
+     */
+    private void placeCraftingTableIfNeeded() {
+        if (getInventory().countItem(Items.CRAFTING_TABLE) > 0 && !hasCraftingTableNearby()) {
+            // Try to place in front of the bot
+            BlockPos placePos = blockPosition().relative(getDirection());
+            BlockPos groundPos = placePos.below();
+
+            // Check if there's solid ground and air at place position
+            if (!level().getBlockState(groundPos).isAir() && level().getBlockState(placePos).isAir()) {
+                // Place the crafting table
+                level().setBlock(placePos, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
+                getInventory().removeItem(getInventory().findSlotMatchingItem(new ItemStack(Items.CRAFTING_TABLE)), 1);
+                broadcastGroupChat("Boom — crafting table placed right here! Let's make tools!");
+                return;
+            }
+
+            // If can't place in front, use the existing spiral search
+            placeCraftingTable();
+        }
+    }
+
     private void placeCraftingTable() {
         // Check if we have a crafting table in inventory
         if (countItemInInventory(Items.CRAFTING_TABLE) == 0) {
