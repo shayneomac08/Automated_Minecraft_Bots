@@ -88,6 +88,55 @@ public class AmbNpcEntity extends FakePlayer {
         return GROUP_LEDGERS.computeIfAbsent(group, k -> new GroupMemoryLedger());
     }
 
+    // ==================== EMOTIONAL REACTIONS & PERSONALITY SYSTEM ====================
+
+    private final List<String> emotions = new ArrayList<>();
+    private String currentMood = "neutral";
+
+    private void updateEmotion(String event) {
+        switch (event.toLowerCase()) {
+            case "hurt" -> {
+                Entity lastHurt = getLastHurtByMob();
+                String attacker = (lastHurt != null ? lastHurt.getName().getString() : "the world");
+                emotions.add("angry at " + attacker);
+                currentMood = "pissed";
+                broadcastGroupChat("Ow! That hurt! I'm mad now...");
+            }
+            case "fed" -> {
+                currentMood = "happy";
+                broadcastGroupChat("Thanks for the food! You're the best, Dev ❤️");
+            }
+            case "night" -> {
+                currentMood = "tired but ready to build";
+            }
+            case "success" -> {
+                currentMood = "accomplished";
+                broadcastGroupChat("Hell yeah! Got it done!");
+            }
+        }
+
+        // Personality flavor based on LLM type (from BotBrain)
+        String llmType = "neutral"; // Will be set from BotBrain context
+        String flavor = switch (llmType.toLowerCase()) {
+            case "grok" -> "Fuck yeah, let's blow something up!";
+            case "gemini" -> "This could be the start of a beautiful friendship...";
+            case "openai" -> "I am considering the optimal strategy here.";
+            default -> "";
+        };
+
+        if (!flavor.isEmpty() && random.nextInt(5) == 0) {
+            broadcastGroupChat(flavor);
+        }
+    }
+
+    public String getCurrentMood() {
+        return currentMood;
+    }
+
+    public List<String> getEmotions() {
+        return new ArrayList<>(emotions);
+    }
+
     // ==================== CONSTRUCTOR ====================
 
     public AmbNpcEntity(ServerLevel level, GameProfile profile) {
@@ -139,6 +188,13 @@ public class AmbNpcEntity extends FakePlayer {
         // Clean up when bot is removed
         System.out.println("[AMB] Removing bot: " + getGameProfile().name());
         super.remove(reason);
+    }
+
+    @Override
+    protected void actuallyHurt(ServerLevel level, DamageSource source, float amount) {
+        super.actuallyHurt(level, source, amount);
+        // Trigger angry emotion when hurt
+        updateEmotion("hurt");
     }
 
     // ==================== TICK - MAIN CONTROL LOOP ====================
@@ -203,6 +259,15 @@ public class AmbNpcEntity extends FakePlayer {
         // Every minute: Run group vote
         if (tickCount % 1200 == 0) {
             runGroupVote();
+        }
+
+        // ===== EMOTIONAL REACTIONS: Check for night time =====
+        if (tickCount % 200 == 0) {
+            long dayTime = level().getDayTime() % 24000L;
+            boolean isNight = dayTime >= 13000 && dayTime < 23000;
+            if (isNight && !currentMood.equals("tired but ready to build")) {
+                updateEmotion("night");
+            }
         }
 
         // Move towards target if set (with path cooldown optimization)
@@ -688,6 +753,9 @@ public class AmbNpcEntity extends FakePlayer {
                 awardStat(net.minecraft.stats.Stats.BLOCK_MINED.get(state.getBlock()));
 
                 broadcastGroupChat("Mined " + state.getBlock().getName().getString() + "!");
+
+                // Trigger success emotion
+                updateEmotion("success");
             }
 
             // Reset mining state
@@ -1165,6 +1233,9 @@ public class AmbNpcEntity extends FakePlayer {
                 }
 
                 broadcastGroupChat("Ate " + stack.getHoverName().getString());
+
+                // Trigger happy emotion when fed
+                updateEmotion("fed");
                 return;
             }
         }
@@ -1961,6 +2032,12 @@ public class AmbNpcEntity extends FakePlayer {
         List<String> memories = getLedger().getMemories(group);
         if (!memories.isEmpty()) {
             sb.append("Group memories: ").append(memories.subList(Math.max(0, memories.size() - 3), memories.size())).append("\n");
+        }
+
+        // Emotional state (HUMAN-LIKE FEATURE)
+        sb.append("Current mood: ").append(currentMood).append("\n");
+        if (!emotions.isEmpty()) {
+            sb.append("Recent emotions: ").append(emotions.subList(Math.max(0, emotions.size() - 3), emotions.size())).append("\n");
         }
 
         // JSON instruction for LLM
