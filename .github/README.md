@@ -1,34 +1,59 @@
-# Automated Minecraft Bots — Your Real Grok Squad 🧠🪓
+# Automated Minecraft Bots
 
-**Spawn 9+ autonomous buddies that act like REAL Minecraft players** — they chop trees with crafted axes, build shelters at night, open doors for you, pick up items, chat with each other, share knowledge, and hang out like a living squad.
+AI-powered autonomous bots for Minecraft using LLM decision-making.
 
-### ✨ Core Features
-- `/amb spawnmulti 9 grok` — spawns 9 random-named, random-gender bots using Grok (or gemini/openai) in one command
-- Brain **always ON** automatically on spawn
-- Zero dirt kicking (silent real-player movement)
-- Auto-craft & use wooden axes
-- Night-time shelter building (5x5 oak planks + working door)
-- Group chat & map sharing
-- Perfect inventory sync (`/amb gui <name>`)
-- Works with Grok, Gemini, OpenAI — each LLM group has its own personality
+**Version:** 1.0.0
+**Minecraft:** 1.21.1
+**Mod Loader:** NeoForge 21.1.38-beta
+
+## Features
+
+- **LLM-Driven AI** - Bots use Grok API for autonomous decision-making
+- **Real Player Rules** - Enforces crafting tables, tool requirements, mining speeds
+- **Auto-Crafting** - Automatically crafts planks, sticks, and tools from gathered materials
+- **Task System** - Supports gather_wood, mine_stone, build_shelter, explore, hunt_animals, etc.
+- **Chat Commands** - Give bots commands via chat for manual override
+- **Autonomous Problem-Solving** - Bots build scaffolding, adapt strategies when stuck
+
+## Quick Start
+
+### Installation
+1. Place JAR in `mods/` folder
+2. Start Minecraft with NeoForge 1.21.1
+
+### Setup API Key
+Set your Grok API key in `config/automated_minecraft_bots.toml`:
+```toml
+llm_provider = "grok"
+grok_api_key = "your-api-key-here"
+```
 
 ### Commands
-- `/amb spawnmulti <count> <llm> [group]` ← your new favorite
-- `/amb gui <name>` — open their real 36-slot backpack
-- `/amb brain <name> on/off`
-- `/amb spawn 1 grok` — old single spawn still works
+```
+/amb spawn <name>           - Spawn a bot
+/amb remove <name>          - Remove a bot
+/amb list                   - List all bots
+/amb give <name> <item>     - Give item to bot
+```
 
-### How to Play With Your Buddies
-1. Throw oak logs + apples at them
-2. `/time set night` — watch them drop everything and build bases
-3. They open doors for you, craft axes, say “Just crafted myself a wooden axe!” and “Come inside my shelter!”
-4. Toss them items → they keep them forever
+### Chat with Bots
+Just type the bot's name in chat:
+```
+botname, gather wood
+botname, build a shelter
+```
 
-**Made with love for the ultimate Minecraft squad experience.**
+## Documentation
 
-Star ⭐ this repo if your buddies made you smile!  
-Want more features? Open an issue — we’re building this together.
+- **CHANGELOG.md** - Version history and recent changes
+- **API_KEYS_SETUP.md** - API key configuration guide
+- **SWEEP.md** - Development guidelines
+- **Debug_console.txt** - Paste game logs here for debugging
 
----
+## Build
 
-**Current Dev Build** — NeoForge 1.21 | Grok API powered
+```bash
+./gradlew clean build
+```
+
+JAR output: `build/libs/automated_minecraft_bots-1.0.0.jar`
