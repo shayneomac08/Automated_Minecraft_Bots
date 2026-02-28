@@ -67,6 +67,8 @@ public class AmbNpcEntity extends FakePlayer {
     private int pathCooldown = 0;
     private int stuckTimer = 0;
     private BlockPos lastPos = BlockPos.ZERO;
+    private int obstacleAvoidanceCooldown = 0;
+    private Vec3 avoidanceDirection = null;
 
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
@@ -138,31 +140,20 @@ public class AmbNpcEntity extends FakePlayer {
 
         if (!brainEnabled) return;
 
-        // ===== FEATURE 1: STUCK DETECTION =====
-        // Now using proper player movement physics, so stuck detection should work correctly
-        if (moveTarget != null) {
-            stuckTimer++;
-
-            // If bot hasn't moved in 60 ticks (3 seconds) while trying to move, try to unstuck
-            if (stuckTimer > 60 && blockPosition().distSqr(lastPos) < 0.5) {
-                // Try jumping to unstuck
-                if (onGround()) {
-                    setDeltaMovement(getDeltaMovement().add(0, 0.42, 0)); // Standard jump
-                }
-
-                // If still stuck after 120 ticks (6 seconds), clear the target
-                if (stuckTimer > 120) {
-                    broadcastGroupChat("Can't reach target, giving up");
-                    stopMovement();
-                }
-
-                stuckTimer = 0;
+        // ===== OPTIMIZED STUCK RECOVERY + JUMP (real player feel) =====
+        stuckTimer++;
+        if (stuckTimer > 30 && blockPosition().distSqr(lastPos) < 0.5) {
+            if (onGround()) {
+                setDeltaMovement(getDeltaMovement().add(0, 0.42, 0)); // jump
             }
-            lastPos = blockPosition();
-        } else {
-            // Reset stuck timer when not moving
             stuckTimer = 0;
-            lastPos = blockPosition();
+            broadcastGroupChat("Ugh, got stuck — jumping free!");
+        }
+        lastPos = blockPosition();
+
+        // ===== AUTO JUMP WHEN OBSTACLE IN FRONT =====
+        if (horizontalCollision && onGround()) {
+            setDeltaMovement(getDeltaMovement().add(0, 0.42, 0));
         }
 
         pathCooldown--;
@@ -245,15 +236,93 @@ public class AmbNpcEntity extends FakePlayer {
             stopMovement();
             stuckTimer = 0; // Reset stuck timer when reaching target
             pathCooldown = 0;
+            obstacleAvoidanceCooldown = 0;
+            avoidanceDirection = null;
             return;
         }
 
         // Calculate direction to target
         Vec3 direction = moveTarget.subtract(currentPos).normalize();
 
-        // Calculate yaw angle to face target
-        double dx = moveTarget.x - currentPos.x;
-        double dz = moveTarget.z - currentPos.z;
+        // ===== OBSTACLE DETECTION AND AVOIDANCE =====
+        // Check if there's an obstacle blocking the direct path
+        boolean obstacleDetected = false;
+        Vec3 movementDirection = direction;
+
+        if (obstacleAvoidanceCooldown > 0) {
+            obstacleAvoidanceCooldown--;
+            // Continue using avoidance direction if set
+            if (avoidanceDirection != null) {
+                movementDirection = avoidanceDirection;
+            }
+        } else {
+            // Check for obstacles in front (up to 3 blocks ahead)
+            Vec3 checkPos = currentPos;
+            for (int i = 1; i <= 3; i++) {
+                checkPos = currentPos.add(direction.x * i, 0, direction.z * i);
+                BlockPos checkBlockPos = BlockPos.containing(checkPos);
+
+                // Check if there's a solid block at eye level or below
+                boolean blocked = false;
+                for (int y = 0; y <= 1; y++) {
+                    BlockPos testPos = checkBlockPos.above(y);
+                    BlockState state = level().getBlockState(testPos);
+                    if (!state.isAir() && state.isSolid()) {
+                        blocked = true;
+                        break;
+                    }
+                }
+
+                if (blocked) {
+                    obstacleDetected = true;
+
+                    // Try to find a way around the obstacle
+                    // Test left and right directions (90 degrees from current direction)
+                    Vec3 leftDir = new Vec3(-direction.z, 0, direction.x).normalize();
+                    Vec3 rightDir = new Vec3(direction.z, 0, -direction.x).normalize();
+
+                    boolean leftClear = isPathClear(currentPos, leftDir, 2);
+                    boolean rightClear = isPathClear(currentPos, rightDir, 2);
+
+                    if (leftClear && rightClear) {
+                        // Both sides clear, choose the one that gets us closer to target
+                        Vec3 leftTest = currentPos.add(leftDir.scale(2));
+                        Vec3 rightTest = currentPos.add(rightDir.scale(2));
+
+                        if (leftTest.distanceTo(moveTarget) < rightTest.distanceTo(moveTarget)) {
+                            avoidanceDirection = leftDir;
+                        } else {
+                            avoidanceDirection = rightDir;
+                        }
+                    } else if (leftClear) {
+                        avoidanceDirection = leftDir;
+                    } else if (rightClear) {
+                        avoidanceDirection = rightDir;
+                    } else {
+                        // Both sides blocked, try diagonal directions
+                        Vec3 leftDiag = direction.add(leftDir).normalize();
+                        Vec3 rightDiag = direction.add(rightDir).normalize();
+
+                        if (isPathClear(currentPos, leftDiag, 2)) {
+                            avoidanceDirection = leftDiag;
+                        } else if (isPathClear(currentPos, rightDiag, 2)) {
+                            avoidanceDirection = rightDiag;
+                        } else {
+                            // Completely blocked, try backing up slightly
+                            avoidanceDirection = direction.scale(-1);
+                        }
+                    }
+
+                    movementDirection = avoidanceDirection;
+                    obstacleAvoidanceCooldown = 20; // Avoid for 1 second
+                    break;
+                }
+            }
+        }
+
+        // Calculate yaw angle to face movement direction
+        double dx = movementDirection.x;
+        double dz = movementDirection.z;
         float targetYaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
 
         // Smoothly rotate towards target
@@ -270,8 +339,8 @@ public class AmbNpcEntity extends FakePlayer {
         // Get current velocity
         Vec3 currentVelocity = getDeltaMovement();
 
-        // Calculate horizontal movement direction (forward toward target)
-        Vec3 horizontalMovement = new Vec3(direction.x, 0, direction.z).normalize();
+        // Calculate horizontal movement direction
+        Vec3 horizontalMovement = new Vec3(movementDirection.x, 0, movementDirection.z).normalize();
 
         // Player walking speed: ~0.1 blocks/tick, sprinting: ~0.13 blocks/tick
         // We'll use a conservative 0.1 for walking speed
@@ -305,8 +374,8 @@ public class AmbNpcEntity extends FakePlayer {
             setDeltaMovement(afterMove.x * friction, afterMove.y, afterMove.z * friction);
         }
 
-        // Handle jumping over obstacles
-        if (pathCooldown <= 0) {
+        // Handle jumping over obstacles (only if not avoiding)
+        if (pathCooldown <= 0 && !obstacleDetected) {
             // Check if there's a block in front that needs jumping
             BlockPos frontPos = blockPosition().relative(getDirection());
             BlockPos aboveFront = frontPos.above();
@@ -320,6 +389,26 @@ public class AmbNpcEntity extends FakePlayer {
 
             pathCooldown = 12; // Reset cooldown
         }
+    }
+
+    /**
+     * Check if a path in a given direction is clear of obstacles
+     */
+    private boolean isPathClear(Vec3 startPos, Vec3 direction, int distance) {
+        for (int i = 1; i <= distance; i++) {
+            Vec3 checkPos = startPos.add(direction.x * i, 0, direction.z * i);
+            BlockPos checkBlockPos = BlockPos.containing(checkPos);
+
+            // Check at ground level and eye level
+            for (int y = 0; y <= 1; y++) {
+                BlockPos testPos = checkBlockPos.above(y);
+                BlockState state = level().getBlockState(testPos);
+                if (!state.isAir() && state.isSolid()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -1205,6 +1294,101 @@ public class AmbNpcEntity extends FakePlayer {
      */
     public String getSurroundingsInfo() {
         return surroundingsInfo;
+    }
+
+    /**
+     * Build rich surroundings prompt with FULL PLAYER AWARENESS for LLM
+     * This gives the LLM everything a real player would see/know
+     */
+    public String buildRichSurroundingsPrompt() {
+        // Get block in front of bot
+        Direction facing = getDirection();
+        BlockPos frontPos = blockPosition().relative(facing);
+        BlockState frontBlock = level().getBlockState(frontPos);
+
+        // Count inventory items
+        int logs = getInventory().countItem(Items.OAK_LOG);
+        int planks = getInventory().countItem(Items.OAK_PLANKS);
+        int sticks = getInventory().countItem(Items.STICK);
+        int cobblestone = getInventory().countItem(Items.COBBLESTONE);
+        int dirt = getInventory().countItem(Items.DIRT);
+
+        // Count tools
+        int woodenAxes = getInventory().countItem(Items.WOODEN_AXE);
+        int stoneAxes = getInventory().countItem(Items.STONE_AXE);
+        int woodenPickaxes = getInventory().countItem(Items.WOODEN_PICKAXE);
+        int stonePickaxes = getInventory().countItem(Items.STONE_PICKAXE);
+
+        // Check for nearby threats
+        String nearbyThreats = "none";
+        List<Entity> nearbyEntities = level().getEntities(this, getBoundingBox().inflate(16.0));
+        int hostileCount = 0;
+        for (Entity entity : nearbyEntities) {
+            if (entity instanceof net.minecraft.world.entity.monster.Monster) {
+                hostileCount++;
+            }
+        }
+        if (hostileCount > 0) {
+            nearbyThreats = hostileCount + " hostile mobs nearby";
+        }
+
+        // Find nearest player
+        String devPosition = "far away";
+        Player nearestPlayer = level().getNearestPlayer(this, 64);
+        if (nearestPlayer != null) {
+            devPosition = nearestPlayer.blockPosition().toShortString() +
+                         " (dist: " + String.format("%.1f", Math.sqrt(distanceToSqr(nearestPlayer))) + " blocks)";
+        }
+
+        // Check if can jump
+        String canJump = horizontalCollision ? "yes (obstacle in front)" : "no (path is clear)";
+
+        // Check if it's night (day time 13000-23000 is night)
+        long dayTime = level().getDayTime() % 24000L;
+        boolean isNight = dayTime >= 13000 && dayTime < 23000;
+
+        // Build the rich prompt
+        return String.format("""
+            You are a real Minecraft player named %s.
+            Position: %s
+            Time: %s
+            Health: %d/20
+            Hunger: %d/20
+
+            === INVENTORY ===
+            Logs: %d
+            Planks: %d
+            Sticks: %d
+            Cobblestone: %d
+            Dirt: %d
+            Wooden Axes: %d
+            Stone Axes: %d
+            Wooden Pickaxes: %d
+            Stone Pickaxes: %d
+
+            === SURROUNDINGS ===
+            Block in front of me: %s
+            Nearby hostile mobs: %s
+            Nearest player position: %s
+            Can I jump right now? %s
+            Current task: %s
+
+            What should I do RIGHT NOW as a real player? Reply with ONLY one action:
+            gather_wood, mine_stone, build_shelter, attack_mob, follow_player, eat_food, explore, idle, place_crafting_table
+            """,
+            getName().getString(),
+            blockPosition().toShortString(),
+            (isNight ? "NIGHT" : "DAY"),
+            (int) getHealth(),
+            getFoodData().getFoodLevel(),
+            logs, planks, sticks, cobblestone, dirt,
+            woodenAxes, stoneAxes, woodenPickaxes, stonePickaxes,
+            frontBlock.getBlock().getName().getString(),
+            nearbyThreats,
+            devPosition,
+            canJump,
+            currentTask
+        );
     }
 
     /**
