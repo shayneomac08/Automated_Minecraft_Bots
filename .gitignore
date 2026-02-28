@@ -34,3 +34,4 @@ Automate_Minecraft_Bots_APIs.txt
 run/config/automated_minecraft_bots-common.toml
 gradle.properties
 !run/config/.gitignore
+src/main/java/com/shayneomac08/automated_minecraft_bots/automated_minecraft_bots.properties
