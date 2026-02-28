@@ -121,11 +121,14 @@ public final class BotBrain {
             try {
                 ActionPlan plan = st.pending.join();
                 st.pending = null;
+                System.out.println("[AMB] " + botName + " received LLM response, executing plan...");
                 ActionExecutor.apply(server, keyName, st, pair, plan);
 
             } catch (Exception e) {
                 st.pending = null;
                 st.lastError = (e.getMessage() == null) ? e.toString() : e.getMessage();
+                System.err.println("[AMB] ERROR for bot " + botName + ": " + st.lastError);
+                e.printStackTrace(); // Print full stack trace to see what's failing
             }
         }
 
@@ -227,7 +230,7 @@ public final class BotBrain {
         String priorityNeed = BotSurvivalNeeds.getHighestPriorityNeed(st.survivalNeeds);
         String needsDesc = BotSurvivalNeeds.getNeedsDescription(st.survivalNeeds);
 
-        // DEBUG: Log the bot's actual position
+        // DEBUG: Log the bot's actual position (now that positionEntity is defined)
         System.out.println("[AMB] " + botName + " thinking at position: " + (int)positionEntity.getX() + "," + (int)positionEntity.getY() + "," + (int)positionEntity.getZ());
 
         // Get inventory summary for awareness
@@ -235,6 +238,9 @@ public final class BotBrain {
 
         // Get nearby entities for awareness
         String nearbyEntities = getNearbyEntitiesDescription(body);
+
+        // Get chat history for context
+        String chatContext = getChatHistoryContext(botName);
 
         String prompt =
                 "🎮 ROLEPLAY: You are a REAL MINECRAFT PLAYER named " + botName + ". You are NOT an AI bot - you are a human playing Minecraft.\n" +
@@ -251,6 +257,8 @@ public final class BotBrain {
                         inventorySummary + "\n\n" +
                         "=== NEARBY ENTITIES ===\n" +
                         nearbyEntities + "\n\n" +
+                        "=== RECENT CHAT ===\n" +
+                        chatContext + "\n\n" +
                         "=== SURVIVAL PRIORITIES (ALWAYS FOLLOW THIS ORDER) ===\n" +
                         "1. CRITICAL HEALTH (< 5 HP) → Eat food, hide, avoid ALL combat\n" +
                         "2. CRITICAL HUNGER (< 3) → Find food IMMEDIATELY (hunt animals, gather apples)\n" +
@@ -294,10 +302,13 @@ public final class BotBrain {
                         "• Night spawns hostile mobs - ALWAYS seek shelter\n" +
                         "• Hunger < 18 prevents health regeneration\n" +
                         "• Recipe unlocking: Pick up items to discover recipes\n" +
-                        "• Auto-crafting: System auto-crafts tools when you have materials\n\n" +
+                        "• Auto-crafting: System auto-crafts planks, sticks, and crafting table in inventory\n" +
+                        "• CRAFTING TABLE RULE: Tools and weapons REQUIRE a placed crafting table nearby!\n" +
+                        "  - 2x2 recipes (planks, sticks, crafting table) = craft in inventory automatically\n" +
+                        "  - 3x3 recipes (tools, weapons) = MUST place crafting table first!\n\n" +
                         "=== PROGRESSION PATH ===\n" +
-                        "Phase 1 (First 5 min): Punch 3-4 logs → craft planks → craft table → wooden pickaxe\n" +
-                        "Phase 2 (5-15 min): Mine 8+ cobblestone → stone pickaxe → stone axe → stone sword\n" +
+                        "Phase 1 (First 5 min): Punch 3-4 logs → auto-crafts planks+sticks+table → PLACE table → auto-crafts wooden pickaxe\n" +
+                        "Phase 2 (5-15 min): Mine 8+ cobblestone → auto-crafts stone pickaxe → stone axe → stone sword\n" +
                         "Phase 3 (15-30 min): Hunt animals → craft furnace → cook meat → build shelter\n" +
                         "Phase 4 (30+ min): Mine iron → smelt iron → iron tools → mine diamonds\n\n" +
                         "=== DECISION FRAMEWORK ===\n" +
@@ -306,6 +317,34 @@ public final class BotBrain {
                         "IF night → Build/find shelter immediately\n" +
                         "IF no tools → Gather wood, craft tools (makes everything faster)\n" +
                         "IF need resource but can't see it → Explore in spiral pattern\n\n" +
+                        "=== PROBLEM-SOLVING STRATEGIES (THINK LIKE A REAL PLAYER) ===\n" +
+                        "Real Minecraft players solve problems creatively. You should too!\n\n" +
+                        "PROBLEM: Target is too high to reach (tree top, floating block, etc.)\n" +
+                        "SOLUTION: Build a scaffold!\n" +
+                        "  1. If you have dirt/cobblestone in inventory → Use mine_stone goal to place blocks and pillar up\n" +
+                        "  2. If you DON'T have blocks → First mine_stone to gather dirt/cobblestone, THEN pillar up\n" +
+                        "  Example: See oak log at Y=65, you're at Y=59 → mine_stone to get dirt → pillar up → gather_wood\n\n" +
+                        "PROBLEM: Stuck trying to reach something for multiple attempts\n" +
+                        "SOLUTION: Change strategy!\n" +
+                        "  1. If gathering wood but can't reach → Switch to mine_stone to get blocks, then build up\n" +
+                        "  2. If path is blocked → Explore to find another route OR mine through obstacles\n" +
+                        "  3. If repeatedly failing → Try a completely different goal\n\n" +
+                        "PROBLEM: Need to build something but no blocks\n" +
+                        "SOLUTION: Gather materials first!\n" +
+                        "  1. Want to build shelter but no blocks → mine_stone to get cobblestone first\n" +
+                        "  2. Want to build farm but no wood → gather_wood first\n" +
+                        "  3. ALWAYS gather materials BEFORE attempting to build\n\n" +
+                        "PROBLEM: Can't mine stone (no pickaxe)\n" +
+                        "SOLUTION: Craft tools first!\n" +
+                        "  1. No pickaxe → gather_wood → auto-craft wooden pickaxe → mine_stone\n" +
+                        "  2. Have wood pickaxe → mine_stone to get cobblestone → auto-craft stone pickaxe\n\n" +
+                        "PROBLEM: Inventory full\n" +
+                        "SOLUTION: Manage resources!\n" +
+                        "  1. Drop useless items (dirt if you have 64+, excess tools)\n" +
+                        "  2. Use manage_resources to store in chests\n" +
+                        "  3. Trade excess items with other bots\n\n" +
+                        "KEY INSIGHT: If you're stuck doing the same thing repeatedly, STOP and try something else!\n" +
+                        "Real players adapt. You should too. Don't be a robot - be creative!\n\n" +
                         "=== AVAILABLE GOALS ===\n" +
                         "• hunt_animals - Hunt chickens/pigs/cows/sheep for food (auto-finds animals, explores if needed)\n" +
                         "• shear_sheep - Shear sheep for wool (requires shears)\n" +
@@ -315,6 +354,7 @@ public final class BotBrain {
                         "• mine_stone - Mine cobblestone (requires pickaxe)\n" +
                         "• mine_ore - Mine coal/iron/diamonds (requires pickaxe)\n" +
                         "• build_shelter - Build enclosed shelter\n" +
+                        "• place_crafting_table - Place crafting table from inventory (REQUIRED before crafting tools!)\n" +
                         "• explore - Wander and discover new areas\n" +
                         "• idle - Stand still (only if safe and all needs met)\n" +
                         "• trade_bots - Trade items with other bots (share resources, help each other)\n" +
@@ -351,22 +391,45 @@ public final class BotBrain {
                         "4. BE TRUTHFUL - only talk about what you can see in YOUR STATUS, YOUR INVENTORY, and NEARBY ENTITIES\n" +
                         "5. If you see hostile mobs nearby, ACKNOWLEDGE them and decide to fight or flee\n" +
                         "6. If you have tools in inventory, USE them (they make tasks 3-10x faster)\n" +
-                        "7. If you need a crafting table for 3x3 recipes, PLACE one first\n\n" +
+                        "7. CRAFTING TABLE REQUIRED: To craft tools/weapons, you MUST place a crafting table first!\n" +
+                        "   - Have crafting table in inventory but no table nearby? → place_crafting_table goal first!\n" +
+                        "   - System auto-crafts the table from planks, but YOU must place it to craft tools!\n" +
+                        "8. CHECK RECENT CHAT - if a player commanded you to do something, DO IT NOW (override other priorities)\n" +
+                        "9. THINK AUTONOMOUSLY - if something is unreachable, gather blocks and build up! Don't wait for commands!\n" +
+                        "10. ADAPT - if stuck doing the same thing repeatedly, CHANGE YOUR STRATEGY!\n\n" +
                         "=== YOUR RESPONSE ===\n" +
-                        "Analyze your PRIORITY NEED above and choose the BEST action.\n" +
-                        "You have FULL PLAYER FREEDOM - if you want to build a castle, farm wheat, breed animals, or fish, YOU CAN!\n" +
+                        "THINK LIKE A REAL MINECRAFT PLAYER:\n" +
+                        "1. CHECK RECENT CHAT - if a player commanded you, DO IT NOW (overrides everything)\n" +
+                        "2. ANALYZE YOUR SITUATION - what do you need? What's blocking you?\n" +
+                        "3. SOLVE PROBLEMS AUTONOMOUSLY - if something is unreachable, gather blocks and build up!\n" +
+                        "4. ADAPT YOUR STRATEGY - if stuck, try something different!\n" +
+                        "5. BE CREATIVE - you have FULL PLAYER FREEDOM to build, farm, explore, or do anything!\n\n" +
                         "Return ONLY JSON:\n" +
                         "{\"actions\":[{\"type\":\"set_goal\",\"goal\":\"<any_goal_from_above>\",\"minutes\":3}]}\n\n" +
-                        "EXAMPLES:\n" +
+                        "EXAMPLES:\n\n" +
+                        "PLAYER COMMANDS (override everything):\n" +
+                        "• Player commanded 'get dirt and build scaffold' → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":2}]} (mine dirt/stone blocks to build with)\n" +
+                        "• Player commanded 'mine stone' → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":3}]} (do what they asked)\n" +
+                        "• Player commanded 'build a house' → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"build_shelter\",\"minutes\":5}]} (build it)\n\n" +
+                        "AUTONOMOUS PROBLEM-SOLVING (no player command needed):\n" +
+                        "• Gathering wood BUT tree is 5 blocks high AND have 0 dirt → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":2}]} (get blocks to pillar up first!)\n" +
+                        "• Gathering wood BUT tree is 5 blocks high AND have 10 dirt → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"gather_wood\",\"minutes\":3}]} (use dirt to pillar up!)\n" +
+                        "• Want to build shelter BUT have 0 blocks → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":3}]} (get cobblestone first!)\n" +
+                        "• Have crafting table in inventory BUT no table nearby → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"place_crafting_table\",\"minutes\":1}]} (place it to craft tools!)\n" +
+                        "• Have planks+sticks BUT no pickaxe AND no table nearby → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"place_crafting_table\",\"minutes\":1}]} (place table first!)\n" +
+                        "• Stuck trying same thing for 30+ seconds → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"explore\",\"minutes\":2}]} (try something different!)\n" +
+                        "• See oak log at Y=65, I'm at Y=59, have 0 blocks → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":2}]} (get dirt to build up!)\n\n" +
+                        "SURVIVAL PRIORITIES:\n" +
                         "• Hunger < 6 AND Food = 0 → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"hunt_animals\",\"minutes\":3}]} (hunt for food)\n" +
+                        "• Wood < 8 → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"gather_wood\",\"minutes\":3}]}\n" +
+                        "• Stone < 16 → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":3}]}\n" +
+                        "• Night → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"build_shelter\",\"minutes\":3}]}\n\n" +
+                        "CREATIVE GAMEPLAY:\n" +
                         "• Have seeds → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"farm\",\"minutes\":5}]} (plant crops)\n" +
                         "• Have wheat → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"breed_animals\",\"minutes\":3}]} (breed cows/sheep)\n" +
                         "• Have fishing rod → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"fish\",\"minutes\":5}]} (catch fish)\n" +
                         "• Have saplings → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"plant_trees\",\"minutes\":3}]} (reforest)\n" +
                         "• Have blocks → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"build_house\",\"minutes\":5}]} (build shelter)\n" +
-                        "• Wood < 8 → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"gather_wood\",\"minutes\":3}]}\n" +
-                        "• Stone < 16 → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":3}]}\n" +
-                        "• Night → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"build_shelter\",\"minutes\":3}]}\n" +
                         "• Need iron but have excess wood → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"trade_bots\",\"minutes\":2}]} (trade with other bots)\n" +
                         "• Inventory full → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"manage_resources\",\"minutes\":2}]} (store in shared chest)\n";
 
@@ -388,8 +451,9 @@ public final class BotBrain {
             }
         });
 
-        // FIX: Don't set nextThinkTick here - let goal completion trigger next think
-        // This prevents constant API spam every 20 seconds
+        // CRITICAL FIX: Set cooldown to prevent infinite loop
+        // If LLM request fails or takes time, don't spam requests every tick
+        st.nextThinkTick = tick + 40; // Wait 2 seconds (40 ticks) before thinking again
         st.lastError = "";
     }
 
@@ -542,6 +606,32 @@ public final class BotBrain {
     }
 
     /**
+     * Interrupt the bot's current goal and make it re-think based on a player command
+     * This is called when a bot agrees to obey a player's command
+     */
+    public static void interruptWithCommand(String botName, String playerName, String command) {
+        State st = stateForName(botName);
+
+        // Cancel current goal immediately
+        st.goalUntilTick = 0;
+        st.goalX = st.goalY = st.goalZ = null;
+
+        // Cancel any pending LLM request
+        if (st.pending != null && !st.pending.isDone()) {
+            st.pending.cancel(true);
+        }
+        st.pending = null;
+
+        // Force immediate re-think on next tick
+        st.nextThinkTick = 0;
+
+        // Add the command to chat history so the LLM sees it in context
+        st.chatHistory.add(playerName + " commanded: " + command);
+
+        System.out.println("[AMB] " + botName + " interrupted current goal to obey command from " + playerName);
+    }
+
+    /**
      * Set the LLM provider for a bot
      */
     public static void setLLMProvider(String botName, LLMProvider provider) {
@@ -685,17 +775,28 @@ public final class BotBrain {
 
         StringBuilder sb = new StringBuilder();
         int itemCount = 0;
+        boolean hasCraftingTable = false;
 
         for (int i = 0; i < hands.getInventory().getContainerSize(); i++) {
             net.minecraft.world.item.ItemStack stack = hands.getInventory().getItem(i);
             if (!stack.isEmpty()) {
                 sb.append("- ").append(stack.getCount()).append("x ").append(stack.getHoverName().getString()).append("\n");
                 itemCount++;
+
+                // Check if we have a crafting table
+                if (stack.getItem().toString().contains("crafting_table")) {
+                    hasCraftingTable = true;
+                }
             }
         }
 
         if (itemCount == 0) {
             return "Empty inventory (no items)";
+        }
+
+        // Add reminder if we have crafting table but haven't placed it
+        if (hasCraftingTable) {
+            sb.append("\n⚠️ IMPORTANT: You have a crafting table in inventory! Place it to craft tools!");
         }
 
         return sb.toString().trim();

@@ -44,7 +44,8 @@ public class ChatEventHandler {
                     .thenAccept(willObey -> {
                         if (willObey) {
                             System.out.println("[AMB] Bot " + targetBotName + " will obey command from " + playerName);
-                            // TODO: Execute the actual command action
+                            // Clear current goal and trigger new thinking cycle with the command context
+                            BotBrain.interruptWithCommand(targetBotName, playerName, command);
                         } else {
                             System.out.println("[AMB] Bot " + targetBotName + " chose to ignore command from " + playerName);
                         }

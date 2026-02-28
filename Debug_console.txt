@@ -1,0 +1,929 @@
+
+Calculating task graph as configuration cache cannot be reused because file 'gradle.properties' has changed.
+> Task :generateModMetadata NO-SOURCE
+> Task :processResources UP-TO-DATE
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :classes UP-TO-DATE
+
+> Task :downloadAssets
+Loaded 141 artifacts from G:\Automated_Minecraft_Bots\build\tmp\downloadAssets\nfrt_artifact_manifest.properties
+Downloading asset index 29
+Using Minecraft asset root: C:\Users\shayn\.gradle\caches\neoformruntime\assets
+  DL    https://piston-meta.mojang.com/v1/packages/744d1f556f65e2d1eac0626f126ee2e31a7519ea/29.json
+
+> Task :prepareClientRun
+
+> Task :runClient
+2026-02-28T06:44:07.646850500Z main WARN Advanced terminal features are not available in this environment
+[00:44:07] [main/INFO] [ne.ne.fm.st.Entrypoint/]: JVM Uptime at startup: 169ms
+[00:44:07] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Starting FancyModLoader version 10.0.36 (CLIENT in DEV)
+[00:44:07] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Game directory: G:\Automated_Minecraft_Bots\run
+[00:44:07] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path GAMEDIR is G:\Automated_Minecraft_Bots\run
+[00:44:07] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path JIJ_CACHEDIR is G:\Automated_Minecraft_Bots\run\.cache\jij
+[00:44:07] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path MODSDIR is G:\Automated_Minecraft_Bots\run\mods
+[00:44:07] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path CONFIGDIR is G:\Automated_Minecraft_Bots\run\config
+[00:44:07] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path FMLCONFIG is G:\Automated_Minecraft_Bots\run\config\fml.toml
+[00:44:07] [ForkJoinPool.commonPool-worker-7/DEBUG] [ne.ne.fm.lo.EarlyServiceDiscovery/]: C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\loader\10.0.36\f72ab4d3e755fe736829883d90430a281527aca\loader-10.0.36.jar contains early service net.neoforged.neoforgespi.locating.IModFileReader
+[00:44:07] [ForkJoinPool.commonPool-worker-24/DEBUG] [ne.ne.fm.lo.EarlyServiceDiscovery/]: C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\earlydisplay\10.0.36\dbd0e11d545443f602addede111c39d9639708f9\earlydisplay-10.0.36.jar contains early service net.neoforged.neoforgespi.earlywindow.ImmediateWindowProvider
+[00:44:07] [ForkJoinPool.commonPool-worker-24/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\earlydisplay\10.0.36\dbd0e11d545443f602addede111c39d9639708f9\earlydisplay-10.0.36.jar with languages []
+[00:44:07] [ForkJoinPool.commonPool-worker-7/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\loader\10.0.36\f72ab4d3e755fe736829883d90430a281527aca\loader-10.0.36.jar with languages []
+[00:44:07] [main/INFO] [ne.ne.fm.lo.EarlyServiceDiscovery/]: Found 2 early service jars (out of 104) in 30ms
+[00:44:07] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Early Services:
+[00:44:07] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:07] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/earlydisplay/10.0.36/dbd0e11d545443f602addede111c39d9639708f9/earlydisplay-10.0.36.jar
+[00:44:07] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 0 implementations of GraphicsBootstrapper:
+[00:44:07] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
+[00:44:07] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 1 implementations of ImmediateWindowProvider:
+[00:44:07] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.fml.earlydisplay.DisplayWindow from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/earlydisplay/10.0.36/dbd0e11d545443f602addede111c39d9639708f9/earlydisplay-10.0.36.jar
+[00:44:07] [main/DEBUG] [ne.ne.fm.ea.th.ThemeLoader/]: Loading built-in theme default
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 4 implementations of IModFileCandidateLocator:
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:           1000 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.GameLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:           1000 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.InDevFolderLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:           1000 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.InDevJarLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:              0 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.ModsFolderLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 2 implementations of IModFileReader:
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:              0 - net.neoforged.fml.loading.moddiscovery.readers.JarModsDotTomlModFileReader from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:          -1000 - net.neoforged.fml.loading.moddiscovery.readers.NestedLibraryModReader from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 1 implementations of IDependencyLocator:
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:              0 - net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.lo.RequiredSystemFiles/]: Found NeoForge MANIFEST.MF in jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar)
+[00:44:08] [ForkJoinPool.commonPool-worker-2/INFO] [ne.ne.fm.lo.mo.lo.GameLocator/]: Detected a joined NeoForge and Minecraft configuration. Applying filtering...
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar with {minecraft} mods - versions {1.21.11}
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar with languages [LanguageSpec[languageName=minecraft, acceptedVersions=1]]
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta.jar
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file neoforge-21.11.38-beta.jar with {neoforge} mods - versions {21.11.38-beta}
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta.jar with languages [LanguageSpec[languageName=javafml, acceptedVersions=[3,]]]
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Found mixin config MixinConfig[config=neoforge.mixins.json, requiredMods=[], behaviorVersion=null]
+[00:44:08] [ForkJoinPool.commonPool-worker-2/INFO] [ne.ne.fm.lo.mo.lo.InDevFolderLocator/CORE]: Got mod coordinates automated_minecraft_bots%%G:\Automated_Minecraft_Bots\build\classes\java\main;automated_minecraft_bots%%G:\Automated_Minecraft_Bots\build\resources\main from env
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate G:\Automated_Minecraft_Bots\build\classes\java\main
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file main with {automated_minecraft_bots} mods - versions {0.0NONE}
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\build\classes\java\main with languages [LanguageSpec[languageName=null, acceptedVersions=null]]
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModDiscoverer/]: Skipping G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta.jar because it was already located earlier
+[00:44:08] [fml-loadingscreen/INFO] [ne.ne.fm.ea.re.LoadingScreenRenderer/]: GL info: AMD Radeon RX 6900 XT GL version 3.3.0 Core Profile Context 26.2.2.260218, ATI Technologies Inc.
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\run\.cache\jij\9c617719248f8b89847348fc7ea5e705739c147ae5e172551264d225bc9f2507\mixinextras-neoforge-0.5.0.jar with languages []
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\run\.cache\jij\54bb3c61f37ced77ba30dc02ca5b2f71ced259612101a8b1325855cff9d9755c\net.neoforged.neoforge-coremods-21.11.38-beta.jar with languages []
+[00:44:08] [ForkJoinPool.commonPool-worker-2/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[00:44:08] [ForkJoinPool.commonPool-worker-2/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]:
+     Mod List:
+                Name Version (Mod Id)
+
+                Automated_Minecraft_Bots 0.0NONE (automated_minecraft_bots)
+                Minecraft 1.21.11 (minecraft)
+                NeoForge 21.11.38-beta (neoforge)
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.ModSorter/]: Configured system mods: [minecraft, neoforge]
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.ModSorter/]: Found system mod: minecraft
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.ModSorter/]: Found system mod: neoforge
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.ModSorter/LOADING]: Found 2 mod requirements (2 mandatory, 0 optional)
+[00:44:08] [ForkJoinPool.commonPool-worker-2/DEBUG] [ne.ne.fm.lo.ModSorter/LOADING]: Found 0 mod requirements missing (0 mandatory, 0 optional)
+[00:44:09] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.16.5+mixin.0.8.7/80fc3a9f592673cea87f4cd702f87991c6c9fe4d/sponge-mixin-0.16.5+mixin.0.8.7.jar Service=FML Env=CLIENT
+[00:44:09] [main/DEBUG] [mixin/]: Initialising Mixin Platform Manager
+[00:44:09] [main/DEBUG] [mixin/]: Adding mixin platform agents for container ContainerHandleVirtual(fml:18c85)
+[00:44:09] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for ContainerHandleVirtual(fml:18c85)
+[00:44:09] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container ContainerHandleVirtual(fml:18c85)
+[00:44:09] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for ContainerHandleVirtual(fml:18c85)
+[00:44:09] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container ContainerHandleVirtual(fml:18c85)
+[00:44:09] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[00:44:09] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[00:44:09] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Plugins:
+[00:44:09] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 2 implementations of IModLanguageLoader:
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.fml.javafmlmod.FMLJavaModLanguageProvider from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.fml.mclanguageprovider.MinecraftModLanguageProvider from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:09] [main/DEBUG] [ne.ne.fm.lo.LanguageProviderLoader/CORE]: Found language provider javafml, version 10.0
+[00:44:09] [main/DEBUG] [ne.ne.fm.lo.LanguageProviderLoader/CORE]: Found language provider minecraft, version 10.0
+[00:44:09] [main/DEBUG] [ne.ne.fm.lo.FMLLoader/]: Adding Access Transformer META-INF/accesstransformer.cfg in composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar)))
+[00:44:09] [main/DEBUG] [ne.ne.fm.lo.FMLLoader/]: Adding Access Transformer META-INF/accesstransformergenerated.cfg in composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar)))
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 5 implementations of ClassProcessor:
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.common.asm.AccessTransformerService from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.common.asm.enumextension.RuntimeEnumExtender from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.common.asm.SimpleProcessorsGroup from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.loading.moddiscovery.locators.NeoForgeDevDistCleaner from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.loading.mixin.FMLMixinClassProcessor from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 1 implementations of ClassProcessorProvider:
+[00:44:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.neoforge.coremods.NeoForgeCoreMod from G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar
+[00:44:09] [main/DEBUG] [ne.ne.fm.lo.FMLLoader/]: Masking classpath elements: [G:/Automated_Minecraft_Bots/build/resources/main, G:/Automated_Minecraft_Bots/build/classes/java/main, G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar, G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar]
+[00:44:09] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Building game content classloader:
+ - automated_minecraft_bots (composite(folder(G:/Automated_Minecraft_Bots/build/classes/java/main), folder(G:/Automated_Minecraft_Bots/build/resources/main)))
+ - minecraft (composite(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar), filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))))
+ - mixinextras.neoforge (jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar))
+ - neoforge (composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))))
+ - net.neoforged.fml.generated (empty(VirtualJar/net.neoforged.fml.generated))
+[00:44:09] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Built game content classloader in 51ms
+[00:44:09] [main/DEBUG] [mixin/]: Processing launch tasks for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[00:44:09] [main/DEBUG] [mixin/]: Processing launch tasks for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[00:44:09] [main/DEBUG] [mixin/]: Adding agents for Mixin Container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[00:44:09] [main/DEBUG] [mixin/]: Adding mixin platform agents for container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[00:44:09] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[00:44:09] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[00:44:09] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[00:44:09] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[00:44:09] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
+[00:44:09] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
+[00:44:09] [main/DEBUG] [mixin/]: Adding agents for Mixin Container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[00:44:09] [main/DEBUG] [mixin/]: Adding mixin platform agents for container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[00:44:09] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[00:44:09] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[00:44:09] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[00:44:09] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[00:44:09] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
+[00:44:09] [main/DEBUG] [mixin/]: Registering mixin config: mixinextras.init.mixins.json source=composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[00:44:09] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
+[00:44:09] [main/DEBUG] [mixin/]: Registering mixin config: mixinextras.init.mixins.json source=composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[00:44:09] [main/DEBUG] [mixin/]: inject() running with 3 agents
+[00:44:09] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[00:44:09] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[00:44:09] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
+[00:44:09] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
+[00:44:09] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
+[00:44:09] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
+[00:44:09] [main/DEBUG] [mixin/]: Preparing mixins for MixinEnvironment[DEFAULT]
+[00:44:09] [main/DEBUG] [mixin/]: Selecting config neoforge.mixins.json
+[00:44:09] [main/DEBUG] [mixin/]: Selecting config mixinextras.init.mixins.json
+[00:44:09] [main/DEBUG] [MixinExtras|Service/]: com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0) is taking over from null
+[00:44:09] [main/DEBUG] [mixin/]: Registering new injector for @Inject with org.spongepowered.asm.mixin.injection.struct.CallbackInjectionInfo
+[00:44:09] [main/DEBUG] [mixin/]: Registering new injector for @ModifyArg with org.spongepowered.asm.mixin.injection.struct.ModifyArgInjectionInfo
+[00:44:09] [main/DEBUG] [mixin/]: Registering new injector for @ModifyArgs with org.spongepowered.asm.mixin.injection.struct.ModifyArgsInjectionInfo
+[00:44:09] [main/DEBUG] [mixin/]: Registering new injector for @Redirect with org.spongepowered.asm.mixin.injection.struct.RedirectInjectionInfo
+[00:44:09] [main/DEBUG] [mixin/]: Registering new injector for @ModifyVariable with org.spongepowered.asm.mixin.injection.struct.ModifyVariableInjectionInfo
+[00:44:09] [main/DEBUG] [mixin/]: Registering new injector for @ModifyConstant with org.spongepowered.asm.mixin.injection.struct.ModifyConstantInjectionInfo
+[00:44:09] [main/DEBUG] [mixin/]: Preparing neoforge.mixins.json (2)
+[00:44:10] [main/DEBUG] [mixin/]: Preparing mixinextras.init.mixins.json (0)
+[00:44:10] [main/DEBUG] [io.ne.ut.in.lo.InternalLoggerFactory/]: Using SLF4J as the default logging framework
+[00:44:10] [main/DEBUG] [io.ne.ut.ResourceLeakDetector/]: -Dio.netty.leakDetection.level: simple
+[00:44:10] [main/DEBUG] [io.ne.ut.ResourceLeakDetector/]: -Dio.netty.leakDetection.targetRecords: 4
+[00:44:11] [Datafixer Bootstrap/INFO] [mojang/DataFixerBuilder]: 290 Datafixer optimizations took 552 milliseconds
+[00:44:11] [main/WARN] [os.dr.wi.pe.PerfmonDisabled/]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[00:44:11] [pool-8-thread-1/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0).
+[00:44:11] [pool-8-thread-1/DEBUG] [mixin/]: Registering new injector for @SugarWrapper with com.llamalad7.mixinextras.sugar.impl.SugarWrapperInjectionInfo
+[00:44:11] [pool-8-thread-1/DEBUG] [mixin/]: Registering new injector for @FactoryRedirectWrapper with com.llamalad7.mixinextras.wrapper.factory.FactoryRedirectWrapperInjectionInfo
+[00:44:11] [pool-8-thread-1/DEBUG] [mixin/]: Registering new injector for @ExpressionInjectorWrapper with com.llamalad7.mixinextras.expression.impl.wrapper.ExpressionInjectorWrapperInjectionInfo
+[00:44:11] [pool-8-thread-1/DEBUG] [mixin/]: Mixing MappedRegistryAccessor from neoforge.mixins.json into net.minecraft.core.MappedRegistry
+[00:44:12] [pool-8-thread-1/DEBUG] [mixin/]: Mixing BlockEntityTypeAccessor from neoforge.mixins.json into net.minecraft.world.level.block.entity.BlockEntityType
+[00:44:18] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[00:44:18] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[00:44:18] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[00:44:18] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[00:44:18] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[00:44:18] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [waypoint, modify, waypoint, color, reset] and [waypoint, modify, waypoint, color, color] with inputs: [reset]
+[00:44:18] [main/DEBUG] [ne.ne.fm.ModWorkManager/LOADING]: Using 32 threads for parallel mod-loading
+[00:44:18] [main/DEBUG] [ne.ne.fm.ja.FMLModContainer/LOADING]: Creating FMLModContainer instance for automated_minecraft_bots with entrypoints [com.shayneomac08.automated_minecraft_bots.AutomatedMinecraftBots, com.shayneomac08.automated_minecraft_bots.AutomatedMinecraftBotsClient]
+[00:44:18] [main/DEBUG] [ne.ne.fm.ja.FMLModContainer/LOADING]: Creating FMLModContainer instance for neoforge with entrypoints [net.neoforged.neoforge.common.NeoForgeMod, net.neoforged.neoforge.common.OnlyInWarningsHandler, net.neoforged.neoforge.client.ClientNeoForgeMod]
+[00:44:18] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.11.38-beta, for MC 1.21.11
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file neoforge-server.toml for neoforge tracking
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file automated_minecraft_bots-common.toml for automated_minecraft_bots tracking
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file neoforge-common.toml for neoforge tracking
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Attempting to inject @EventBusSubscriber classes into the eventbus for automated_minecraft_bots
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class com.shayneomac08.automated_minecraft_bots.event.MobTargetingHandler for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void com.shayneomac08.automated_minecraft_bots.event.MobTargetingHandler.onLivingAttack(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void com.shayneomac08.automated_minecraft_bots.event.MobTargetingHandler.onMobChangeTarget(net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file neoforge-client.toml for neoforge tracking
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Attempting to inject @EventBusSubscriber classes into the eventbus for neoforge
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.attachment.AttachmentInternals for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.attachment.AttachmentInternals.onPlayerClone(net.neoforged.neoforge.event.entity.player.PlayerEvent$Clone) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.attachment.AttachmentInternals.onLivingConvert(net.neoforged.neoforge.event.entity.living.LivingConversionEvent$Post) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.attachment.AttachmentSync for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.attachment.AttachmentSync.onChunkSent(net.neoforged.neoforge.event.level.ChunkWatchEvent$Sent) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer.onRegisterClientCommands(net.neoforged.neoforge.client.event.RegisterClientCommandsEvent) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer.onExtractLevelRenderState(net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer.onRenderLevelStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent$AfterEntities) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.client.NeoForgeRenderPipelines for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method static void net.neoforged.neoforge.client.NeoForgeRenderPipelines.registerPipelines(net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent) to the event bus of mod neoforge
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.client.network.ClientPayloadHandler for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.client.network.ClientPayloadHandler.register(net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent) to the event bus of mod neoforge
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.common.MonsterRoomHooks for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.common.MonsterRoomHooks.onDataMapsUpdated(net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.model.data.ModelDataManager for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.model.data.ModelDataManager.onChunkUnload(net.neoforged.neoforge.event.level.ChunkEvent$Unload) to the game event bus
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.network.ConfigurationInitialization for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.network.ConfigurationInitialization.configureModdedClient(net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent) to the event bus of mod neoforge
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.network.NetworkInitialization for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.network.NetworkInitialization.register(net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent) to the event bus of mod neoforge
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.network.filters.GenericPacketSplitter for @SubscribeEvent-annotated methods
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: Java version: 21
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: -Dio.netty.noUnsafe: false
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: sun.misc.Unsafe.theUnsafe: available
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: sun.misc.Unsafe base methods: all available
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: java.nio.Buffer.address: available
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: direct buffer constructor: unavailable: Reflective setAccessible(true) disabled
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: java.nio.Bits.unaligned: available, true
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable: symbolic reference class is not accessible: class jdk.internal.misc.Unsafe, from class io.netty.util.internal.PlatformDependent0 (unnamed module @1a0dcaa)
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: java.nio.DirectByteBuffer.<init>(long, {int,long}): unavailable
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: sun.misc.Unsafe: available
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.tmpdir: C:\Users\shayn\AppData\Local\Temp (java.io.tmpdir)
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.bitMode: 64 (sun.arch.data.model)
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: Platform: Windows
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.maxDirectMemory: -1 bytes
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.CleanerJava9/]: java.nio.ByteBuffer.cleaner(): available
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.noPreferDirect: false
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.jfr.enabled: true
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.bu.AbstractByteBuf/]: -Dio.netty.buffer.checkAccessible: true
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.bu.AbstractByteBuf/]: -Dio.netty.buffer.checkBounds: true
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.ResourceLeakDetectorFactory/]: Loaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@31bfa8cc
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.InternalThreadLocalMap/]: -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.in.InternalThreadLocalMap/]: -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.bu.AdaptiveByteBufAllocator/]: -Dio.netty.allocator.useCachedMagazinesForNonEventLoopThreads: false
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.maxCapacityPerThread: 4096
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.ratio: 8
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.chunkSize: 32
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.blocking: false
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.batchFastThreadLocalOnly: true
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.bu.ByteBufUtil/]: -Dio.netty.allocator.type: adaptive
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.bu.ByteBufUtil/]: -Dio.netty.threadLocalDirectBufferSize: 0
+[00:44:18] [modloading-worker-0/DEBUG] [io.ne.bu.ByteBufUtil/]: -Dio.netty.maxThreadLocalCharBufferSize: 16384
+[00:44:18] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.network.filters.GenericPacketSplitter.register(net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent) to the event bus of mod neoforge
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loading configs type CLIENT
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.ne.co.NeoForgeMod/FORGEMOD]: Loaded NeoForge config file neoforge-client.toml
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-client.toml
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-client.toml for changes
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loading configs type COMMON
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\automated_minecraft_bots-common.toml
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\automated_minecraft_bots-common.toml for changes
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.ne.co.NeoForgeMod/FORGEMOD]: Loaded NeoForge config file neoforge-common.toml
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-common.toml
+[00:44:18] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-common.toml for changes
+[00:44:18] [Render thread/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[00:44:18] [Render thread/INFO] [minecraft/Minecraft]: Setting user: Dev
+[00:44:18] [Render thread/INFO] [minecraft/Minecraft]: Backend library: LWJGL version 3.3.3+5
+[00:44:19] [Render thread/INFO] [minecraft/Minecraft]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+[00:44:19] [Render thread/INFO] [minecraft/ReloadableResourceManager]: Reloading ResourceManager: vanilla, mod_resources, mod/automated_minecraft_bots, mod/neoforge
+[00:44:19] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: HELLO FROM COMMON SETUP
+[00:44:19] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: DIRT BLOCK >> minecraft:dirt
+[00:44:19] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: The magic number is... 42
+[00:44:19] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: ITEM >> minecraft:iron_ingot
+[00:44:20] [Render thread/DEBUG] [ne.ne.fm.DeferredWorkQueue/LOADING]: Dispatching synchronous work for work queue Common setup: 1 jobs
+[00:44:20] [Render thread/DEBUG] [ne.ne.fm.DeferredWorkQueue/LOADING]: Synchronous work queue completed in 9.640 ms
+[00:44:20] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: HELLO FROM CLIENT SETUP
+[00:44:20] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: MINECRAFT NAME >> Dev
+[00:44:20] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_jp_patch-17.0.01.hex, loading
+[00:44:20] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_pua-17.0.01.hex, loading
+[00:44:20] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_all_no_pua-17.0.01.hex, loading
+[00:44:21] [resourceLoad/WARN] [minecraft/ModelManager]: Missing model for variant: 'Block{automated_minecraft_bots:example_block}'
+[00:44:22] [Render thread/INFO] [mojang/Library]: OpenAL initialized on device OpenAL Soft on Speakers (Razer Kraken Ultimate)
+[00:44:22] [Render thread/INFO] [minecraft/SoundEngine]: Sound engine started
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x2048x4 minecraft:textures/atlas/blocks.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
+[00:44:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[00:44:22] [Render thread/WARN] [minecraft/ModelManager]: No model loaded for default item model ID automated_minecraft_bots:example_block of automated_minecraft_bots:example_block
+[00:44:22] [Render thread/INFO] [ne.ne.ne.cl.en.an.js.AnimationLoader/]: Loaded 0 entity animations
+[00:44:22] [Render thread/DEBUG] [ne.ne.fm.cl.tr.ClassTransformStatistics/]: Transformed/total loaded classes: 382/7149 (5.34%) and 5 parsed for mixin
+[00:44:30] [Worker-Main-30/INFO] [co.sh.au.AutomatedMinecraftBots/]: Registered AMB commands
+[00:44:31] [Render thread/INFO] [minecraft/RecipeManager]: Loaded 1470 recipes
+[00:44:31] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 1584 advancements
+[00:44:31] [Render thread/INFO] [ne.ne.ne.co.cr.RecipePriorityManager/]: Loaded 0 recipe priority overrides
+[00:44:31] [Render thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
+[00:44:31] [Server thread/INFO] [minecraft/IntegratedServer]: Starting integrated minecraft server version 1.21.11
+[00:44:31] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[00:44:31] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loading configs type SERVER
+[00:44:31] [Server thread/DEBUG] [ne.ne.ne.co.NeoForgeMod/FORGEMOD]: Loaded NeoForge config file neoforge-server.toml
+[00:44:31] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-server.toml
+[00:44:31] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-server.toml for changes
+[00:44:31] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 0 persistent chunks...
+[00:44:31] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[00:44:31] [Render thread/DEBUG] [io.ne.ch.MultithreadEventLoopGroup/]: -Dio.netty.eventLoopThreads: 64
+[00:44:31] [Render thread/DEBUG] [io.ne.ut.co.GlobalEventExecutor/]: -Dio.netty.globalEventExecutor.quietPeriodSeconds: 1
+[00:44:31] [Render thread/DEBUG] [io.ne.ut.in.PlatformDependent/]: org.jctools-core.MpscChunkedArrayQueue: available
+[00:44:31] [Render thread/DEBUG] [io.ne.ch.DefaultChannelId/]: -Dio.netty.processId: 33212 (auto-detected)
+[00:44:31] [Render thread/DEBUG] [io.ne.ut.NetUtil/]: -Djava.net.preferIPv4Stack: false
+[00:44:31] [Render thread/DEBUG] [io.ne.ut.NetUtil/]: -Djava.net.preferIPv6Addresses: system
+[00:44:31] [Render thread/DEBUG] [io.ne.ut.NetUtilInitializations/]: Loopback interface: loopback_0 (Software Loopback Interface 1, 0:0:0:0:0:0:0:1)
+[00:44:31] [Render thread/DEBUG] [io.ne.ut.NetUtil/]: Failed to get SOMAXCONN from sysctl and file \proc\sys\net\core\somaxconn. Default: 200
+[00:44:31] [Render thread/DEBUG] [io.ne.ch.DefaultChannelId/]: -Dio.netty.machineId: 2c:f0:5d:ff:fe:0e:bf:b1 (auto-detected)
+[00:44:31] [Render thread/DEBUG] [io.ne.bo.ChannelInitializerExtensions/]: -Dio.netty.bootstrap.extensions: null
+[00:44:31] [Netty Local IO #1/DEBUG] [ne.ne.ne.ne.fi.NetworkFilters/]: Injected net.neoforged.neoforge.network.filters.GenericPacketSplitter@3a156b2 into net.minecraft.network.Connection@6c3a6394
+[00:44:31] [Netty Local IO #0/DEBUG] [ne.ne.ne.ne.fi.NetworkFilters/]: Injected net.neoforged.neoforge.network.filters.GenericPacketSplitter@4628d8ed into net.minecraft.network.Connection@332193d3
+[00:44:31] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[00:44:31] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[00:44:31] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[00:44:31] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[00:44:32] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 49 chunks for player spawn...
+[00:44:32] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
+[00:44:32] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
+[00:44:32] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 100%
+[00:44:32] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Time elapsed: 1046 ms
+[00:44:33] [Netty Local IO #1/DEBUG] [ne.ne.ne.ne.fi.NetworkFilters/]: Injected net.neoforged.neoforge.network.filters.GenericPacketSplitter@1debc667 into net.minecraft.network.Connection@6c3a6394
+[00:44:33] [Server thread/INFO] [minecraft/PlayerList]: Dev[local:E:a055ac75] logged in with entity id 1 at (3.0852096465861534, 56.0, 5.245304901902379)
+[00:44:33] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/]: Sending 0 recipes of the following types: []
+[00:44:33] [Server thread/INFO] [minecraft/MinecraftServer]: Dev joined the game
+[00:44:33] [Server thread/INFO] [minecraft/IntegratedServer]: Changing view distance to 16, from 10
+[00:44:33] [Server thread/INFO] [minecraft/IntegratedServer]: Changing simulation distance to 12, from 0
+[00:44:33] [Render thread/WARN] [minecraft/ClientPacketListener]: Ignoring chat session from Dev due to missing Services public key
+[00:44:33] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 48 advancements
+[00:44:33] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[00:44:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[00:44:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 8.
+[00:44:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[00:44:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[00:44:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[00:44:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
+[00:44:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
+[00:44:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
+[AMB] Created FakePlayer bot: beavis
+[AMB] beavis brain set to ON
+[AMB] Spawned FakePlayer bot: beavis in group: grok (brain: ON)
+[AMB] beavis brain set to ON
+[00:44:44] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned beavis (grok) - FakePlayer mode]
+[AMB] Spawned FakePlayer bot: beavis (LLM: grok)
+[AMB] Loading config for bot: beavis using LLM: grok
+[00:44:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned beavis (grok) - FakePlayer mode
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 84
+[AMB] beavis thinking at position: 3,56,5
+[00:44:45] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[AMB] ? SUCCESSFULLY EXTRACTED CONTENT (Grok): {"actions":[{"type":"set_goal","goal":"gather_wood","minutes":3}]}
+[AMB] beavis received LLM response, executing plan...
+[AMB] beavis starting task: gather_wood
+[AMB] beavis task set to: gather_wood for 3 minutes
+[00:44:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 63.5, 0.5 (dist: 8.4)
+[00:44:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 63.5, 0.5 (dist: 8.4)
+[00:44:53] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: Set own game mode to Creative Mode]
+[00:44:53] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Set own game mode to Creative Mode
+[00:44:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 63.5, 0.5 (dist: 8.4)
+[00:44:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 63.5, 0.5 (dist: 8.4)
+[00:44:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 63.5, 0.5 (dist: 8.4)
+[00:44:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 63.5, 0.5 (dist: 8.4)
+[00:45:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 57.5, 0.5 (dist: 4.1)
+[00:45:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 57.5, 0.5 (dist: 4.1)
+[00:45:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening beavis's inventory
+[00:45:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:48] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted wooden sword at crafting table!
+[00:45:48] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted wooden sword at crafting table!
+[00:45:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted crafting table! Need to place it to craft tools.
+[00:45:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted wooden pickaxe at crafting table!
+[00:45:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted wooden axe at crafting table!
+[00:45:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted wooden sword at crafting table!
+[00:45:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted crafting table! Need to place it to craft tools.
+[00:45:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted wooden pickaxe at crafting table!
+[00:45:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted wooden axe at crafting table!
+[00:45:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted wooden sword at crafting table!
+[00:45:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 sticks from planks
+[00:45:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 sticks from planks
+[00:45:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 3.5, 56.5, 0.5 (dist: 3.8)
+[00:45:57] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:45:57] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:00] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:00] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:00] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:00] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:03] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:03] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:03] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:03] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:06] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:06] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:06] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:06] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 planks from oak log
+[00:46:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 planks from oak log
+[00:46:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 2 Oak Log
+[00:46:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 planks from oak log
+[00:46:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 2 Oak Log
+[00:46:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 planks from oak log
+[00:46:10] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 planks from oak log
+[00:46:10] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 planks from oak log
+[00:46:10] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 planks from oak log
+[00:46:10] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 planks from oak log
+[00:46:12] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:12] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:12] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:12] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening beavis's inventory
+[00:46:16] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:16] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:16] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:16] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:16] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:16] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:18] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 sticks from planks
+[00:46:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 sticks from planks
+[00:46:18] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 planks from oak log
+[00:46:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 planks from oak log
+[00:46:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:20] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:20] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:21] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:21] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:22] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:22] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:22] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:22] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:22] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:22] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:25] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:25] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:25] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:26] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:26] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:27] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:27] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:27] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:27] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:30] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:30] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 2 Oak Log
+[00:46:30] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 2 Oak Log
+[00:46:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:31] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Oak Log...
+[00:46:31] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Oak Log...
+[00:46:31] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening beavis's inventory
+[00:46:32] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Oak Log!
+[00:46:32] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Oak Log!
+[00:46:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 3 Oak Log
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 3 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 3 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 3 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 2 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 2 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 2 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 4 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 2 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 2 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 2 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 4 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 6 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 2 Oak Log
+[00:46:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 6 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 2 Oak Log
+[00:46:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[00:46:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening beavis's inventory
+[00:46:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:46:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:46:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:46:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[AMB] Processing chat command for bot: beavis using LLM: grok
+[AMB] Chat - Grok - Model: grok-4-1-fast-reasoning, Key length: 84
+[00:47:23] [Server thread/INFO] [minecraft/MinecraftServer]: [Not Secure] <Dev> beavis, place a crafting table
+[00:47:23] [Render thread/INFO] [minecraft/ChatComponent]: [CHAT] <Dev> beavis, place a crafting table
+[00:47:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[AMB] ? SUCCESSFULLY EXTRACTED CONTENT (Grok): {"obey":true,"response":"Heh heh, cool! Placing a crafting table right now!"}
+[AMB] Bot beavis will obey command from Dev
+[AMB] beavis interrupted current goal to obey command from Dev
+[00:47:26] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Heh heh, cool! Placing a crafting table right now!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 84
+[AMB] beavis thinking at position: 1,56,0
+[00:47:26] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Heh heh, cool! Placing a crafting table right now!
+[AMB] ? SUCCESSFULLY EXTRACTED CONTENT (Grok): {"actions":[{"type":"set_goal","goal":"mine_stone","minutes":3}]}
+[AMB] beavis received LLM response, executing plan...
+[AMB] beavis starting task: mine_stone
+[AMB] beavis task set to: mine_stone for 3 minutes
+[00:47:27] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> No stone nearby!
+[00:47:27] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> No stone nearby!
+[00:47:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:56] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 62 advancements
+[00:47:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:47:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:47:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:47:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:05] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 64 advancements
+[00:48:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:54] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 66 advancements
+[00:48:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:48:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:48:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:48:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:13] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 68 advancements
+[00:49:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:19] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 70 advancements
+[00:49:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:25] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 72 advancements
+[00:49:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:31] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 74 advancements
+[00:49:33] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
+[00:49:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:36] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 76 advancements
+[00:49:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:41] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 78 advancements
+[00:49:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:49:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:49:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:49:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[00:50:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, 0.5 (dist: 3.5)
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 84
+[AMB] beavis thinking at position: 1,56,0
+[AMB] ? SUCCESSFULLY EXTRACTED CONTENT (Grok): {"actions":[{"type":"set_goal","goal":"mine_stone","minutes":3}]}
+[AMB] beavis received LLM response, executing plan...
+[AMB] beavis starting task: mine_stone
+[AMB] beavis task set to: mine_stone for 3 minutes
+[00:50:28] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:28] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:30] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:30] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:30] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:32] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:32] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:32] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:32] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:33] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:33] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:35] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:35] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:35] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:35] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:35] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:35] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:37] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:37] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:37] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:37] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:38] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:38] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:41] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:41] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:42] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:42] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:46] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:46] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:46] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:46] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:46] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:46] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:48] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:48] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:48] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:48] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:50] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:50] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:51] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:53] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:53] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:53] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mining Stone...
+[00:50:53] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mining Stone...
+[00:50:53] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:53] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:55] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Mined Stone!
+[00:50:55] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Mined Stone!
+[00:50:55] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Cobblestone
+[00:50:55] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Cobblestone
+[00:50:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:50:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:50:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:50:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:51:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:51:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:51:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:51:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:51:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:51:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:51:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:51:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening beavis's inventory
+[00:51:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:51:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:51:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:27] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted crafting table! Need to place it to craft tools.
+[00:51:27] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted crafting table! Need to place it to craft tools.
+[00:51:28] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 planks from oak log
+[00:51:28] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 planks from oak log
+[00:51:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:51:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:51:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:51:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:51:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:51:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:51:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:40] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening beavis's inventory
+[00:51:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[00:51:44] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[00:51:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[00:51:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 1.5, 59.5, -0.5 (dist: 3.5)
+[AMB] Removing bot: beavis
+[00:51:52] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: beavis]
+[AMB] Bot removed: beavis
+[00:51:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: beavis
+[00:54:30] [Server thread/INFO] [minecraft/IntegratedServer]: Saving and pausing game...
+[00:54:30] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[00:54:30] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[00:54:30] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[00:54:30] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
+[00:54:31] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Dev lost connection: Disconnected
+[00:54:31] [Server thread/INFO] [minecraft/MinecraftServer]: Dev left the game
+[00:54:31] [Server thread/INFO] [minecraft/ServerCommonPacketListenerImpl]: Stopping singleplayer server as player logged out
+[00:54:31] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[00:54:31] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[00:54:31] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[00:54:32] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[00:54:32] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[00:54:32] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[00:54:32] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
+[00:54:32] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (New World): All chunks are saved
+[00:54:32] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[00:54:32] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[00:54:32] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+[00:54:32] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Unloading configs type SERVER
+[00:54:32] [Render thread/DEBUG] [ne.ne.fm.cl.tr.ClassTransformStatistics/]: Transformed/total loaded classes: 422/8861 (4.76%) and 5 parsed for mixin
+[00:54:32] [Render thread/INFO] [minecraft/Minecraft]: Stopping!

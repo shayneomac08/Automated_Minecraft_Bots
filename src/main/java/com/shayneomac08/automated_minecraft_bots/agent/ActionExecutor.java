@@ -44,6 +44,7 @@ public final class ActionExecutor {
                         case "mine_stone", "gather_stone" -> "mine_stone";
                         case "build_shelter", "shelter", "build_house", "build" -> "build_shelter";
                         case "craft", "crafting" -> "craft";
+                        case "place_crafting_table", "place_table" -> "place_crafting_table";
                         case "idle", "stop", "wait" -> "idle";
                         default -> g; // Pass through unknown tasks
                     };
