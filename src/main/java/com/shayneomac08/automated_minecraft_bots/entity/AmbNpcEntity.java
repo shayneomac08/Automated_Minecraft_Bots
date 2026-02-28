@@ -71,6 +71,9 @@ public class AmbNpcEntity extends FakePlayer {
     private int obstacleAvoidanceCooldown = 0;
     private Vec3 avoidanceDirection = null;
 
+    // FakePlayer-safe jump cooldown (USER MANDATE LEVEL 10)
+    private int jumpCooldown = 0;
+
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
     private int miningProgress = 0;
@@ -204,6 +207,9 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         super.tick(); // FakePlayer tick - handles inventory, movement, etc.
 
+        // ===== FAKEPLAYER-SAFE JUMP COOLDOWN FIX (USER MANDATE LEVEL 10) =====
+        attemptSafeUnstick();
+
         if (!brainEnabled) return;
 
         // ===== OPTIMIZED STUCK RECOVERY + INTELLIGENT ESCAPE =====
@@ -286,6 +292,26 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     // ==================== MOVEMENT CONTROL ====================
+
+    /**
+     * FakePlayer-safe unstick with proper jump cooldown (USER MANDATE LEVEL 10)
+     * Uses real player jump field to prevent looking like idiots
+     */
+    private void attemptSafeUnstick() {
+        if (jumpCooldown > 0) {
+            jumpCooldown--;
+            return;
+        }
+
+        if (blockPosition().equals(lastPos)) {  // stuck in same spot
+            this.jumping = true;                // real player jump field
+            jumpCooldown = 25;                  // ~1.25 seconds cooldown so they stop looking like idiots
+            if (random.nextInt(3) == 0) {
+                broadcastGroupChat("Ugh, got stuck again — hopping free!");
+            }
+        }
+        lastPos = blockPosition();
+    }
 
     /**
      * Smart jump and unstick system - FakePlayer compatible
