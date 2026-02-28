@@ -68,11 +68,6 @@ public class AmbNpcEntity extends FakePlayer {
     private int obstacleAvoidanceCooldown = 0;
     private Vec3 avoidanceDirection = null;
 
-    // CALMER FAKEPLAYER-ONLY UNSTICK SYSTEM
-    private int stuckTimer = 0;
-    private int jumpCooldown = 0;
-    private BlockPos lastStablePos = BlockPos.ZERO;
-
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
     private int miningProgress = 0;
@@ -206,17 +201,7 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         super.tick(); // FakePlayer tick - handles inventory, movement, etc.
 
-        // ===== CALMER FAKEPLAYER-ONLY UNSTICK SYSTEM =====
-        attemptCalmUnstick();
-
         if (!brainEnabled) return;
-
-        // ===== AUTO JUMP WHEN OBSTACLE IN FRONT =====
-        // Only jump if not on cooldown to prevent spam
-        if (horizontalCollision && onGround() && pathCooldown <= 0) {
-            jumpFromGround();
-            pathCooldown = 15; // Set cooldown after collision jump
-        }
 
         // ===== FEATURE 2: AUTO DOOR OPENING =====
         attemptOpenDoors();
@@ -274,33 +259,6 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== MOVEMENT CONTROL ====================
 
     /**
-     * CALMER FAKEPLAYER-ONLY UNSTICK SYSTEM
-     * Waits 4 full seconds before jumping, 3-second cooldown to prevent spam
-     */
-    private void attemptCalmUnstick() {
-        if (jumpCooldown > 0) {
-            jumpCooldown--;
-            return;
-        }
-
-        stuckTimer++;
-        if (stuckTimer > 80) {  // 4 full seconds of no movement
-            double moved = blockPosition().distSqr(lastStablePos);
-            if (moved < 1.0) {  // barely moved at all
-                this.jumping = true;           // real player jump
-                jumpCooldown = 60;             // 3-second cooldown so they calm down
-                stuckTimer = 0;
-                if (random.nextInt(3) == 0) {
-                    broadcastGroupChat("Ugh... stuck again. Hopping free!");
-                }
-            } else {
-                lastStablePos = blockPosition();
-                stuckTimer = 0;
-            }
-        }
-    }
-
-    /**
      * Set a movement target for the bot
      */
     public void setMoveTarget(Vec3 target, float speed) {
@@ -344,7 +302,6 @@ public class AmbNpcEntity extends FakePlayer {
         // Check if reached target
         if (currentPos.distanceTo(moveTarget) < 0.5) {
             stopMovement();
-            stuckTimer = 0; // Reset stuck timer when reaching target
             pathCooldown = 0;
             obstacleAvoidanceCooldown = 0;
             avoidanceDirection = null;
