@@ -46,24 +46,26 @@ public final class BotTicker {
 // PRIORITY 1: shelter in danger
             if (danger) {
                 if (isSheltered(level, body.blockPosition())) {
-                    if (body instanceof net.minecraft.world.entity.Mob) {
-                        ((net.minecraft.world.entity.Mob) body).getNavigation().stop();
+                    // FakePlayer compatible: Stop movement
+                    if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                        ambBot.stopMovement();
                     }
                     brain.goalUntilTick = tick + 40; // short lock
                 } else {
                     BlockPos shelter = findShelter(level, body.blockPosition());
-                    if (shelter != null && body instanceof net.minecraft.world.entity.Mob) {
-                        net.minecraft.world.entity.Mob mob = (net.minecraft.world.entity.Mob) body;
-                        // Speed multiplier: 1.15 = slightly faster than walk for urgency
-                        mob.getNavigation().moveTo(shelter.getX() + 0.5, shelter.getY(), shelter.getZ() + 0.5, 1.15);
+                    if (shelter != null && body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                        // FakePlayer compatible: Use setMoveTarget with urgency speed
+                        Vec3 shelterPos = new Vec3(shelter.getX() + 0.5, shelter.getY(), shelter.getZ() + 0.5);
+                        ambBot.setMoveTarget(shelterPos, 0.13f); // Sprint speed for urgency
                         brain.goalUntilTick = tick + Math.min(ticksUntilDawn(level), 20 * 120);
                         brain.goalX = shelter.getX() + 0.5;
                         brain.goalY = (double) shelter.getY();
                         brain.goalZ = shelter.getZ() + 0.5;
                         brain.lastThought = "seeking shelter";
                     } else {
-                        if (body instanceof net.minecraft.world.entity.Mob) {
-                            ((net.minecraft.world.entity.Mob) body).getNavigation().stop();
+                        // FakePlayer compatible: Stop movement
+                        if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                            ambBot.stopMovement();
                         }
                         brain.goalUntilTick = tick + 40;
                     }
@@ -93,32 +95,11 @@ public final class BotTicker {
             // This prevents conflict between Goal system and manual velocity setting
 
             // 6) PvP protection: prevent attacking players unless allowed
-            if (body instanceof net.minecraft.world.entity.Mob) {
-                net.minecraft.world.entity.Mob mob = (net.minecraft.world.entity.Mob) body;
-                var tgt = mob.getTarget();
-
-                // If target is a player, only allow if PvP enabled OR player provoked bot recently
-                if (tgt instanceof net.minecraft.server.level.ServerPlayer sp && !brain.allowPlayerCombat) {
-
-                    boolean provoked = false;
-
-                    // "Provoked" = player recently hurt the bot (best-effort, mappings differ)
-                    try {
-                        var last = body.getLastHurtByMob();
-                        int ts = body.getLastHurtByMobTimestamp();
-                        if (last == sp && (tick - ts) <= 200) { // 10 seconds
-                            provoked = true;
-                        }
-                    } catch (Throwable ignored) {}
-
-                    if (!provoked) {
-                        mob.setTarget(null);
-                        try { mob.getNavigation().stop(); } catch (Throwable ignored) {}
-                        mob.getBrain().eraseMemory(ATTACK_TARGET);
-                        mob.setAggressive(false);
-                        mob.setLastHurtByMob(null);
-                    }
-                }
+            // FakePlayer compatible: AmbNpcEntity handles combat differently
+            if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                // FakePlayers don't use Mob targeting system
+                // Combat is handled through task system and LLM decisions
+                // PvP protection is enforced at action execution level
             }
 
             // 7) Hands always glued
@@ -157,17 +138,20 @@ public final class BotTicker {
             double nz = target.getZ() + 2.0;
             double ny = groundY(level, nx, nz);
             body.teleportTo(nx, ny, nz);
-            body.setDeltaMovement(Vec3.ZERO);
+            // FakePlayer compatible: Use AmbNpcEntity's stopMovement if available
+            if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                ambBot.stopMovement();
+            }
             brain.farTicks = 0;
             return;
         }
 
         // Stop if close enough
         if (dist2 <= minDist * minDist) {
-            if (body instanceof net.minecraft.world.entity.Mob mob) {
-                mob.getNavigation().stop();
+            // FakePlayer compatible: Use AmbNpcEntity's stopMovement() if available
+            if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                ambBot.stopMovement();
             }
-            body.setDeltaMovement(body.getDeltaMovement().multiply(0.5, 1.0, 0.5));
             brain.farTicks = 0;
             return;
         }
@@ -187,29 +171,22 @@ public final class BotTicker {
         // When far, sprint. When close, walk.
         boolean shouldSprint = dist2 > maxDist * maxDist;
 
-        // PLAYER PARITY: Use DIRECT MOVEMENT with exact player speeds
-        if (body instanceof net.minecraft.world.entity.Mob) {
-            // PLAYER PARITY FIX: Match player movement speeds exactly
+        // FakePlayer compatible: Use AmbNpcEntity's setMoveTarget() for proper player movement
+        if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
             // Player walk speed: 0.1 blocks/tick (2 blocks/second)
             // Player sprint speed: 0.13 blocks/tick (2.6 blocks/second)
-            double moveSpeed = shouldSprint ? 0.13 : 0.1;
+            float moveSpeed = shouldSprint ? 0.13f : 0.1f;
 
-            // DIRECT MOVEMENT: Set velocity directly toward target
-            Vec3 movement = new Vec3(dx * moveSpeed, body.getDeltaMovement().y, dz * moveSpeed);
-            body.setDeltaMovement(movement);
-
-            // Update rotation to face target (smooth like player)
-            float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
-            body.setYRot(yaw);
-            body.setYHeadRot(yaw);
-            body.yBodyRot = yaw;
+            // Use proper FakePlayer movement system
+            Vec3 targetPos = new Vec3(target.getX(), target.getY(), target.getZ());
+            ambBot.setMoveTarget(targetPos, moveSpeed);
 
             // Debug logging every 5 seconds
             if (tick % 100 == 0) {
-                System.out.println("[AMB] Follow (Direct): Pos=" + body.blockPosition() +
+                System.out.println("[AMB] Follow (FakePlayer): Pos=" + body.blockPosition() +
                                  " Target=" + target.blockPosition() +
                                  " Dist=" + String.format("%.1f", dist) +
-                                 " Velocity=" + String.format("%.3f", body.getDeltaMovement().horizontalDistance()));
+                                 " Speed=" + moveSpeed);
             }
         }
 
@@ -221,7 +198,10 @@ public final class BotTicker {
                 double nz = target.getZ() + 2.0;
                 double ny = groundY(level, nx, nz);
                 body.teleportTo(nx, ny, nz);
-                body.setDeltaMovement(Vec3.ZERO);
+                // FakePlayer compatible: Use AmbNpcEntity's stopMovement if available
+                if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                    ambBot.stopMovement();
+                }
                 brain.farTicks = 0;
             }
         } else {

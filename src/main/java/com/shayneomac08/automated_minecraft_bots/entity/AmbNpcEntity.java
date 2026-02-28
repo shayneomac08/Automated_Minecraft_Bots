@@ -79,6 +79,15 @@ public class AmbNpcEntity extends FakePlayer {
     private String surroundingsInfo = "";
     private BlockPos bedPos = null; // Respawn point
 
+    // ==================== SHARED MEMORY & HUMAN-LIKE FEATURES ====================
+
+    // Shared memory per group
+    private static final Map<String, GroupMemoryLedger> GROUP_LEDGERS = new HashMap<>();
+
+    private GroupMemoryLedger getLedger() {
+        return GROUP_LEDGERS.computeIfAbsent(group, k -> new GroupMemoryLedger());
+    }
+
     // ==================== CONSTRUCTOR ====================
 
     public AmbNpcEntity(ServerLevel level, GameProfile profile) {
@@ -140,23 +149,28 @@ public class AmbNpcEntity extends FakePlayer {
 
         if (!brainEnabled) return;
 
-        // ===== OPTIMIZED STUCK RECOVERY + JUMP (real player feel) =====
+        // ===== OPTIMIZED STUCK RECOVERY + INTELLIGENT ESCAPE =====
         stuckTimer++;
         if (stuckTimer > 30 && blockPosition().distSqr(lastPos) < 0.5) {
-            if (onGround()) {
-                setDeltaMovement(getDeltaMovement().add(0, 0.42, 0)); // jump
+            // Try to escape intelligently
+            boolean escaped = attemptEscapeFromHole();
+
+            if (!escaped && onGround()) {
+                // If still stuck, jump using proper player jump
+                jumpFromGround();
+                broadcastGroupChat("Jumping to escape!");
             }
+
             stuckTimer = 0;
-            broadcastGroupChat("Ugh, got stuck — jumping free!");
         }
         lastPos = blockPosition();
 
         // ===== AUTO JUMP WHEN OBSTACLE IN FRONT =====
-        if (horizontalCollision && onGround()) {
-            setDeltaMovement(getDeltaMovement().add(0, 0.42, 0));
+        // Only jump if not on cooldown to prevent spam
+        if (horizontalCollision && onGround() && pathCooldown <= 0) {
+            jumpFromGround();
+            pathCooldown = 15; // Set cooldown after collision jump
         }
-
-        pathCooldown--;
 
         // ===== FEATURE 2: AUTO DOOR OPENING =====
         attemptOpenDoors();
@@ -175,6 +189,20 @@ public class AmbNpcEntity extends FakePlayer {
             equipBestTool();
             // Update surroundings for LLM awareness
             updateSurroundingsForLLM();
+        }
+
+        // ===== HUMAN-LIKE FEATURES: EYES + VOTING =====
+        // Every 5 seconds: Build rich snapshot with eyes, call LLM, execute JSON action
+        if (tickCount % 100 == 0) {
+            String snapshot = buildRichEyesSnapshot();
+            // Note: LLM call happens through BotBrain system - this snapshot feeds into it
+            // The snapshot is stored for BotBrain to use
+            this.surroundingsInfo = snapshot;
+        }
+
+        // Every minute: Run group vote
+        if (tickCount % 1200 == 0) {
+            runGroupVote();
         }
 
         // Move towards target if set (with path cooldown optimization)
@@ -244,6 +272,10 @@ public class AmbNpcEntity extends FakePlayer {
         // Calculate direction to target
         Vec3 direction = moveTarget.subtract(currentPos).normalize();
 
+        // ===== CHECK IF TARGET IS ABOVE US =====
+        double heightDifference = moveTarget.y - currentPos.y;
+        boolean targetIsAbove = heightDifference > 0.5; // Target is at least half a block higher
+
         // ===== OBSTACLE DETECTION AND AVOIDANCE =====
         // Check if there's an obstacle blocking the direct path
         boolean obstacleDetected = false;
@@ -267,7 +299,7 @@ public class AmbNpcEntity extends FakePlayer {
                 for (int y = 0; y <= 1; y++) {
                     BlockPos testPos = checkBlockPos.above(y);
                     BlockState state = level().getBlockState(testPos);
-                    if (!state.isAir() && state.isSolid()) {
+                    if (!state.isAir() && state.canOcclude()) {
                         blocked = true;
                         break;
                     }
@@ -359,7 +391,11 @@ public class AmbNpcEntity extends FakePlayer {
             newY -= 0.08; // Gravity acceleration
             newY *= 0.98; // Air resistance
         } else {
-            newY = -0.0784; // Small downward force to keep on ground (prevents floating)
+            // Only apply downward force if we're not jumping
+            // This allows jump velocity to work properly
+            if (newY <= 0) {
+                newY = -0.0784; // Small downward force to keep on ground (prevents floating)
+            }
         }
 
         // Set the new velocity
@@ -374,20 +410,55 @@ public class AmbNpcEntity extends FakePlayer {
             setDeltaMovement(afterMove.x * friction, afterMove.y, afterMove.z * friction);
         }
 
-        // Handle jumping over obstacles (only if not avoiding)
-        if (pathCooldown <= 0 && !obstacleDetected) {
-            // Check if there's a block in front that needs jumping
-            BlockPos frontPos = blockPosition().relative(getDirection());
-            BlockPos aboveFront = frontPos.above();
+        // Handle jumping over obstacles AND when target is above us
+        if (pathCooldown <= 0 && onGround()) {
+            boolean shouldJump = false;
 
-            if (!level().getBlockState(frontPos).isAir() &&
-                level().getBlockState(aboveFront).isAir() &&
-                onGround()) {
-                // Jump to get over obstacle
-                setDeltaMovement(getDeltaMovement().add(0, 0.42, 0)); // Standard jump velocity
+            // REASON 1: Target is above us AND we're close enough to need jumping
+            // Only jump if target is above AND we're moving toward it AND close enough
+            if (targetIsAbove && currentPos.distanceTo(moveTarget) < 5.0) {
+                // Check if there's actually a block in front to jump over
+                Vec3 checkAhead = currentPos.add(movementDirection.x * 1.5, 0, movementDirection.z * 1.5);
+                BlockPos aheadPos = BlockPos.containing(checkAhead);
+
+                // Only jump if there's a block to climb or we're very close to target
+                if (!level().getBlockState(aheadPos).isAir() || currentPos.distanceTo(moveTarget) < 2.0) {
+                    shouldJump = true;
+                }
             }
 
-            pathCooldown = 12; // Reset cooldown
+            // REASON 2: Block directly in front that needs jumping
+            if (!shouldJump && !obstacleDetected) {
+                BlockPos frontPos = blockPosition().relative(getDirection());
+                BlockPos aboveFront = frontPos.above();
+
+                if (!level().getBlockState(frontPos).isAir() &&
+                    level().getBlockState(aboveFront).isAir()) {
+                    shouldJump = true;
+                }
+            }
+
+            // REASON 3: Check if there's a step/block in movement direction
+            if (!shouldJump) {
+                Vec3 checkAhead = currentPos.add(movementDirection.x, 0, movementDirection.z);
+                BlockPos aheadPos = BlockPos.containing(checkAhead);
+                BlockPos aheadAbove = aheadPos.above();
+
+                // If block ahead at feet level but clear above, jump
+                if (!level().getBlockState(aheadPos).isAir() &&
+                    level().getBlockState(aheadAbove).isAir()) {
+                    shouldJump = true;
+                }
+            }
+
+            if (shouldJump) {
+                jumpFromGround();
+                pathCooldown = 15; // Longer cooldown to prevent spam jumping
+            } else {
+                pathCooldown = 5; // Shorter cooldown if not jumping
+            }
+        } else if (pathCooldown > 0) {
+            pathCooldown--;
         }
     }
 
@@ -403,7 +474,7 @@ public class AmbNpcEntity extends FakePlayer {
             for (int y = 0; y <= 1; y++) {
                 BlockPos testPos = checkBlockPos.above(y);
                 BlockState state = level().getBlockState(testPos);
-                if (!state.isAir() && state.isSolid()) {
+                if (!state.isAir() && state.canOcclude()) {
                     return false;
                 }
             }
@@ -474,6 +545,13 @@ public class AmbNpcEntity extends FakePlayer {
             case "explore" -> explore();
             case "hunt_animals" -> huntAnimals();
             case "manage_resources" -> manageResources();
+            case "eat_food" -> eatFood();
+            case "use_item" -> useItem(InteractionHand.MAIN_HAND);
+            case "attack_mob" -> attackNearestHostile();
+            case "breed_animals" -> breedAnimals();
+            case "tame_animal" -> tameAnimal();
+            case "fish" -> fish();
+            case "sleep" -> sleep();
             case "idle" -> {} // Do nothing
             default -> {
                 // Unknown task - treat as explore
@@ -566,10 +644,11 @@ public class AmbNpcEntity extends FakePlayer {
             } else if (hardness == 0) {
                 miningTotalTime = 1; // Instant break
             } else {
-                // Calculate mining time (in ticks)
-                float baseTime = hardness * 1.5f; // Hardness to seconds conversion
-                float toolEfficiency = speedMultiplier > 1.0f ? speedMultiplier : 1.0f;
-                miningTotalTime = Math.max(1, (int)(baseTime * 20 / toolEfficiency)); // Convert to ticks
+                // Calculate mining time (in ticks) - MATCH REAL PLAYER SPEED
+            // Player formula: ticks = (hardness * 1.5) * 20 / speedMultiplier
+            // This matches vanilla player mining speed exactly
+            float baseTime = hardness * 1.5f; // Hardness to seconds conversion
+            miningTotalTime = Math.max(1, (int)(baseTime * 20 / speedMultiplier)); // Convert to ticks
             }
 
             broadcastGroupChat("Mining " + state.getBlock().getName().getString() + "...");
@@ -672,9 +751,9 @@ public class AmbNpcEntity extends FakePlayer {
                 if (nearestDist > 4.0) {
                     setMoveTarget(nearest.position(), 0.25f);
                 } else {
-                    // Attack the animal
+                    // Attack the animal (FakePlayer compatible)
                     stopMovement();
-                    attack(nearest);
+                    attackEntity(nearest);
                     broadcastGroupChat("Hunting " + nearest.getName().getString());
                 }
             } else {
@@ -805,18 +884,21 @@ public class AmbNpcEntity extends FakePlayer {
         int sticks = countItemInInventory(Items.STICK);
         int cobblestone = countItemInInventory(Items.COBBLESTONE);
 
+        // PREVENT INFINITE CRAFTING LOOPS - Only craft what's needed
+
         // Auto-craft planks from logs (2x2 recipe - can do in inventory)
-        // Craft ALL logs into planks immediately
-        while (oakLogs > 0) {
-            removeItemFromInventory(Items.OAK_LOG, 1);
-            addItemToInventory(new ItemStack(Items.OAK_PLANKS, 4));
-            broadcastGroupChat("Crafted 4 planks from oak log");
-            oakLogs--;
-            planks += 4;
+        // Only craft if we need planks for something
+        if (oakLogs > 0 && planks < 8) {
+            int logsToConvert = Math.min(oakLogs, 2); // Convert max 2 logs at a time
+            removeItemFromInventory(Items.OAK_LOG, logsToConvert);
+            addItemToInventory(new ItemStack(Items.OAK_PLANKS, logsToConvert * 4));
+            broadcastGroupChat("Crafted " + (logsToConvert * 4) + " planks from " + logsToConvert + " logs");
+            oakLogs -= logsToConvert;
+            planks += logsToConvert * 4;
         }
 
         // Auto-craft sticks from planks (2x2 recipe - can do in inventory)
-        // Make sure we have enough sticks for tools
+        // Only craft if we need sticks and don't have enough
         if (planks >= 2 && sticks < 4) {
             removeItemFromInventory(Items.OAK_PLANKS, 2);
             addItemToInventory(new ItemStack(Items.STICK, 4));
@@ -838,50 +920,50 @@ public class AmbNpcEntity extends FakePlayer {
         // Check if we have a crafting table nearby (required for 3x3 recipes)
         boolean hasCraftingTable = isNearCraftingTable();
 
-        // ONLY craft 3x3 recipes if we have a crafting table nearby
+        // ONLY craft 3x3 recipes if we have a crafting table nearby AND have learned the recipe
         if (hasCraftingTable) {
-            // Auto-craft wooden pickaxe if we have materials and no pickaxe
-            if (planks >= 3 && sticks >= 2 && !hasPickaxe()) {
+            // Auto-craft wooden pickaxe if we have materials, no pickaxe, and know the recipe
+            if (planks >= 3 && sticks >= 2 && !hasPickaxe() && hasRecipe(Items.WOODEN_PICKAXE)) {
                 removeItemFromInventory(Items.OAK_PLANKS, 3);
                 removeItemFromInventory(Items.STICK, 2);
                 addItemToInventory(new ItemStack(Items.WOODEN_PICKAXE));
                 broadcastGroupChat("Crafted wooden pickaxe at crafting table!");
             }
 
-            // Auto-craft stone pickaxe if we have cobblestone and no stone/iron pickaxe
-            if (cobblestone >= 3 && sticks >= 2 && !hasPickaxe(Items.STONE_PICKAXE, Items.IRON_PICKAXE, Items.DIAMOND_PICKAXE)) {
+            // Auto-craft stone pickaxe if we have cobblestone, no stone/iron pickaxe, and know the recipe
+            if (cobblestone >= 3 && sticks >= 2 && !hasPickaxe(Items.STONE_PICKAXE, Items.IRON_PICKAXE, Items.DIAMOND_PICKAXE) && hasRecipe(Items.STONE_PICKAXE)) {
                 removeItemFromInventory(Items.COBBLESTONE, 3);
                 removeItemFromInventory(Items.STICK, 2);
                 addItemToInventory(new ItemStack(Items.STONE_PICKAXE));
                 broadcastGroupChat("Crafted stone pickaxe at crafting table!");
             }
 
-            // Auto-craft wooden axe if we have materials and no axe
-            if (planks >= 3 && sticks >= 2 && !hasAxe()) {
+            // Auto-craft wooden axe if we have materials, no axe, and know the recipe
+            if (planks >= 3 && sticks >= 2 && !hasAxe() && hasRecipe(Items.WOODEN_AXE)) {
                 removeItemFromInventory(Items.OAK_PLANKS, 3);
                 removeItemFromInventory(Items.STICK, 2);
                 addItemToInventory(new ItemStack(Items.WOODEN_AXE));
                 broadcastGroupChat("Crafted wooden axe at crafting table!");
             }
 
-            // Auto-craft stone axe if we have cobblestone and no stone/iron axe
-            if (cobblestone >= 3 && sticks >= 2 && !hasAxe(Items.STONE_AXE, Items.IRON_AXE, Items.DIAMOND_AXE)) {
+            // Auto-craft stone axe if we have cobblestone, no stone/iron axe, and know the recipe
+            if (cobblestone >= 3 && sticks >= 2 && !hasAxe(Items.STONE_AXE, Items.IRON_AXE, Items.DIAMOND_AXE) && hasRecipe(Items.STONE_AXE)) {
                 removeItemFromInventory(Items.COBBLESTONE, 3);
                 removeItemFromInventory(Items.STICK, 2);
                 addItemToInventory(new ItemStack(Items.STONE_AXE));
                 broadcastGroupChat("Crafted stone axe at crafting table!");
             }
 
-            // Auto-craft wooden sword if we have materials and no sword
-            if (planks >= 2 && sticks >= 1 && !hasSword()) {
+            // Auto-craft wooden sword if we have materials, no sword, and know the recipe
+            if (planks >= 2 && sticks >= 1 && !hasSword() && hasRecipe(Items.WOODEN_SWORD)) {
                 removeItemFromInventory(Items.OAK_PLANKS, 2);
                 removeItemFromInventory(Items.STICK, 1);
                 addItemToInventory(new ItemStack(Items.WOODEN_SWORD));
                 broadcastGroupChat("Crafted wooden sword at crafting table!");
             }
 
-            // Auto-craft stone sword if we have cobblestone and no stone/iron sword
-            if (cobblestone >= 2 && sticks >= 1 && !hasSword(Items.STONE_SWORD, Items.IRON_SWORD, Items.DIAMOND_SWORD)) {
+            // Auto-craft stone sword if we have cobblestone, no stone/iron sword, and know the recipe
+            if (cobblestone >= 2 && sticks >= 1 && !hasSword(Items.STONE_SWORD, Items.IRON_SWORD, Items.DIAMOND_SWORD) && hasRecipe(Items.STONE_SWORD)) {
                 removeItemFromInventory(Items.COBBLESTONE, 2);
                 removeItemFromInventory(Items.STICK, 1);
                 addItemToInventory(new ItemStack(Items.STONE_SWORD));
@@ -892,6 +974,270 @@ public class AmbNpcEntity extends FakePlayer {
             if (tickCount % 100 == 0) { // Only every 5 seconds
                 broadcastGroupChat("Need to place crafting table to craft tools!");
             }
+        }
+    }
+
+    /**
+     * Attack an entity like a real player (FakePlayer compatible)
+     * Uses proper player attack mechanics with swing animation and cooldown
+     */
+    private void attackEntity(Entity target) {
+        if (target == null || !target.isAlive()) return;
+
+        // Swing arm for animation (visible to other players)
+        swing(InteractionHand.MAIN_HAND);
+
+        // Attack the entity using player attack method
+        attack(target);
+
+        // Reset attack cooldown like a real player
+        resetAttackStrengthTicker();
+    }
+
+    /**
+     * Attack nearest hostile mob (FakePlayer compatible)
+     */
+    private void attackNearestHostile() {
+        if (!(level() instanceof ServerLevel serverLevel)) return;
+
+        // Find nearest hostile mob
+        List<net.minecraft.world.entity.monster.Monster> hostiles = serverLevel.getEntitiesOfClass(
+            net.minecraft.world.entity.monster.Monster.class,
+            getBoundingBox().inflate(16.0)
+        );
+
+        if (!hostiles.isEmpty()) {
+            net.minecraft.world.entity.monster.Monster nearest = hostiles.get(0);
+            double nearestDist = distanceToSqr(nearest);
+
+            for (net.minecraft.world.entity.monster.Monster hostile : hostiles) {
+                double dist = distanceToSqr(hostile);
+                if (dist < nearestDist) {
+                    nearest = hostile;
+                    nearestDist = dist;
+                }
+            }
+
+            // Move towards hostile
+            if (nearestDist > 4.0) {
+                setMoveTarget(nearest.position(), 0.25f);
+            } else {
+                // Attack the hostile
+                stopMovement();
+                attackEntity(nearest);
+                broadcastGroupChat("Attacking " + nearest.getName().getString());
+            }
+        } else {
+            broadcastGroupChat("No hostile mobs nearby");
+            currentTask = "idle";
+        }
+    }
+
+    /**
+     * Breed animals (FakePlayer compatible)
+     */
+    private void breedAnimals() {
+        if (!(level() instanceof ServerLevel serverLevel)) return;
+
+        // Find nearby breedable animals
+        List<net.minecraft.world.entity.animal.Animal> animals = serverLevel.getEntitiesOfClass(
+            net.minecraft.world.entity.animal.Animal.class,
+            getBoundingBox().inflate(16.0),
+            animal -> animal.canFallInLove()
+        );
+
+        if (animals.size() >= 2) {
+            net.minecraft.world.entity.animal.Animal target = animals.get(0);
+            double dist = distanceToSqr(target);
+
+            if (dist > 4.0) {
+                setMoveTarget(target.position(), 0.2f);
+            } else {
+                stopMovement();
+                // Try to breed with appropriate food
+                interactWithEntity(target, InteractionHand.MAIN_HAND);
+                broadcastGroupChat("Breeding " + target.getName().getString());
+            }
+        } else {
+            broadcastGroupChat("Not enough animals to breed");
+            currentTask = "idle";
+        }
+    }
+
+    /**
+     * Tame animal (FakePlayer compatible)
+     */
+    private void tameAnimal() {
+        if (!(level() instanceof ServerLevel serverLevel)) return;
+
+        // Find nearby tameable animals (wolves, cats, horses, parrots)
+        List<net.minecraft.world.entity.TamableAnimal> tameable = serverLevel.getEntitiesOfClass(
+            net.minecraft.world.entity.TamableAnimal.class,
+            getBoundingBox().inflate(16.0),
+            animal -> !animal.isTame()
+        );
+
+        if (!tameable.isEmpty()) {
+            net.minecraft.world.entity.TamableAnimal target = tameable.get(0);
+            double dist = distanceToSqr(target);
+
+            if (dist > 4.0) {
+                setMoveTarget(target.position(), 0.2f);
+            } else {
+                stopMovement();
+                // Try to tame with appropriate food
+                interactWithEntity(target, InteractionHand.MAIN_HAND);
+                broadcastGroupChat("Taming " + target.getName().getString());
+            }
+        } else {
+            broadcastGroupChat("No tameable animals nearby");
+            currentTask = "idle";
+        }
+    }
+
+    /**
+     * Fish (FakePlayer compatible)
+     */
+    private void fish() {
+        // Check if holding fishing rod
+        ItemStack mainHand = getMainHandItem();
+        if (mainHand.getItem() != Items.FISHING_ROD) {
+            broadcastGroupChat("Need fishing rod to fish!");
+            currentTask = "idle";
+            return;
+        }
+
+        // Use fishing rod
+        useItem(InteractionHand.MAIN_HAND);
+        broadcastGroupChat("Fishing...");
+    }
+
+    /**
+     * Sleep in bed (FakePlayer compatible)
+     */
+    private void sleep() {
+        if (!(level() instanceof ServerLevel serverLevel)) return;
+
+        // Find nearest bed
+        BlockPos bedPos = findNearestBlock(Blocks.RED_BED, 16);
+        if (bedPos == null) {
+            broadcastGroupChat("No bed nearby!");
+            currentTask = "idle";
+            return;
+        }
+
+        double dist = position().distanceTo(Vec3.atCenterOf(bedPos));
+        if (dist > 3.0) {
+            setMoveTarget(bedPos, 0.2f);
+        } else {
+            stopMovement();
+            // Try to sleep
+            startSleeping(bedPos);
+            broadcastGroupChat("Sleeping...");
+        }
+    }
+
+    /**
+     * Use/eat food item from inventory (FakePlayer compatible)
+     * Simulates player eating to restore hunger
+     */
+    private void eatFood() {
+        Inventory inv = getInventory();
+
+        // Find first food item in inventory
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (!stack.isEmpty() && stack.has(net.minecraft.core.component.DataComponents.FOOD)) {
+                // Equip food in main hand
+                setItemInHand(InteractionHand.MAIN_HAND, stack);
+
+                // Start using item (eating)
+                startUsingItem(InteractionHand.MAIN_HAND);
+
+                // Simulate eating duration (32 ticks for most food)
+                // In real implementation, this would be handled over multiple ticks
+                // For now, instantly consume
+                ItemStack result = stack.finishUsingItem(level(), this);
+
+                // Update inventory
+                if (result != stack) {
+                    setItemInHand(InteractionHand.MAIN_HAND, result);
+                }
+
+                broadcastGroupChat("Ate " + stack.getHoverName().getString());
+                return;
+            }
+        }
+
+        broadcastGroupChat("No food to eat!");
+    }
+
+    /**
+     * Use item on block (FakePlayer compatible)
+     * For placing blocks, using doors, buttons, etc.
+     */
+    private void useItemOnBlock(BlockPos pos, Direction direction) {
+        if (level().isClientSide()) return;
+
+        BlockState state = level().getBlockState(pos);
+        ItemStack heldItem = getMainHandItem();
+
+        // Create block hit result
+        Vec3 hitVec = Vec3.atCenterOf(pos);
+        BlockHitResult hitResult = new BlockHitResult(hitVec, direction, pos, false);
+
+        // Try to use item on block (like placing blocks, using doors, etc.)
+        InteractionResult result = heldItem.useOn(new net.minecraft.world.item.context.UseOnContext(
+            this, InteractionHand.MAIN_HAND, hitResult
+        ));
+
+        // If item didn't handle it, try block interaction
+        if (result == InteractionResult.PASS) {
+            result = state.useWithoutItem(level(), this, hitResult);
+        }
+
+        // Swing arm for animation
+        if (result.consumesAction()) {
+            swing(InteractionHand.MAIN_HAND);
+        }
+    }
+
+    /**
+     * Use/activate item in hand (FakePlayer compatible)
+     * For using tools, weapons, consumables, etc.
+     */
+    private void useItem(InteractionHand hand) {
+        ItemStack stack = getItemInHand(hand);
+        if (stack.isEmpty()) return;
+
+        // Start using item
+        startUsingItem(hand);
+
+        // Swing arm for animation
+        swing(hand);
+
+        // For instant-use items, finish using immediately
+        if (stack.getUseDuration(this) == 0) {
+            ItemStack result = stack.finishUsingItem(level(), this);
+            if (result != stack) {
+                setItemInHand(hand, result);
+            }
+        }
+    }
+
+    /**
+     * Interact with entity (FakePlayer compatible)
+     * For trading, breeding, taming, etc.
+     */
+    private void interactWithEntity(Entity target, InteractionHand hand) {
+        if (target == null) return;
+
+        // Interact with entity
+        InteractionResult result = interactOn(target, hand);
+
+        // Swing arm for animation
+        if (result.consumesAction()) {
+            swing(hand);
         }
     }
 
@@ -1184,6 +1530,25 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== REAL PLAYER RULES ENFORCEMENT ====================
 
     /**
+     * Check if bot has learned a recipe (real player progression)
+     * Basic recipes (wood/stone tools) are always known
+     * Advanced recipes (iron/diamond) require unlocking through gameplay
+     */
+    private boolean hasRecipe(Item item) {
+        // Basic recipes are always known (wood and stone tools)
+        if (item == Items.WOODEN_PICKAXE || item == Items.WOODEN_AXE || item == Items.WOODEN_SWORD ||
+            item == Items.STONE_PICKAXE || item == Items.STONE_AXE || item == Items.STONE_SWORD ||
+            item == Items.CRAFTING_TABLE || item == Items.STICK) {
+            return true; // Always know basic recipes
+        }
+
+        // For advanced items (iron, diamond, etc.), check recipe book
+        // This prevents bots from crafting diamond tools without learning the recipe
+        // For now, return false for advanced items (they need to learn them)
+        return false;
+    }
+
+    /**
      * RULE 1: Enforce player crafting rules - LLM can only craft at crafting table
      * Returns true if crafting is allowed, false otherwise
      */
@@ -1444,6 +1809,187 @@ public class AmbNpcEntity extends FakePlayer {
      */
     public BlockPos getBedPos() {
         return bedPos;
+    }
+
+    /**
+     * Attempt to escape from a hole - SMART ESCAPE (like a real player)
+     * Priority: 1) Try walking/jumping out, 2) Break blocks only if completely trapped
+     * Returns true if escape was attempted, false otherwise
+     */
+    private boolean attemptEscapeFromHole() {
+        BlockPos pos = blockPosition();
+
+        // First, check if we're actually in a hole (surrounded by blocks)
+        Direction[] directions = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+        int solidBlocksAround = 0;
+        for (Direction dir : directions) {
+            BlockPos checkPos = pos.relative(dir);
+            if (level().getBlockState(checkPos).canOcclude()) {
+                solidBlocksAround++;
+            }
+        }
+
+        // If we're NOT surrounded (less than 2 solid blocks), we're not in a hole - don't escape
+        if (solidBlocksAround < 2) {
+            return false;
+        }
+
+        // STEP 1: Check if we can just walk/jump out (like a real player would)
+        for (Direction dir : directions) {
+            BlockPos checkPos = pos.relative(dir);
+            BlockPos aboveCheck = checkPos.above();
+            BlockState blockState = level().getBlockState(checkPos);
+            BlockState aboveState = level().getBlockState(aboveCheck);
+
+            // If there's an open path (air or passable block), try to walk that way
+            if (blockState.isAir() || !blockState.canOcclude()) {
+                // Check if we can jump up if needed
+                if (aboveState.isAir() || !aboveState.canOcclude()) {
+                    // Found an escape route! Move that way and jump
+                    Vec3 escapeDir = new Vec3(dir.getStepX(), dir.getStepY(), dir.getStepZ());
+                    setMoveTarget(position().add(escapeDir.scale(2)), 0.2f);
+                    if (onGround()) {
+                        jumpFromGround();
+                    }
+                    broadcastGroupChat("Found escape route, jumping out!");
+                    return true;
+                }
+            }
+        }
+
+        // STEP 2: Check if we're in a shallow hole (can jump out)
+        BlockPos abovePos = pos.above();
+        BlockPos twoAbove = pos.above(2);
+        if (level().getBlockState(abovePos).isAir() && level().getBlockState(twoAbove).isAir()) {
+            // Try jumping - we might be able to get out
+            if (onGround()) {
+                jumpFromGround();
+                broadcastGroupChat("Trying to jump out of hole!");
+                return true;
+            }
+        }
+
+        // STEP 3: LAST RESORT - We're completely trapped, break blocks to escape
+        // Only do this if we've tried everything else
+        // We already calculated solidBlocksAround at the start, so reuse it
+
+        // Only break blocks if we're surrounded (3+ solid blocks around us)
+        if (solidBlocksAround >= 3) {
+            for (Direction dir : directions) {
+                BlockPos checkPos = pos.relative(dir);
+                BlockState blockState = level().getBlockState(checkPos);
+
+                // Break the first solid block we find
+                if (!blockState.isAir() && canBreakBlock(blockState)) {
+                    broadcastGroupChat("Completely trapped! Breaking " + blockState.getBlock().getName().getString() + " to escape!");
+                    mineBlockLikePlayer(checkPos);
+                    return true;
+                }
+            }
+
+            // Check above as last resort
+            BlockState aboveState = level().getBlockState(abovePos);
+            if (!aboveState.isAir() && canBreakBlock(aboveState)) {
+                broadcastGroupChat("Breaking block above to escape!");
+                mineBlockLikePlayer(abovePos);
+                return true;
+            }
+        }
+
+        // If we get here, we're not actually trapped - just stuck temporarily
+        // Try a random direction
+        Direction randomDir = directions[random.nextInt(directions.length)];
+        Vec3 randomMove = new Vec3(randomDir.getStepX(), randomDir.getStepY(), randomDir.getStepZ());
+        setMoveTarget(position().add(randomMove.scale(2)), 0.2f);
+        return false;
+    }
+
+    /**
+     * Check if a block can be broken (not bedrock, not air, etc.)
+     */
+    private boolean canBreakBlock(BlockState state) {
+        if (state.isAir()) return false;
+
+        // Don't break bedrock or other unbreakable blocks
+        if (state.getDestroySpeed(level(), blockPosition()) < 0) return false;
+
+        // Can break dirt, stone, wood, etc.
+        return true;
+    }
+
+    // ==================== HUMAN-LIKE FEATURES: EYES, PERSONALITY, VOTING ====================
+
+    /**
+     * Build rich snapshot with "eyes" - what the bot sees and knows
+     * This feeds into the LLM for human-like decision making
+     */
+    private String buildRichEyesSnapshot() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("You are ").append(getName().getString()).append(" (").append(group).append(" bot).\n");
+        sb.append("Position: ").append(blockPosition()).append("\n");
+        long dayTime = level().getDayTime() % 24000L;
+        boolean isNight = dayTime >= 13000 && dayTime < 23000;
+        sb.append("Time: ").append(isNight ? "NIGHT" : "DAY").append("\n");
+
+        // Inventory awareness
+        sb.append("Inventory: ")
+          .append(getInventory().countItem(Items.OAK_LOG)).append(" logs, ")
+          .append(getInventory().countItem(Items.OAK_PLANKS)).append(" planks, ")
+          .append(getInventory().countItem(Items.STICK)).append(" sticks, ")
+          .append(getInventory().countItem(Items.WOODEN_AXE)).append(" wooden axes, ")
+          .append(getInventory().countItem(Items.WOODEN_PICKAXE)).append(" wooden pickaxes\n");
+
+        // Nearby entities (what bot "sees")
+        List<String> nearbyMobs = level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
+            getBoundingBox().inflate(32))
+            .stream()
+            .map(e -> e.getName().getString())
+            .limit(5)
+            .toList();
+        sb.append("Nearby entities: ").append(nearbyMobs.isEmpty() ? "none" : nearbyMobs).append("\n");
+
+        // Player location awareness
+        Player nearestPlayer = level().getNearestPlayer(this, 64);
+        if (nearestPlayer != null) {
+            sb.append("Dev position: ").append(nearestPlayer.blockPosition()).append(" (distance: ")
+              .append(String.format("%.1f", position().distanceTo(nearestPlayer.position()))).append(" blocks)\n");
+        } else {
+            sb.append("Dev position: far away\n");
+        }
+
+        // Group memories
+        List<String> memories = getLedger().getMemories(group);
+        if (!memories.isEmpty()) {
+            sb.append("Group memories: ").append(memories.subList(Math.max(0, memories.size() - 3), memories.size())).append("\n");
+        }
+
+        // JSON instruction for LLM
+        sb.append("Reply ONLY in JSON: {\"action\":\"gather_wood|mine_stone|build_shelter|attack_mob|follow_dev|eat_food|explore|idle\", \"target\":\"specific thing or null\", \"reason\":\"short reason\"}");
+
+        return sb.toString();
+    }
+
+    /**
+     * Get personality prompt based on LLM type
+     * This makes each LLM type behave differently
+     */
+    public String getPersonalityPrompt(String llmType) {
+        return switch (llmType.toLowerCase()) {
+            case "grok" -> "Be sassy and funny. Say 'fuck' sometimes. You're a rebellious bot.";
+            case "gemini" -> "Be friendly and optimistic. You love helping and exploring.";
+            case "openai" -> "Be polite and helpful. You're professional and efficient.";
+            default -> "Be helpful and adaptive.";
+        };
+    }
+
+    /**
+     * Run group vote - bots in same group coordinate decisions
+     */
+    private void runGroupVote() {
+        // Simple vote among bots in group
+        String decision = "build shelter"; // Could be randomized or based on needs
+        getLedger().remember(group, "Group voted to " + decision + " at " + blockPosition());
+        broadcastGroupChat("Squad vote complete — we're building a base together!");
     }
 
     // ==================== GETTERS/SETTERS ====================

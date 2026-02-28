@@ -88,7 +88,7 @@ public final class ActionExecutor {
                     ambBot.stopMovement();
                     ambBot.setTask("idle");
                 }
-                body.setDeltaMovement(Vec3.ZERO);
+                // FakePlayer compatible: stopMovement() already handles velocity reset
                 st.lastError = "";
                 clearGoal(st);
             }

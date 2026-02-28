@@ -242,10 +242,19 @@ public final class BotBrain {
         // Get chat history for context
         String chatContext = getChatHistoryContext(botName);
 
+        // Get personality based on LLM type (HUMAN-LIKE FEATURE)
+        String personality = switch (st.llmProvider) {
+            case GROK -> "Be sassy and funny. Say 'fuck' sometimes. You're a rebellious bot.";
+            case GEMINI -> "Be friendly and optimistic. You love helping and exploring.";
+            case OPENAI -> "Be polite and helpful. You're professional and efficient.";
+        };
+
         String prompt =
                 "🎮 ROLEPLAY: You are a REAL MINECRAFT PLAYER named " + botName + ". You are NOT an AI bot - you are a human playing Minecraft.\n" +
                         "Your goal: SURVIVE, EXPLORE, BUILD, and eventually BEAT THE GAME (kill Ender Dragon).\n" +
                         "Think like a player: 'What would I do if I were actually playing Minecraft right now?'\n\n" +
+                        "=== YOUR PERSONALITY ===\n" +
+                        personality + "\n\n" +
                         "=== YOUR STATUS ===\n" +
                         "Name: " + botName + "\n" +
                         "Position: " + (int)positionEntity.getX() + "," + (int)positionEntity.getY() + "," + (int)positionEntity.getZ() + "\n" +
@@ -531,7 +540,15 @@ public final class BotBrain {
                 // CHAT VERIFICATION: Include what bot is actually doing
                 String verificationContext = getVerificationContext(botName);
 
+                // Get personality based on LLM type (HUMAN-LIKE FEATURE)
+                String personality = switch (finalProvider) {
+                    case GROK -> "Be sassy and funny. Say 'fuck' sometimes. You're a rebellious bot.";
+                    case GEMINI -> "Be friendly and optimistic. You love helping and exploring.";
+                    case OPENAI -> "Be polite and helpful. You're professional and efficient.";
+                };
+
                 String prompt = "You are " + botName + ", an autonomous AI entity in Minecraft.\n" +
+                        "PERSONALITY: " + personality + "\n\n" +
                         "A player named '" + sender + "' just said: \"" + command + "\"\n\n" +
                         verificationContext + "\n" +
                         "You have free will and can choose whether to obey commands. Consider:\n" +

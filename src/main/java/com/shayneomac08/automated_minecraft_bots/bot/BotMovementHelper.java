@@ -50,21 +50,25 @@ public final class BotMovementHelper {
     private static boolean unstickBot(ServerLevel level, LivingEntity body, MovementState state) {
         BlockPos currentPos = body.blockPosition();
 
-        // Strategy 1: Stop navigation and force recalculation (most common fix)
-        if (body instanceof Mob mob) {
-            mob.getNavigation().stop();
-            mob.getNavigation().recomputePath();
+        // Strategy 1: Stop movement and try jumping (FakePlayer compatible)
+        if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+            ambBot.stopMovement();
+            // Try jumping to escape
+            if (ambBot.onGround()) {
+                ambBot.jumpFromGround();
+            }
             // Only log if truly stuck (reduce spam)
             if (state.consecutiveStuckCount == 0) {
-                System.out.println("[AMB] Bot appears stuck at " + currentPos + " - Attempting navigation reset");
+                System.out.println("[AMB] Bot appears stuck at " + currentPos + " - Attempting jump escape");
             }
             state.stuckTicks = 0;
             state.consecutiveStuckCount++;
             return true;
         }
 
-        // Strategy 2: Navigate to random nearby position (only if Strategy 1 didn't work)
-        if (state.consecutiveStuckCount >= 1 && state.consecutiveStuckCount < 3 && body instanceof Mob mob) {
+        // Strategy 2: Move to random nearby position (FakePlayer compatible)
+        if (state.consecutiveStuckCount >= 1 && state.consecutiveStuckCount < 3 &&
+            body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
             double angle = Math.random() * Math.PI * 2;
             double dist = 3.0 + Math.random() * 3.0;
             double tx = body.getX() + Math.cos(angle) * dist;
@@ -72,8 +76,8 @@ public final class BotMovementHelper {
             int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                                    (int)Math.floor(tx), (int)Math.floor(tz));
 
-            mob.getNavigation().moveTo(tx, y, tz, 1.25);
-            System.out.println("[AMB] Unsticking bot - Random navigation to " + tx + "," + y + "," + tz);
+            ambBot.setMoveTarget(new Vec3(tx, y, tz), 0.2f);
+            System.out.println("[AMB] Unsticking bot - Random movement to " + tx + "," + y + "," + tz);
             state.consecutiveStuckCount++;
             state.stuckTicks = 0;
             return true;
@@ -84,7 +88,10 @@ public final class BotMovementHelper {
             Vec3 escapePos = findNearestSafePosition(level, currentPos);
             if (escapePos != null) {
                 body.teleportTo(escapePos.x, escapePos.y, escapePos.z);
-                body.setDeltaMovement(Vec3.ZERO);
+                // FakePlayer compatible: Use AmbNpcEntity's stopMovement if available
+                if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                    ambBot.stopMovement();
+                }
                 System.out.println("[AMB] Bot stuck in block - Teleported to safe position: " + escapePos);
                 state.lastTeleportTime = System.currentTimeMillis();
                 state.stuckTicks = 0;
@@ -98,7 +105,10 @@ public final class BotMovementHelper {
             Vec3 safePos = findSafePositionNearby(level, currentPos);
             if (safePos != null) {
                 body.teleportTo(safePos.x, safePos.y, safePos.z);
-                body.setDeltaMovement(Vec3.ZERO);
+                // FakePlayer compatible: Use AmbNpcEntity's stopMovement if available
+                if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                    ambBot.stopMovement();
+                }
                 System.out.println("[AMB] Bot severely stuck - Emergency teleport to: " + safePos);
                 state.lastTeleportTime = System.currentTimeMillis();
                 state.stuckTicks = 0;
