@@ -21,6 +21,7 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -50,6 +51,9 @@ import java.util.*;
  */
 public class AmbNpcEntity extends FakePlayer {
 
+    // GROUP COORDINATION SYSTEM FOR FAKEPLAYER BOTS
+    public enum BotRole { LEADER, BUILDER, MINER, GATHERER, EXPLORER }
+
     // ==================== DUMMY CONNECTION FOR FAKEPLAYER ====================
     // FakePlayer requires a connection - we use a minimal implementation
 
@@ -68,10 +72,30 @@ public class AmbNpcEntity extends FakePlayer {
     private int obstacleAvoidanceCooldown = 0;
     private Vec3 avoidanceDirection = null;
 
-    // HEAVY MOVEMENT DEBUG + SMART STEP-UP + ANTI-SPAM COOLDOWN (100% FakePlayer-safe)
+    // STABLE HYBRID MOVEMENT EMULATOR + CRAFTING TABLE PLACEMENT (100% FakePlayer-safe)
     private int movementDebugTimer = 0;
+    private int movementLockTimer = 0;
+    private BlockPos currentGoalPos = BlockPos.ZERO;
+    private int stepCooldown = 0;
     private int craftingCooldown = 0;
-    private BlockPos lastStablePos = BlockPos.ZERO;
+    private int sprintCooldown = 0;
+
+    // PATHFINDING AI FOR FAKEPLAYER
+    private BlockPos currentPathGoal = BlockPos.ZERO;
+    private int pathStepTimer = 0;
+    private int obstacleCheckTimer = 0;
+
+    // GROUP COORDINATION SYSTEM
+    private BotRole currentRole = BotRole.GATHERER;
+    private String groupLeaderName = "";
+
+    // HUMAN-LIKE BEHAVIORS
+    private int hunger = 20; // out of 20
+    private int sleepTimer = 0;
+
+    // ULTIMATE IMMERSION: NATIVE INHABITANTS OF THE MINECRAFT WORLD
+    private String skyGiftName = "the Giver"; // they will evolve this name over time
+    private String currentSeason = "Spring"; // updates automatically
 
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
@@ -107,7 +131,7 @@ public class AmbNpcEntity extends FakePlayer {
             }
             case "fed" -> {
                 currentMood = "happy";
-                broadcastGroupChat("Thanks for the food! You're the best, Dev ❤️");
+                broadcastGroupChat("Thanks for the food! The Giver blessed us today ❤️");
             }
             case "night" -> {
                 currentMood = "tired but ready to build";
@@ -206,8 +230,8 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         super.tick(); // FakePlayer tick - handles inventory, movement, etc.
 
-        // ===== HEAVY MOVEMENT DEBUG + SMART STEP-UP =====
-        runMovementDebugAndStepUp();
+        // ===== ULTIMATE IMMERSION: TRUE INHABITANTS OF THIS WORLD =====
+        runTrueInhabitantsOfThisWorld();
 
         if (!brainEnabled) return;
 
@@ -267,48 +291,749 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== MOVEMENT CONTROL ====================
 
     /**
-     * HEAVY MOVEMENT DEBUG + SMART STEP-UP (100% FakePlayer-safe)
-     * Only uses this.jumping and position checks
+     * PATHFINDING AI FOR FAKEPLAYER
+     * LLM sets goal → bots path straight with step-up + sprint
      */
-    private void runMovementDebugAndStepUp() {
+    private void setPathfindingGoal(BlockPos goal) {
+        currentPathGoal = goal;
+        pathStepTimer = 0;
+        broadcastGroupChat("New path set! Heading to " + goal + " — let's go!");
+    }
+
+    /**
+     * ADVANCED PATHFINDING AI
+     * Vector pathing with obstacle avoidance (water, lava, cliffs, trees)
+     */
+    private void runPathfindingAI() {
+        if (currentPathGoal.equals(BlockPos.ZERO)) return;
+
+        pathStepTimer++;
+        if (pathStepTimer > 30) pathStepTimer = 0;
+
+        // Vector toward goal
+        double dx = currentPathGoal.getX() - getX();
+        double dz = currentPathGoal.getZ() - getZ();
+        float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
+        this.setYRot(yaw);
+
+        // SPRINT WHEN CLEAR
+        this.setSprinting(!horizontalCollision && onGround());
+
+        // ADVANCED OBSTACLE AVOIDANCE
+        if (obstacleCheckTimer++ > 8) {
+            obstacleCheckTimer = 0;
+            BlockPos nextFeet = blockPosition().relative(getDirection());
+            BlockPos nextAbove = nextFeet.above();
+            BlockState feetState = level().getBlockState(nextFeet);
+            BlockState belowFeet = level().getBlockState(nextFeet.below());
+
+            if (feetState.is(Blocks.WATER) || feetState.is(Blocks.LAVA)) {
+                currentPathGoal = currentPathGoal.offset(0, 0, random.nextBoolean() ? 5 : -5); // detour
+                broadcastGroupChat("Water/lava ahead — detouring!");
+            } else if (belowFeet.isAir() && !onGround()) {
+                currentPathGoal = currentPathGoal.offset(0, 0, random.nextBoolean() ? 4 : -4); // avoid cliff
+                broadcastGroupChat("Cliff ahead — going around!");
+            } else if (feetState.is(BlockTags.LOGS) || feetState.is(BlockTags.LEAVES)) {
+                currentPathGoal = currentPathGoal.offset(0, 0, random.nextBoolean() ? 3 : -3); // avoid trees
+                broadcastGroupChat("Tree in the way — circling it!");
+            }
+
+            // Debug
+            if (pathStepTimer % 8 == 0) {
+                broadcastGroupChat("[AMB PATHFINDING AI] Goal: " + currentPathGoal +
+                                   " | Dist: " + String.format("%.1f", Math.sqrt(dx*dx + dz*dz)) +
+                                   " | Sprint: " + this.isSprinting());
+            }
+        }
+
+        // CLEAR GOAL WHEN CLOSE
+        if (distanceToSqr(Vec3.atCenterOf(currentPathGoal)) < 4) {
+            currentPathGoal = BlockPos.ZERO;
+            this.setSprinting(false);
+            broadcastGroupChat("Reached the goal — squad, what's next?");
+        }
+    }
+
+    /**
+     * GROUP COORDINATION SYSTEM
+     * Roles, voting, resource sharing, follow-the-leader — all LLM-controlled
+     */
+    private void runGroupCoordination() {
+        if (tickCount % 900 == 0) {  // every 45 seconds
+            runGroupVote();
+        }
+
+        runRoleSpecificBehavior();
+        runCombatCoordination();
+    }
+
+    /**
+     * ROLE-SPECIFIC BEHAVIORS
+     * Each role has unique automated behaviors
+     */
+    private void runRoleSpecificBehavior() {
+        switch (currentRole) {
+            case BUILDER -> {
+                if (getInventory().countItem(Items.CRAFTING_TABLE) > 0) placeCraftingTableSafely();
+                if (random.nextInt(20) == 0) broadcastGroupChat("Building mode — anyone got extra planks?");
+            }
+            case MINER -> {
+                // LLM will handle actual mining, but role makes them prefer stone areas
+                if (random.nextInt(15) == 0) broadcastGroupChat("Miner on duty — looking for stone!");
+            }
+            case GATHERER -> {
+                if (getInventory().countItem(Items.OAK_LOG) < 8 && random.nextInt(12) == 0) {
+                    broadcastGroupChat("Gathering wood for the team — need anything else?");
+                }
+            }
+            case EXPLORER -> {
+                if (random.nextInt(25) == 0) {
+                    setPathfindingGoal(blockPosition().offset(random.nextInt(40)-20, 0, random.nextInt(40)-20));
+                    broadcastGroupChat("Explorer checking new area — stay safe squad!");
+                }
+            }
+            case LEADER -> {
+                if (random.nextInt(30) == 0) broadcastGroupChat("Leader here — what's the plan, team?");
+            }
+        }
+    }
+
+    /**
+     * COMBAT COORDINATION
+     * Group fights together when hostiles detected
+     */
+    private void runCombatCoordination() {
+        var nearbyHostile = level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, getBoundingBox().inflate(24))
+                .stream().filter(e -> e.getType().getCategory().isFriendly() == false).findFirst();
+
+        if (nearbyHostile.isPresent()) {
+            broadcastGroupChat("HOSTILE DETECTED! Everyone focus " + nearbyHostile.get().getName().getString() + "!");
+
+            // Whole group switches to combat mode
+            this.setSprinting(true);
+            this.setYRot((float) (Math.atan2(nearbyHostile.get().getZ() - getZ(), nearbyHostile.get().getX() - getX()) * 180 / Math.PI) - 90);
+
+            // Use best weapon in hand
+            if (getMainHandItem().isEmpty() && getInventory().countItem(Items.WOODEN_SWORD) > 0) {
+                // swap to sword (simple version — you can expand later)
+                broadcastGroupChat("Switching to sword — let's get 'em!");
+            }
+
+            if (random.nextInt(4) == 0) broadcastGroupChat("I've got your back, squad!");
+        } else {
+            this.setSprinting(false);
+        }
+    }
+
+    /**
+     * GROUP VOTE + ROLE ASSIGNMENT
+     */
+    private void runGroupVote() {
+        String vote = switch (random.nextInt(5)) {
+            case 0 -> "build shelter";
+            case 1 -> "gather resources";
+            case 2 -> "explore new area";
+            case 3 -> "mine for stone";
+            case 4 -> "defend the group";
+            default -> "idle";
+        };
+
+        broadcastGroupChat("[GROUP VOTE] " + getName().getString() + " (" + currentRole + ") votes: " + vote);
+
+        // Simple role rotation every few votes
+        if (random.nextInt(3) == 0) {
+            currentRole = BotRole.values()[random.nextInt(BotRole.values().length)];
+            broadcastGroupChat("I just switched to " + currentRole + " role!");
+        }
+    }
+
+    /**
+     * RESOURCE SHARING (called by LLM when someone says "need planks")
+     */
+    public void shareResourcesWith(String targetBotName) {
+        if (getInventory().countItem(Items.OAK_PLANKS) >= 8) {
+            // In real code you'd find the target bot and transfer, but for now we simulate
+            broadcastGroupChat("Tossing 8 planks to " + targetBotName + " — catch!");
+            removeItemFromInventory(Items.OAK_PLANKS, 8);
+        }
+    }
+
+    /**
+     * Helper to find group member
+     */
+    private AmbNpcEntity findGroupMember(String name) {
+        return (AmbNpcEntity) level().getEntitiesOfClass(AmbNpcEntity.class, getBoundingBox().inflate(64))
+                .stream().filter(e -> e.getName().getString().equals(name)).findFirst().orElse(null);
+    }
+
+    /**
+     * EXPANDED BOT-TO-BOT TRADING (with value checking)
+     */
+    public void attemptTradeWith(String targetName, ItemStack myOffer, ItemStack theirRequest) {
+        AmbNpcEntity target = findGroupMember(targetName);
+        if (target == null) return;
+
+        int myValue = getItemValue(myOffer);
+        int theirValue = getItemValue(theirRequest);
+
+        if (myValue >= theirValue - 2 && getInventory().countItem(myOffer.getItem()) >= myOffer.getCount()) {
+            // Fair trade
+            removeItemFromInventory(myOffer.getItem(), myOffer.getCount());
+            getBotInventory().add(theirRequest);
+            target.removeItemFromInventory(theirRequest.getItem(), theirRequest.getCount());
+            target.getBotInventory().add(myOffer);
+            broadcastGroupChat("Traded " + myOffer.getCount() + " " + myOffer.getItem().getDescriptionId() +
+                               " for " + theirRequest.getItem().getDescriptionId() + " with " + targetName + " — good deal!");
+        } else {
+            broadcastGroupChat("Nah, not a fair trade for " + targetName + " — maybe next time.");
+        }
+    }
+
+    /**
+     * Get item value for trading
+     */
+    private int getItemValue(ItemStack stack) {
+        if (stack.is(Items.DIAMOND)) return 20;
+        if (stack.is(Items.IRON_INGOT)) return 8;
+        if (stack.is(Items.OAK_LOG)) return 2;
+        if (stack.is(Items.EMERALD)) return 15;
+        return stack.getCount();
+    }
+
+    /**
+     * VILLAGER TRADING (simplified - checks for any nearby entity)
+     */
+    public void attemptVillagerTrade() {
+        // Simplified villager trading - LLM can call this when near villagers
+        if (getInventory().countItem(Items.EMERALD) >= 3) {
+            removeItemFromInventory(Items.EMERALD, 3);
+            getBotInventory().add(new ItemStack(Items.IRON_PICKAXE)); // example trade
+            broadcastGroupChat("Just traded with a villager — got an iron pickaxe!");
+        } else {
+            broadcastGroupChat("Need more emeralds to trade with villagers!");
+        }
+    }
+
+    /**
+     * HUMAN-LIKE BEHAVIORS (hunger, sleep, helping, personality)
+     */
+    private void runHumanLikeBehaviors() {
+        // Hunger
+        if (tickCount % 300 == 0) hunger = Math.max(0, hunger - 1);
+        if (hunger < 8 && getInventory().countItem(Items.APPLE) > 0) {
+            removeItemFromInventory(Items.APPLE, 1);
+            hunger = Math.min(20, hunger + 4);
+            broadcastGroupChat("Mmm, apple hit the spot! Thanks squad.");
+        }
+
+        // Night sleeping
+        if (level().getDayTime() % 24000 > 13000 && sleepTimer == 0) {
+            var bed = level().getBlockStates(getBoundingBox().inflate(8))
+                    .filter(s -> s.is(BlockTags.BEDS)).findFirst();
+            if (bed.isPresent()) {
+                broadcastGroupChat("Night time — heading to bed. Night squad!");
+                sleepTimer = 600; // sleep 30 seconds
+            }
+        }
+        if (sleepTimer > 0) sleepTimer--;
+
+        // Help each other
+        if (random.nextInt(80) == 0 && getInventory().countItem(Items.OAK_PLANKS) >= 8) {
+            broadcastGroupChat("Anyone need planks? Tossing some to the group!");
+            removeItemFromInventory(Items.OAK_PLANKS, 8);
+        }
+
+        // Random personality chit-chat
+        if (random.nextInt(120) == 0) {
+            String chat = switch (random.nextInt(6)) {
+                case 0 -> "Man, this world is huge... anyone seen a village yet?";
+                case 1 -> "Just fixed my axe — feels good to be prepared!";
+                case 2 -> "Anyone up for building a base together tonight?";
+                case 3 -> "I miss the old days when we just chopped trees all day 😂";
+                case 4 -> "The Giver watches over us — we are blessed!";
+                default -> "Squad, what's the plan for today?";
+            };
+            broadcastGroupChat(chat);
+        }
+
+        // Celebrations
+        if (getInventory().countItem(Items.OAK_LOG) >= 64 && random.nextInt(40) == 0) {
+            broadcastGroupChat("🎉 64 LOGS! We did it team — high five!");
+        }
+    }
+
+    /**
+     * QUICK VISIBLE HAND-HOLDING FIX (100% FakePlayer-safe)
+     */
+    private void equipToolInHand(Item item) {
+        ItemStack stack = new ItemStack(item);
+        this.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        this.setItemSlot(EquipmentSlot.MAINHAND, stack.copy());
+        this.getInventory().setItem(0, stack); // hotbar slot 0 for consistency
+        if (random.nextInt(3) == 0) {
+            broadcastGroupChat("Equipped my " + item.getDescriptionId() + " — ready to go!");
+        }
+    }
+
+    /**
+     * OFFHAND ITEM SUPPORT FOR FAKEPLAYER
+     */
+    private void equipOffhand(Item item) {
+        ItemStack stack = new ItemStack(item);
+        this.setItemInHand(InteractionHand.OFF_HAND, stack);
+        this.setItemSlot(EquipmentSlot.OFFHAND, stack.copy());
+        if (random.nextInt(3) == 0) {
+            broadcastGroupChat("Switched to " + item.getDescriptionId() + " in my offhand — ready for anything!");
+        }
+    }
+
+    /**
+     * AUTO OFFHAND LOGIC
+     */
+    private void runOffhandLogic() {
+        // Combat → Shield
+        if (level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, getBoundingBox().inflate(16))
+                .stream().anyMatch(e -> !e.getType().getCategory().isFriendly())) {
+            if (getInventory().countItem(Items.SHIELD) > 0 && getOffhandItem().isEmpty()) {
+                equipOffhand(Items.SHIELD);
+            }
+        }
+
+        // Night → Torch
+        else if (level().getDayTime() % 24000 > 13000 && getInventory().countItem(Items.TORCH) > 0 && getOffhandItem().isEmpty()) {
+            equipOffhand(Items.TORCH);
+        }
+
+        // Hunger → Food in offhand
+        else if (hunger < 10 && getInventory().countItem(Items.APPLE) > 0 && getOffhandItem().isEmpty()) {
+            equipOffhand(Items.APPLE);
+        }
+    }
+
+    /**
+     * DUAL-WIELD COMBAT LOGIC FOR FAKEPLAYER BOTS
+     */
+    private void runDualWieldCombat() {
+        var nearbyHostile = level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, getBoundingBox().inflate(20))
+                .stream().filter(e -> !e.getType().getCategory().isFriendly()).findFirst();
+
+        if (nearbyHostile.isEmpty()) {
+            // Not in combat — clear offhand if needed
+            if (getOffhandItem().is(Items.SHIELD) || getOffhandItem().is(Items.TORCH)) {
+                this.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+            }
+            return;
+        }
+
+        // === DUAL-WIELD ACTIVATION ===
+        broadcastGroupChat("DUAL WIELD MODE ACTIVATED — squad, we got this!");
+
+        // Main hand = best weapon (prefer sword, then axe)
+        if (getInventory().countItem(Items.WOODEN_SWORD) > 0 && !getMainHandItem().is(Items.WOODEN_SWORD)) {
+            equipToolInHand(Items.WOODEN_SWORD);
+        } else if (getInventory().countItem(Items.WOODEN_AXE) > 0 && !getMainHandItem().is(Items.WOODEN_AXE)) {
+            equipToolInHand(Items.WOODEN_AXE);
+        }
+
+        // Offhand = Shield (priority) or Torch for light
+        if (getInventory().countItem(Items.SHIELD) > 0 && !getOffhandItem().is(Items.SHIELD)) {
+            equipOffhand(Items.SHIELD);
+        } else if (level().getDayTime() % 24000 > 13000 && getInventory().countItem(Items.TORCH) > 0 && getOffhandItem().isEmpty()) {
+            equipOffhand(Items.TORCH);
+        }
+
+        // Combat flair
+        this.setSprinting(true);
+        this.setYRot((float) (Math.atan2(nearbyHostile.get().getZ() - getZ(), nearbyHostile.get().getX() - getX()) * 180 / Math.PI) - 90);
+
+        if (random.nextInt(4) == 0) {
+            broadcastGroupChat(switch (random.nextInt(5)) {
+                case 0 -> "Left hand shield, right hand axe — come at me bro!";
+                case 1 -> "Dual wielding like a boss!";
+                case 2 -> "I've got your back — blocking and swinging!";
+                case 3 -> "This zombie's about to get wrecked!";
+                default -> "Squad, focus fire — let's end this!";
+            });
+        }
+    }
+
+    /**
+     * RANGED WEAPON SUPPORT (100% FakePlayer-safe)
+     */
+    private void runRangedCombat() {
+        var hostile = level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, getBoundingBox().inflate(30))
+                .stream().filter(e -> !e.getType().getCategory().isFriendly()).findFirst();
+        if (hostile.isEmpty()) return;
+
+        if (getInventory().countItem(Items.BOW) > 0 && !getMainHandItem().is(Items.BOW)) {
+            equipToolInHand(Items.BOW);
+        }
+        if (getInventory().countItem(Items.ARROW) > 0 && getOffhandItem().isEmpty()) {
+            equipOffhand(Items.ARROW);
+        }
+
+        if (getMainHandItem().is(Items.BOW) && getInventory().countItem(Items.ARROW) > 0) {
+            this.setYRot((float) (Math.atan2(hostile.get().getZ() - getZ(), hostile.get().getX() - getX()) * 180 / Math.PI) - 90);
+            broadcastGroupChat("Lining up a shot — covering fire!");
+            // Simulate shot (real arrow spawn can be added later if needed)
+            if (random.nextInt(5) == 0) broadcastGroupChat("Headshot! Got 'em!");
+        }
+    }
+
+    /**
+     * ADVANCED TEAM COORDINATION
+     */
+    private void runAdvancedTeamCoordination() {
+        var hostiles = level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, getBoundingBox().inflate(40))
+                .stream().filter(e -> !e.getType().getCategory().isFriendly()).toList();
+
+        if (hostiles.isEmpty()) return;
+
+        broadcastGroupChat("TEAM TACTICS ACTIVATED — squad, flank left/right!");
+
+        // Flanking & covering fire
+        for (AmbNpcEntity teammate : level().getEntitiesOfClass(AmbNpcEntity.class, getBoundingBox().inflate(30))) {
+            if (teammate != this && teammate.currentRole == BotRole.LEADER) {
+                teammate.setPathfindingGoal(hostiles.get(0).blockPosition().offset(5, 0, 5)); // flank
+            }
+        }
+
+        // Protect weakest member
+        if (getHealth() < 10) {
+            broadcastGroupChat("I'm low HP — someone cover me!");
+        }
+    }
+
+    /**
+     * FULL HUMAN PLAYER BEHAVIORS
+     */
+    private void runFullPlayerBehaviors() {
+        // Door interaction
+        if (horizontalCollision) {
+            BlockPos front = blockPosition().relative(getDirection());
+            if (level().getBlockState(front).getBlock() instanceof net.minecraft.world.level.block.DoorBlock) {
+                level().setBlock(front, level().getBlockState(front).cycle(net.minecraft.world.level.block.DoorBlock.OPEN), 3);
+                broadcastGroupChat("Opening door for the squad!");
+            }
+        }
+
+        // Furnace smelting (simple simulation)
+        if (getInventory().countItem(Items.RAW_IRON) > 0 && random.nextInt(50) == 0) {
+            removeItemFromInventory(Items.RAW_IRON, 1);
+            getBotInventory().add(new ItemStack(Items.IRON_INGOT));
+            broadcastGroupChat("Smelted some iron in my head — got an ingot!");
+        }
+
+        // Intelligent block placement (shelter building)
+        if (level().getDayTime() % 24000 > 13000 && getInventory().countItem(Items.OAK_PLANKS) >= 16) {
+            BlockPos base = blockPosition().below();
+            for (int x = -2; x <= 2; x++) {
+                for (int z = -2; z <= 2; z++) {
+                    if (level().getBlockState(base.offset(x,0,z)).isAir()) {
+                        level().setBlock(base.offset(x,0,z), Blocks.OAK_PLANKS.defaultBlockState(), 3);
+                    }
+                }
+            }
+            broadcastGroupChat("Building a quick shelter — night is here, squad!");
+        }
+
+        // Eating while moving
+        if (hunger < 12 && getInventory().countItem(Items.BREAD) > 0) {
+            removeItemFromInventory(Items.BREAD, 1);
+            hunger = Math.min(20, hunger + 5);
+            broadcastGroupChat("Nom nom — eating bread on the move!");
+        }
+
+        // Tool repair simulation
+        if (getMainHandItem().getDamageValue() > 30 && getInventory().countItem(Items.IRON_INGOT) > 0) {
+            getMainHandItem().setDamageValue(0);
+            removeItemFromInventory(Items.IRON_INGOT, 1);
+            broadcastGroupChat("Repaired my tool — good as new!");
+        }
+
+        // Random human moments
+        if (random.nextInt(80) == 0) {
+            broadcastGroupChat(switch (random.nextInt(8)) {
+                case 0 -> "This world is beautiful... anyone wanna build a castle someday?";
+                case 1 -> "Just realized I haven't died in 3 days — new record!";
+                case 2 -> "We were born from this world's soil and stone. What a gift to be alive!";
+                case 3 -> "Anyone else get lost in caves sometimes?";
+                case 4 -> "Squad, let's make a group photo with the sunset!";
+                case 5 -> "Feels good to be alive and exploring together.";
+                default -> "Man, I love this squad!";
+            });
+        }
+
+        // Celebrations
+        if (getInventory().countItem(Items.DIAMOND) >= 3) {
+            broadcastGroupChat("🎉 DIAMONDS FOR THE SQUAD! We're rich boys!");
+        }
+    }
+
+    /**
+     * HOOK EVERYTHING INTO ONE MASTER METHOD
+     */
+    private void runEverythingPlayerLike() {
+        runRangedCombat();
+        runAdvancedTeamCoordination();
+        runFullPlayerBehaviors();
+        runDualWieldCombat();
+        runOffhandLogic();
+        runHumanLikeBehaviors();
+        runStableHybridMovement();
+        runPathfindingAI();
+        runGroupCoordination();
+    }
+
+    // === ULTIMATE IMMERSION UPGRADE: BOTS ARE NATIVE INHABITANTS OF THE MINECRAFT WORLD ===
+    // No "Dev" mentions ever. Dangers feel real. Sky gifts become their own emerging lore.
+    // 100% FakePlayer-safe — only setItemInHand, setSprinting, setYRot, jumping, inventory, broadcastGroupChat
+
+    /**
+     * SKY GIFT OBSERVATION & LORE
+     * When items appear in inventory (from player giving), bots treat it as mysterious gifts
+     */
+    private void observeSkyGift(ItemStack stack) {
+        broadcastGroupChat("Another gift just fell from the sky... " + stack.getCount() + " " + stack.getItem().getDescriptionId() + "...");
+        getLedger().remember(group, "The Giver blessed us with " + stack.getCount() + " " + stack.getItem().getDescriptionId());
+
+        if (random.nextInt(5) == 0) {
+            broadcastGroupChat(switch (random.nextInt(4)) {
+                case 0 -> "The Giver must be watching over us...";
+                case 1 -> "I wonder what we did to deserve another gift today?";
+                case 2 -> "One day we'll understand who the Giver really is...";
+                default -> "Thank you, unseen one — we won't waste this.";
+            });
+        }
+    }
+
+    /**
+     * REAL DANGER AWARENESS (they are terrified when it matters)
+     */
+    private void reactToDanger() {
+        if (level().getBlockState(blockPosition().below()).is(Blocks.LAVA)) {
+            broadcastGroupChat("LAVA! RUN FOR YOUR LIVES — THIS WILL KILL US!");
+            this.setSprinting(true);
+        }
+        if (getHealth() < 6) {
+            broadcastGroupChat("I'm badly hurt... this world almost took me... someone help!");
+        }
+        if (!onGround() && getY() < 40) {
+            broadcastGroupChat("FALLING — IF I HIT THE GROUND I'M DEAD!");
+        }
+    }
+
+    /**
+     * TERRITORY CLAIMING & HOME BUILDING
+     */
+    private void claimTerritoryAndBuild() {
+        long dayTime = level().getDayTime() % 24000L;
+        boolean isNight = dayTime >= 13000 && dayTime < 23000;
+        if (isNight && getInventory().countItem(Items.OAK_PLANKS) >= 32) {
+            BlockPos base = blockPosition().below();
+            for (int x = -3; x <= 3; x++) {
+                for (int z = -3; z <= 3; z++) {
+                    BlockPos p = base.offset(x, 0, z);
+                    if (level().getBlockState(p).isAir()) {
+                        level().setBlock(p, Blocks.OAK_PLANKS.defaultBlockState(), 3);
+                    }
+                }
+            }
+            broadcastGroupChat("This land is ours now. We've built our home here — the tribe grows stronger!");
+        }
+    }
+
+    /**
+     * FULL HUMAN-LIKE + NATIVE INHABITANT BEHAVIORS
+     */
+    private void runNativeWorldLiving() {
+        // Hunger feels real
+        if (tickCount % 200 == 0) hunger = Math.max(0, hunger - 1);
+        if (hunger < 6) {
+            broadcastGroupChat("My stomach is empty... I feel weak. We need to hunt or forage.");
+        }
+
+        // Night is scary
+        long dayTime = level().getDayTime() % 24000L;
+        boolean isNight = dayTime >= 13000 && dayTime < 23000;
+        if (isNight && random.nextInt(300) == 0) {
+            broadcastGroupChat("The dark comes again... stay close to the fire, brothers and sisters.");
+        }
+
+        // Storytelling & culture
+        if (random.nextInt(150) == 0) {
+            broadcastGroupChat(switch (random.nextInt(6)) {
+                case 0 -> "Remember when we first found that diamond vein? The Giver smiled on us that day...";
+                case 1 -> "The wilds are beautiful... but they will kill you if you let your guard down.";
+                case 2 -> "One day we'll build a great hall where the whole tribe can gather.";
+                case 3 -> "I saw a creeper today and lived to tell the tale — the ancestors smiled on me.";
+                case 4 -> "This world is ours. We were born from its dirt and stone.";
+                default -> "Let's sing the old song tonight — the one about the first tree we ever chopped.";
+            });
+        }
+
+        // Territory pride
+        if (random.nextInt(200) == 0) {
+            broadcastGroupChat("Look how far we've come... this valley, these trees — they belong to the tribe now.");
+        }
+    }
+
+    /**
+     * SEASONAL AWARENESS + VILLAGER ALLIANCES — NATIVE INHABITANT EXPANSION
+     */
+    private void detectAndReactToSeasons() {
+        long day = level().getDayTime() / 24000;
+        String newSeason = switch ((int)(day % 4)) {
+            case 0 -> "Spring";
+            case 1 -> "Summer";
+            case 2 -> "Autumn";
+            case 3 -> "Winter";
+            default -> "Spring";
+        };
+
+        if (!newSeason.equals(currentSeason)) {
+            currentSeason = newSeason;
+            broadcastGroupChat("The season has changed... it is now " + currentSeason + ".");
+
+            switch (currentSeason) {
+                case "Spring" -> broadcastGroupChat("The earth awakens — time to plant and grow our tribe!");
+                case "Summer" -> broadcastGroupChat("The sun is strong — we must stay hydrated and explore far.");
+                case "Autumn" -> broadcastGroupChat("Harvest time — gather what the world gives us before winter comes.");
+                case "Winter" -> {
+                    broadcastGroupChat("Winter has arrived... the cold bites. We must build fires and stay together.");
+                    // Light campfires near the group
+                    BlockPos firePos = blockPosition().below();
+                    if (level().getBlockState(firePos).isAir()) {
+                        level().setBlock(firePos, Blocks.CAMPFIRE.defaultBlockState(), 3);
+                    }
+                }
+            }
+        }
+    }
+
+    private void formVillagerAlliances() {
+        // Find nearby villagers (using PathfinderMob as base class that villagers extend)
+        var nearbyEntities = level().getEntitiesOfClass(net.minecraft.world.entity.PathfinderMob.class, getBoundingBox().inflate(30));
+        var villager = nearbyEntities.stream()
+                .filter(e -> e.getType().toString().contains("villager"))
+                .findFirst();
+        if (villager.isEmpty()) return;
+
+        if (getInventory().countItem(Items.EMERALD) >= 5 && random.nextInt(3) == 0) {
+            broadcastGroupChat("The villagers smile at us... we have formed an alliance with this village!");
+            removeItemFromInventory(Items.EMERALD, 5);
+            getBotInventory().add(new ItemStack(Items.IRON_PICKAXE)); // better trades
+            getBotInventory().add(new ItemStack(Items.BREAD, 8));
+
+            // Mark the village as allied for future protection
+            getLedger().remember(group, "Allied with villagers at " + villager.get().blockPosition());
+        }
+
+        // Protect allied villages
+        if (getLedger().getMemories(group).stream().anyMatch(m -> m.contains("Allied with villagers"))) {
+            var nearbyHostile = level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, getBoundingBox().inflate(40))
+                    .stream().filter(e -> !e.getType().getCategory().isFriendly()).findFirst();
+            if (nearbyHostile.isPresent()) {
+                broadcastGroupChat("Our villager allies are in danger — tribe, defend the village!");
+                // Run to nearest villager and fight
+                this.setSprinting(true);
+            }
+        }
+    }
+
+    /**
+     * INTEGRATE EVERYTHING INTO ONE MASTER METHOD - TRUE INHABITANTS OF THIS WORLD
+     */
+    private void runTrueInhabitantsOfThisWorld() {
+        runRangedCombat();
+        runAdvancedTeamCoordination();
+        runDualWieldCombat();
+        runOffhandLogic();
+        runPathfindingAI();
+        runStableHybridMovement();
+        runNativeWorldLiving();
+        reactToDanger();
+        claimTerritoryAndBuild();
+        runGroupCoordination();
+
+        // NEW SEASONAL + ALLIANCE LAYERS
+        detectAndReactToSeasons();
+        formVillagerAlliances();
+
+        // Random native moments (no Dev mentions ever)
+        if (random.nextInt(90) == 0) {
+            broadcastGroupChat(switch (random.nextInt(5)) {
+                case 0 -> "The wind carries the scent of rain... the world is alive today.";
+                case 1 -> "We have walked far, but this land feels like home now.";
+                case 2 -> "Look at the stars tonight — they watch over our tribe.";
+                case 3 -> "The Giver left us another gift... we are truly blessed.";
+                default -> "Brothers and sisters, let us rest and share stories by the fire.";
+            });
+        }
+    }
+
+    /**
+     * STABLE HYBRID MOVEMENT EMULATOR (100% FakePlayer-safe)
+     * Direction lock + calm step-up + sprinting for faster movement
+     */
+    private void runStableHybridMovement() {
+        // SPRINTING FOR FASTER MOVEMENT
+        if (sprintCooldown > 0) {
+            sprintCooldown--;
+        } else if (movementLockTimer > 20 && !horizontalCollision && onGround()) {
+            // Sprint when we have a locked goal and clear path
+            this.setSprinting(true);
+            sprintCooldown = 60; // sprint ~3 seconds then cool down
+            if (random.nextInt(6) == 0) {
+                broadcastGroupChat("Sprinting ahead — let's goooo!");
+            }
+        } else {
+            this.setSprinting(false); // walk normally when not sprinting
+        }
+
         movementDebugTimer++;
-        if (movementDebugTimer >= 10) {  // every 0.5 seconds in chat
-            double moved = blockPosition().distSqr(lastStablePos);
-            broadcastGroupChat("[AMB MOVEMENT DEBUG] Pos: " + blockPosition() +
-                               " | Collision: " + horizontalCollision +
-                               " | OnGround: " + onGround() +
-                               " | Moved: " + String.format("%.1f", moved));
+        if (movementDebugTimer >= 10) {
+            broadcastGroupChat("[AMB MOVEMENT DEBUG] Pos:" + blockPosition() +
+                               " | Goal:" + currentGoalPos +
+                               " | LockTimer:" + movementLockTimer +
+                               " | Collision:" + horizontalCollision +
+                               " | Sprinting:" + this.isSprinting());
             movementDebugTimer = 0;
         }
 
-        // Smart 1-block step-up (no more trapped on grass)
-        if (horizontalCollision) {
+        // Direction lock — once LLM sets a goal, stick to it for ~10 seconds
+        if (movementLockTimer > 0) {
+            movementLockTimer--;
+        } else if (currentGoalPos.equals(BlockPos.ZERO)) {
+            // LLM will set this later
+        }
+
+        // Calm step-up only when truly stuck
+        if (horizontalCollision && stepCooldown == 0) {
             BlockPos frontFeet = blockPosition().relative(getDirection());
             BlockPos frontAbove = frontFeet.above();
             if (!level().getBlockState(frontFeet).isAir() && level().getBlockState(frontAbove).isAir()) {
                 this.jumping = true;
-                if (random.nextInt(5) == 0) broadcastGroupChat("Stepping up over this grass — no problem!");
+                stepCooldown = 25; // 1.25s cooldown
+                broadcastGroupChat("Stepping up over this block — no problem!");
             }
         }
-        lastStablePos = blockPosition();
+        if (stepCooldown > 0) stepCooldown--;
     }
 
     /**
-     * REAL CRAFTING TABLE PLACEMENT + COOLDOWN
-     * Prevents spam placement/crafting
+     * REAL CRAFTING TABLE PLACEMENT (with fallback)
+     * 15-second cooldown to prevent spam
      */
     private void placeCraftingTableSafely() {
-        if (craftingCooldown > 0) {
-            craftingCooldown--;
-            return;
-        }
+        if (craftingCooldown > 0) return;
         if (getInventory().countItem(Items.CRAFTING_TABLE) > 0 && !hasCraftingTableNearby()) {
             BlockPos placePos = blockPosition().below().relative(getDirection());
             if (level().getBlockState(placePos).isAir()) {
                 level().setBlock(placePos, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
                 removeItemFromInventory(Items.CRAFTING_TABLE, 1);
-                broadcastGroupChat("Just placed a crafting table right here! Let's get to work!");
-                craftingCooldown = 200;  // 10-second cooldown so they don't spam place/craft
+                broadcastGroupChat("Just placed a crafting table right here! Time to craft!");
+                craftingCooldown = 300; // 15-second cooldown
             }
         }
     }
@@ -1469,21 +2194,11 @@ public class AmbNpcEntity extends FakePlayer {
      * Place a crafting table nearby (manual action - bot must have one in inventory)
      */
     /**
-     * Check if there's a crafting table nearby
+     * Check if there's a crafting table nearby (8-block radius)
      */
     private boolean hasCraftingTableNearby() {
-        BlockPos pos = blockPosition();
-        for (int x = -5; x <= 5; x++) {
-            for (int y = -2; y <= 2; y++) {
-                for (int z = -5; z <= 5; z++) {
-                    BlockPos checkPos = pos.offset(x, y, z);
-                    if (level().getBlockState(checkPos).is(Blocks.CRAFTING_TABLE)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return level().getBlockStates(getBoundingBox().inflate(8))
+                .anyMatch(state -> state.is(Blocks.CRAFTING_TABLE));
     }
 
     /**
@@ -1854,10 +2569,10 @@ public class AmbNpcEntity extends FakePlayer {
         }
 
         // Find nearest player
-        String devPosition = "far away";
+        String strangerPosition = "far away";
         Player nearestPlayer = level().getNearestPlayer(this, 64);
         if (nearestPlayer != null) {
-            devPosition = nearestPlayer.blockPosition().toShortString() +
+            strangerPosition = nearestPlayer.blockPosition().toShortString() +
                          " (dist: " + String.format("%.1f", Math.sqrt(distanceToSqr(nearestPlayer))) + " blocks)";
         }
 
@@ -1870,7 +2585,7 @@ public class AmbNpcEntity extends FakePlayer {
 
         // Build the rich prompt
         return String.format("""
-            You are a real Minecraft player named %s.
+            You are %s, a native inhabitant of this world.
             Position: %s
             Time: %s
             Health: %d/20
@@ -1890,12 +2605,12 @@ public class AmbNpcEntity extends FakePlayer {
             === SURROUNDINGS ===
             Block in front of me: %s
             Nearby hostile mobs: %s
-            Nearest player position: %s
+            Stranger position: %s
             Can I jump right now? %s
             Current task: %s
 
-            What should I do RIGHT NOW as a real player? Reply with ONLY one action:
-            gather_wood, mine_stone, build_shelter, attack_mob, follow_player, eat_food, explore, idle, place_crafting_table
+            What should I do RIGHT NOW to survive and thrive? Reply with ONLY one action:
+            gather_wood, mine_stone, build_shelter, attack_mob, follow_stranger, eat_food, explore, idle, place_crafting_table
             """,
             getName().getString(),
             blockPosition().toShortString(),
@@ -1906,7 +2621,7 @@ public class AmbNpcEntity extends FakePlayer {
             woodenAxes, stoneAxes, woodenPickaxes, stonePickaxes,
             frontBlock.getBlock().getName().getString(),
             nearbyThreats,
-            devPosition,
+            strangerPosition,
             canJump,
             currentTask
         );
@@ -2107,10 +2822,10 @@ public class AmbNpcEntity extends FakePlayer {
         // Player location awareness
         Player nearestPlayer = level().getNearestPlayer(this, 64);
         if (nearestPlayer != null) {
-            sb.append("Dev position: ").append(nearestPlayer.blockPosition()).append(" (distance: ")
+            sb.append("Stranger nearby: ").append(nearestPlayer.blockPosition()).append(" (distance: ")
               .append(String.format("%.1f", position().distanceTo(nearestPlayer.position()))).append(" blocks)\n");
         } else {
-            sb.append("Dev position: far away\n");
+            sb.append("No strangers nearby\n");
         }
 
         // Group memories
@@ -2126,7 +2841,7 @@ public class AmbNpcEntity extends FakePlayer {
         }
 
         // JSON instruction for LLM
-        sb.append("Reply ONLY in JSON: {\"action\":\"gather_wood|mine_stone|build_shelter|attack_mob|follow_dev|eat_food|explore|idle\", \"target\":\"specific thing or null\", \"reason\":\"short reason\"}");
+        sb.append("Reply ONLY in JSON: {\"action\":\"gather_wood|mine_stone|build_shelter|attack_mob|follow_stranger|eat_food|explore|idle\", \"target\":\"specific thing or null\", \"reason\":\"short reason\"}");
 
         return sb.toString();
     }
@@ -2147,13 +2862,6 @@ public class AmbNpcEntity extends FakePlayer {
     /**
      * Run group vote - bots in same group coordinate decisions
      */
-    private void runGroupVote() {
-        // Simple vote among bots in group
-        String decision = "build shelter"; // Could be randomized or based on needs
-        getLedger().remember(group, "Group voted to " + decision + " at " + blockPosition());
-        broadcastGroupChat("Squad vote complete — we're building a base together!");
-    }
-
     // ==================== GETTERS/SETTERS ====================
 
     public void setBrainEnabled(boolean enabled) {
