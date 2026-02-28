@@ -68,8 +68,10 @@ public class AmbNpcEntity extends FakePlayer {
     private int obstacleAvoidanceCooldown = 0;
     private Vec3 avoidanceDirection = null;
 
-    // HYBRID MOVEMENT EMULATOR FOR FAKEPLAYER
-    private int stepCooldown = 0;
+    // HEAVY MOVEMENT DEBUG + SMART STEP-UP + ANTI-SPAM COOLDOWN (100% FakePlayer-safe)
+    private int movementDebugTimer = 0;
+    private int craftingCooldown = 0;
+    private BlockPos lastStablePos = BlockPos.ZERO;
 
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
@@ -204,8 +206,8 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         super.tick(); // FakePlayer tick - handles inventory, movement, etc.
 
-        // ===== HYBRID MOVEMENT EMULATOR =====
-        runMovementEmulator();
+        // ===== HEAVY MOVEMENT DEBUG + SMART STEP-UP =====
+        runMovementDebugAndStepUp();
 
         if (!brainEnabled) return;
 
@@ -265,27 +267,48 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== MOVEMENT CONTROL ====================
 
     /**
-     * HYBRID MOVEMENT EMULATOR FOR FAKEPLAYER
-     * Automatic 1-block step-up + calm walking. LLM stays in full control.
+     * HEAVY MOVEMENT DEBUG + SMART STEP-UP (100% FakePlayer-safe)
+     * Only uses this.jumping and position checks
      */
-    private void runMovementEmulator() {
-        if (stepCooldown > 0) {
-            stepCooldown--;
-            return;
+    private void runMovementDebugAndStepUp() {
+        movementDebugTimer++;
+        if (movementDebugTimer >= 10) {  // every 0.5 seconds in chat
+            double moved = blockPosition().distSqr(lastStablePos);
+            broadcastGroupChat("[AMB MOVEMENT DEBUG] Pos: " + blockPosition() +
+                               " | Collision: " + horizontalCollision +
+                               " | OnGround: " + onGround() +
+                               " | Moved: " + String.format("%.1f", moved));
+            movementDebugTimer = 0;
         }
 
-        // Detect 1-block obstacle in front (grass, dirt, etc.)
-        BlockPos frontFeet = blockPosition().relative(getDirection());
-        BlockPos frontAbove = frontFeet.above();
+        // Smart 1-block step-up (no more trapped on grass)
+        if (horizontalCollision) {
+            BlockPos frontFeet = blockPosition().relative(getDirection());
+            BlockPos frontAbove = frontFeet.above();
+            if (!level().getBlockState(frontFeet).isAir() && level().getBlockState(frontAbove).isAir()) {
+                this.jumping = true;
+                if (random.nextInt(5) == 0) broadcastGroupChat("Stepping up over this grass — no problem!");
+            }
+        }
+        lastStablePos = blockPosition();
+    }
 
-        boolean blocked = !level().getBlockState(frontFeet).isAir();
-        boolean canStepUp = level().getBlockState(frontAbove).isAir();
-
-        if (horizontalCollision && blocked && canStepUp) {
-            this.jumping = true;                    // real player jump field
-            stepCooldown = 12;                      // smooth cooldown so they don't bunny-hop
-            if (random.nextInt(4) == 0) {
-                broadcastGroupChat("Stepping up — no big deal!");
+    /**
+     * REAL CRAFTING TABLE PLACEMENT + COOLDOWN
+     * Prevents spam placement/crafting
+     */
+    private void placeCraftingTableSafely() {
+        if (craftingCooldown > 0) {
+            craftingCooldown--;
+            return;
+        }
+        if (getInventory().countItem(Items.CRAFTING_TABLE) > 0 && !hasCraftingTableNearby()) {
+            BlockPos placePos = blockPosition().below().relative(getDirection());
+            if (level().getBlockState(placePos).isAir()) {
+                level().setBlock(placePos, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
+                removeItemFromInventory(Items.CRAFTING_TABLE, 1);
+                broadcastGroupChat("Just placed a crafting table right here! Let's get to work!");
+                craftingCooldown = 200;  // 10-second cooldown so they don't spam place/craft
             }
         }
     }
@@ -865,9 +888,10 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     private void craft() {
-        // Auto-place crafting table if we have one but none nearby
+        // Auto-place crafting table if we have one but none nearby (with anti-spam cooldown)
+        placeCraftingTableSafely();
+
         if (!hasCraftingTableNearby() && getInventory().countItem(Items.CRAFTING_TABLE) > 0) {
-            placeCraftingTableIfNeeded();
             return; // Wait for next tick to craft
         }
 
