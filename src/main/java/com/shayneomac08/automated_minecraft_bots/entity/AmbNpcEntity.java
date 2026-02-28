@@ -68,6 +68,9 @@ public class AmbNpcEntity extends FakePlayer {
     private int obstacleAvoidanceCooldown = 0;
     private Vec3 avoidanceDirection = null;
 
+    // HYBRID MOVEMENT EMULATOR FOR FAKEPLAYER
+    private int stepCooldown = 0;
+
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
     private int miningProgress = 0;
@@ -201,6 +204,9 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         super.tick(); // FakePlayer tick - handles inventory, movement, etc.
 
+        // ===== HYBRID MOVEMENT EMULATOR =====
+        runMovementEmulator();
+
         if (!brainEnabled) return;
 
         // ===== FEATURE 2: AUTO DOOR OPENING =====
@@ -257,6 +263,32 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     // ==================== MOVEMENT CONTROL ====================
+
+    /**
+     * HYBRID MOVEMENT EMULATOR FOR FAKEPLAYER
+     * Automatic 1-block step-up + calm walking. LLM stays in full control.
+     */
+    private void runMovementEmulator() {
+        if (stepCooldown > 0) {
+            stepCooldown--;
+            return;
+        }
+
+        // Detect 1-block obstacle in front (grass, dirt, etc.)
+        BlockPos frontFeet = blockPosition().relative(getDirection());
+        BlockPos frontAbove = frontFeet.above();
+
+        boolean blocked = !level().getBlockState(frontFeet).isAir();
+        boolean canStepUp = level().getBlockState(frontAbove).isAir();
+
+        if (horizontalCollision && blocked && canStepUp) {
+            this.jumping = true;                    // real player jump field
+            stepCooldown = 12;                      // smooth cooldown so they don't bunny-hop
+            if (random.nextInt(4) == 0) {
+                broadcastGroupChat("Stepping up — no big deal!");
+            }
+        }
+    }
 
     /**
      * Set a movement target for the bot
