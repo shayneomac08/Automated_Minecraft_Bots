@@ -57,7 +57,7 @@ public class AmbNpcEntity extends FakePlayer {
 
     private boolean brainEnabled = true;
     private String group = "none";
-    private String currentTask = "idle";
+    private String currentTask = "explore"; // Start exploring by default instead of standing idle
     private BlockPos targetPos = null;
     private int taskTicks = 0;
     private Vec3 moveTarget = null;
@@ -617,11 +617,18 @@ public class AmbNpcEntity extends FakePlayer {
             case "tame_animal" -> tameAnimal();
             case "fish" -> fish();
             case "sleep" -> sleep();
-            case "idle" -> {} // Do nothing
+            case "idle" -> {
+                // Idle bots should wander around instead of standing still
+                // This makes them look more alive and human-like
+                if (tickCount % 100 == 0) { // Every 5 seconds, pick a new wander target
+                    explore();
+                }
+            }
             default -> {
                 // Unknown task - treat as explore
                 broadcastGroupChat("Don't know how to '" + currentTask + "', exploring instead");
                 currentTask = "explore";
+                explore();
             }
         }
     }

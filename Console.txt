@@ -4,7 +4,7 @@ WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.i
 WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
 WARNING: Restricted methods will be blocked in a future release unless native access is enabled
 
-Reusing configuration cache.
+Calculating task graph as configuration cache cannot be reused because file 'build.gradle' has changed.
 > Task :generateModMetadata NO-SOURCE
 > Task :processResources UP-TO-DATE
 > Task :downloadAssets UP-TO-DATE
@@ -14,455 +14,785 @@ Reusing configuration cache.
 > Task :classes UP-TO-DATE
 
 > Task :runClient
-2026-02-28T16:24:09.465249400Z main WARN Advanced terminal features are not available in this environment
-[10:24:09] [main/INFO] [ne.ne.fm.st.Entrypoint/]: JVM Uptime at startup: 147ms
-[10:24:09] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Starting FancyModLoader version 10.0.36 (CLIENT in DEV)
-[10:24:09] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Game directory: G:\Automated_Minecraft_Bots\run
-[10:24:09] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path GAMEDIR is G:\Automated_Minecraft_Bots\run
-[10:24:09] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path JIJ_CACHEDIR is G:\Automated_Minecraft_Bots\run\.cache\jij
-[10:24:09] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path MODSDIR is G:\Automated_Minecraft_Bots\run\mods
-[10:24:09] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path CONFIGDIR is G:\Automated_Minecraft_Bots\run\config
-[10:24:09] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path FMLCONFIG is G:\Automated_Minecraft_Bots\run\config\fml.toml
-[10:24:09] [ForkJoinPool.commonPool-worker-7/DEBUG] [ne.ne.fm.lo.EarlyServiceDiscovery/]: C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\loader\10.0.36\f72ab4d3e755fe736829883d90430a281527aca\loader-10.0.36.jar contains early service net.neoforged.neoforgespi.locating.IDependencyLocator
-[10:24:09] [ForkJoinPool.commonPool-worker-3/DEBUG] [ne.ne.fm.lo.EarlyServiceDiscovery/]: C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\earlydisplay\10.0.36\dbd0e11d545443f602addede111c39d9639708f9\earlydisplay-10.0.36.jar contains early service net.neoforged.neoforgespi.earlywindow.ImmediateWindowProvider
-[10:24:09] [ForkJoinPool.commonPool-worker-7/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\loader\10.0.36\f72ab4d3e755fe736829883d90430a281527aca\loader-10.0.36.jar with languages []
-[10:24:09] [ForkJoinPool.commonPool-worker-3/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\earlydisplay\10.0.36\dbd0e11d545443f602addede111c39d9639708f9\earlydisplay-10.0.36.jar with languages []
-[10:24:09] [main/INFO] [ne.ne.fm.lo.EarlyServiceDiscovery/]: Found 2 early service jars (out of 104) in 33ms
-[10:24:09] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Early Services:
-[10:24:09] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:09] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/earlydisplay/10.0.36/dbd0e11d545443f602addede111c39d9639708f9/earlydisplay-10.0.36.jar
-[10:24:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 0 implementations of GraphicsBootstrapper:
-[10:24:09] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
-[10:24:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 1 implementations of ImmediateWindowProvider:
-[10:24:09] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.fml.earlydisplay.DisplayWindow from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/earlydisplay/10.0.36/dbd0e11d545443f602addede111c39d9639708f9/earlydisplay-10.0.36.jar
-[10:24:09] [main/DEBUG] [ne.ne.fm.ea.th.ThemeLoader/]: Loading built-in theme default
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 4 implementations of IModFileCandidateLocator:
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:          1000 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.GameLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:          1000 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.InDevFolderLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:          1000 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.InDevJarLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:             0 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.ModsFolderLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 2 implementations of IModFileReader:
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:             0 - net.neoforged.fml.loading.moddiscovery.readers.JarModsDotTomlModFileReader from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:         -1000 - net.neoforged.fml.loading.moddiscovery.readers.NestedLibraryModReader from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 1 implementations of IDependencyLocator:
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:             0 - net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.lo.RequiredSystemFiles/]: Found NeoForge MANIFEST.MF in jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar)
-[10:24:10] [ForkJoinPool.commonPool-worker-21/INFO] [ne.ne.fm.lo.mo.lo.GameLocator/]: Detected a joined NeoForge and Minecraft configuration. Applying filtering...
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar with {minecraft} mods - versions {1.21.11}
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar with languages [LanguageSpec[languageName=minecraft, acceptedVersions=1]]
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta.jar
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file neoforge-21.11.38-beta.jar with {neoforge} mods - versions {21.11.38-beta}
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta.jar with languages [LanguageSpec[languageName=javafml, acceptedVersions=[3,]]]
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Found mixin config MixinConfig[config=neoforge.mixins.json, requiredMods=[], behaviorVersion=null]
-[10:24:10] [ForkJoinPool.commonPool-worker-21/INFO] [ne.ne.fm.lo.mo.lo.InDevFolderLocator/CORE]: Got mod coordinates automated_minecraft_bots%%G:\Automated_Minecraft_Bots\build\classes\java\main;automated_minecraft_bots%%G:\Automated_Minecraft_Bots\build\resources\main from env
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate G:\Automated_Minecraft_Bots\build\classes\java\main
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file main with {automated_minecraft_bots} mods - versions {0.0NONE}
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\build\classes\java\main with languages [LanguageSpec[languageName=null, acceptedVersions=null]]
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModDiscoverer/]: Skipping G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta.jar because it was already located earlier
-[10:24:10] [fml-loadingscreen/INFO] [ne.ne.fm.ea.re.LoadingScreenRenderer/]: GL info: AMD Radeon RX 6900 XT GL version 3.3.0 Core Profile Context 26.2.2.260218, ATI Technologies Inc.
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\run\.cache\jij\9c617719248f8b89847348fc7ea5e705739c147ae5e172551264d225bc9f2507\mixinextras-neoforge-0.5.0.jar with languages []
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\run\.cache\jij\54bb3c61f37ced77ba30dc02ca5b2f71ced259612101a8b1325855cff9d9755c\net.neoforged.neoforge-coremods-21.11.38-beta.jar with languages []
-[10:24:10] [ForkJoinPool.commonPool-worker-21/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
-[10:24:10] [ForkJoinPool.commonPool-worker-21/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]:
+2026-02-28T19:17:37.202357300Z main WARN Advanced terminal features are not available in this environment
+[13:17:37] [main/INFO] [ne.ne.fm.st.Entrypoint/]: JVM Uptime at startup: 161ms
+[13:17:37] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Starting FancyModLoader version 10.0.36 (CLIENT in DEV)
+[13:17:37] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Game directory: G:\Automated_Minecraft_Bots\run
+[13:17:37] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path GAMEDIR is G:\Automated_Minecraft_Bots\run
+[13:17:37] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path JIJ_CACHEDIR is G:\Automated_Minecraft_Bots\run\.cache\jij
+[13:17:37] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path MODSDIR is G:\Automated_Minecraft_Bots\run\mods
+[13:17:37] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path CONFIGDIR is G:\Automated_Minecraft_Bots\run\config
+[13:17:37] [main/DEBUG] [ne.ne.fm.lo.FMLPaths/CORE]: Path FMLCONFIG is G:\Automated_Minecraft_Bots\run\config\fml.toml
+[13:17:37] [ForkJoinPool.commonPool-worker-7/DEBUG] [ne.ne.fm.lo.EarlyServiceDiscovery/]: C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\earlydisplay\10.0.36\dbd0e11d545443f602addede111c39d9639708f9\earlydisplay-10.0.36.jar contains early service net.neoforged.neoforgespi.earlywindow.ImmediateWindowProvider
+[13:17:37] [ForkJoinPool.commonPool-worker-8/DEBUG] [ne.ne.fm.lo.EarlyServiceDiscovery/]: C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\loader\10.0.36\f72ab4d3e755fe736829883d90430a281527aca\loader-10.0.36.jar contains early service net.neoforged.neoforgespi.locating.IDependencyLocator
+[13:17:37] [ForkJoinPool.commonPool-worker-7/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\earlydisplay\10.0.36\dbd0e11d545443f602addede111c39d9639708f9\earlydisplay-10.0.36.jar with languages []
+[13:17:37] [ForkJoinPool.commonPool-worker-8/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file C:\Users\shayn\.gradle\caches\modules-2\files-2.1\net.neoforged.fancymodloader\loader\10.0.36\f72ab4d3e755fe736829883d90430a281527aca\loader-10.0.36.jar with languages []
+[13:17:37] [main/INFO] [ne.ne.fm.lo.EarlyServiceDiscovery/]: Found 2 early service jars (out of 104) in 36ms
+[13:17:37] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Early Services:
+[13:17:37] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:37] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/earlydisplay/10.0.36/dbd0e11d545443f602addede111c39d9639708f9/earlydisplay-10.0.36.jar
+[13:17:37] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 0 implementations of GraphicsBootstrapper:
+[13:17:37] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
+[13:17:37] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 1 implementations of ImmediateWindowProvider:
+[13:17:37] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.fml.earlydisplay.DisplayWindow from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/earlydisplay/10.0.36/dbd0e11d545443f602addede111c39d9639708f9/earlydisplay-10.0.36.jar
+[13:17:37] [main/DEBUG] [ne.ne.fm.ea.th.ThemeLoader/]: Loading built-in theme default
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 4 implementations of IModFileCandidateLocator:
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:          1000 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.GameLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:          1000 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.InDevFolderLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:          1000 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.InDevJarLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:             0 - [built-in] net.neoforged.fml.loading.moddiscovery.locators.ModsFolderLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 2 implementations of IModFileReader:
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:             0 - net.neoforged.fml.loading.moddiscovery.readers.JarModsDotTomlModFileReader from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:         -1000 - net.neoforged.fml.loading.moddiscovery.readers.NestedLibraryModReader from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 1 implementations of IDependencyLocator:
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:             0 - net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.lo.RequiredSystemFiles/]: Found NeoForge MANIFEST.MF in jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar)
+[13:17:38] [ForkJoinPool.commonPool-worker-20/INFO] [ne.ne.fm.lo.mo.lo.GameLocator/]: Detected a joined NeoForge and Minecraft configuration. Applying filtering...
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar with {minecraft} mods - versions {1.21.11}
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar with languages [LanguageSpec[languageName=minecraft, acceptedVersions=1]]
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta.jar
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file neoforge-21.11.38-beta.jar with {neoforge} mods - versions {21.11.38-beta}
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta.jar with languages [LanguageSpec[languageName=javafml, acceptedVersions=[3,]]]
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Found mixin config MixinConfig[config=neoforge.mixins.json, requiredMods=[], behaviorVersion=null]
+[13:17:38] [ForkJoinPool.commonPool-worker-20/INFO] [ne.ne.fm.lo.mo.lo.InDevFolderLocator/CORE]: Got mod coordinates automated_minecraft_bots%%G:\Automated_Minecraft_Bots\build\classes\java\main;automated_minecraft_bots%%G:\Automated_Minecraft_Bots\build\resources\main from env
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate G:\Automated_Minecraft_Bots\build\classes\java\main
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file main with {automated_minecraft_bots} mods - versions {0.0NONE}
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\build\classes\java\main with languages [LanguageSpec[languageName=null, acceptedVersions=null]]
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModDiscoverer/]: Skipping G:\Automated_Minecraft_Bots\build\moddev\artifacts\neoforge-21.11.38-beta.jar because it was already located earlier
+[13:17:38] [fml-loadingscreen/INFO] [ne.ne.fm.ea.re.LoadingScreenRenderer/]: GL info: AMD Radeon RX 6900 XT GL version 3.3.0 Core Profile Context 26.2.2.260218, ATI Technologies Inc.
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\run\.cache\jij\9c617719248f8b89847348fc7ea5e705739c147ae5e172551264d225bc9f2507\mixinextras-neoforge-0.5.0.jar with languages []
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.mo.ModFile/LOADING]: Loading mod file G:\Automated_Minecraft_Bots\run\.cache\jij\54bb3c61f37ced77ba30dc02ca5b2f71ced259612101a8b1325855cff9d9755c\net.neoforged.neoforge-coremods-21.11.38-beta.jar with languages []
+[13:17:38] [ForkJoinPool.commonPool-worker-20/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[13:17:38] [ForkJoinPool.commonPool-worker-20/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]:
      Mod List:
                 Name Version (Mod Id)
 
                 Automated_Minecraft_Bots 0.0NONE (automated_minecraft_bots)
                 Minecraft 1.21.11 (minecraft)
                 NeoForge 21.11.38-beta (neoforge)
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.ModSorter/]: Configured system mods: [minecraft, neoforge]
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.ModSorter/]: Found system mod: minecraft
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.ModSorter/]: Found system mod: neoforge
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.ModSorter/LOADING]: Found 2 mod requirements (2 mandatory, 0 optional)
-[10:24:10] [ForkJoinPool.commonPool-worker-21/DEBUG] [ne.ne.fm.lo.ModSorter/LOADING]: Found 0 mod requirements missing (0 mandatory, 0 optional)
-[10:24:11] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.16.5+mixin.0.8.7/80fc3a9f592673cea87f4cd702f87991c6c9fe4d/sponge-mixin-0.16.5+mixin.0.8.7.jar Service=FML Env=CLIENT
-[10:24:11] [main/DEBUG] [mixin/]: Initialising Mixin Platform Manager
-[10:24:11] [main/DEBUG] [mixin/]: Adding mixin platform agents for container ContainerHandleVirtual(fml:18c85)
-[10:24:11] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for ContainerHandleVirtual(fml:18c85)
-[10:24:11] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container ContainerHandleVirtual(fml:18c85)
-[10:24:11] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for ContainerHandleVirtual(fml:18c85)
-[10:24:11] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container ContainerHandleVirtual(fml:18c85)
-[10:24:11] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
-[10:24:11] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
-[10:24:11] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Plugins:
-[10:24:11] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 2 implementations of IModLanguageLoader:
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.fml.javafmlmod.FMLJavaModLanguageProvider from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.fml.mclanguageprovider.MinecraftModLanguageProvider from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:11] [main/DEBUG] [ne.ne.fm.lo.LanguageProviderLoader/CORE]: Found language provider javafml, version 10.0
-[10:24:11] [main/DEBUG] [ne.ne.fm.lo.LanguageProviderLoader/CORE]: Found language provider minecraft, version 10.0
-[10:24:11] [main/DEBUG] [ne.ne.fm.lo.FMLLoader/]: Adding Access Transformer META-INF/accesstransformer.cfg in composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar)))
-[10:24:11] [main/DEBUG] [ne.ne.fm.lo.FMLLoader/]: Adding Access Transformer META-INF/accesstransformergenerated.cfg in composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar)))
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 5 implementations of ClassProcessor:
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.common.asm.AccessTransformerService from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.common.asm.enumextension.RuntimeEnumExtender from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.common.asm.SimpleProcessorsGroup from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.loading.moddiscovery.locators.NeoForgeDevDistCleaner from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.loading.mixin.FMLMixinClassProcessor from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 1 implementations of ClassProcessorProvider:
-[10:24:11] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.neoforge.coremods.NeoForgeCoreMod from G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar
-[10:24:11] [main/DEBUG] [ne.ne.fm.lo.FMLLoader/]: Masking classpath elements: [G:/Automated_Minecraft_Bots/build/resources/main, G:/Automated_Minecraft_Bots/build/classes/java/main, G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar, G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar]
-[10:24:11] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Building game content classloader:
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.ModSorter/]: Configured system mods: [minecraft, neoforge]
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.ModSorter/]: Found system mod: minecraft
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.ModSorter/]: Found system mod: neoforge
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.ModSorter/LOADING]: Found 2 mod requirements (2 mandatory, 0 optional)
+[13:17:38] [ForkJoinPool.commonPool-worker-20/DEBUG] [ne.ne.fm.lo.ModSorter/LOADING]: Found 0 mod requirements missing (0 mandatory, 0 optional)
+[13:17:38] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.16.5+mixin.0.8.7/80fc3a9f592673cea87f4cd702f87991c6c9fe4d/sponge-mixin-0.16.5+mixin.0.8.7.jar Service=FML Env=CLIENT
+[13:17:39] [main/DEBUG] [mixin/]: Initialising Mixin Platform Manager
+[13:17:39] [main/DEBUG] [mixin/]: Adding mixin platform agents for container ContainerHandleVirtual(fml:18c85)
+[13:17:39] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for ContainerHandleVirtual(fml:18c85)
+[13:17:39] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container ContainerHandleVirtual(fml:18c85)
+[13:17:39] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for ContainerHandleVirtual(fml:18c85)
+[13:17:39] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container ContainerHandleVirtual(fml:18c85)
+[13:17:39] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[13:17:39] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[13:17:39] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Plugins:
+[13:17:39] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 2 implementations of IModLanguageLoader:
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.fml.javafmlmod.FMLJavaModLanguageProvider from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.fml.mclanguageprovider.MinecraftModLanguageProvider from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:39] [main/DEBUG] [ne.ne.fm.lo.LanguageProviderLoader/CORE]: Found language provider javafml, version 10.0
+[13:17:39] [main/DEBUG] [ne.ne.fm.lo.LanguageProviderLoader/CORE]: Found language provider minecraft, version 10.0
+[13:17:39] [main/DEBUG] [ne.ne.fm.lo.FMLLoader/]: Adding Access Transformer META-INF/accesstransformer.cfg in composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar)))
+[13:17:39] [main/DEBUG] [ne.ne.fm.lo.FMLLoader/]: Adding Access Transformer META-INF/accesstransformergenerated.cfg in composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar)))
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 5 implementations of ClassProcessor:
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.common.asm.AccessTransformerService from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.common.asm.enumextension.RuntimeEnumExtender from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.common.asm.SimpleProcessorsGroup from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.loading.moddiscovery.locators.NeoForgeDevDistCleaner from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   [built-in] net.neoforged.fml.loading.mixin.FMLMixinClassProcessor from C:/Users/shayn/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/10.0.36/f72ab4d3e755fe736829883d90430a281527aca/loader-10.0.36.jar
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]: Found 1 implementations of ClassProcessorProvider:
+[13:17:39] [main/DEBUG] [ne.ne.fm.ut.ServiceLoaderUtil/CORE]:   net.neoforged.neoforge.coremods.NeoForgeCoreMod from G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar
+[13:17:39] [main/DEBUG] [ne.ne.fm.lo.FMLLoader/]: Masking classpath elements: [G:/Automated_Minecraft_Bots/build/resources/main, G:/Automated_Minecraft_Bots/build/classes/java/main, G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar, G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar]
+[13:17:39] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Building game content classloader:
  - automated_minecraft_bots (composite(folder(G:/Automated_Minecraft_Bots/build/classes/java/main), folder(G:/Automated_Minecraft_Bots/build/resources/main)))
  - minecraft (composite(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta-client-extra-aka-minecraft-resources.jar), filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))))
  - mixinextras.neoforge (jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar))
  - neoforge (composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))))
  - net.neoforged.fml.generated (empty(VirtualJar/net.neoforged.fml.generated))
-[10:24:11] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Built game content classloader in 53ms
-[10:24:11] [main/DEBUG] [mixin/]: Processing launch tasks for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
-[10:24:11] [main/DEBUG] [mixin/]: Processing launch tasks for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
-[10:24:11] [main/DEBUG] [mixin/]: Adding agents for Mixin Container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
-[10:24:11] [main/DEBUG] [mixin/]: Adding mixin platform agents for container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
-[10:24:11] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
-[10:24:11] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
-[10:24:11] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
-[10:24:11] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
-[10:24:11] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
-[10:24:11] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
-[10:24:11] [main/DEBUG] [mixin/]: Adding agents for Mixin Container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
-[10:24:11] [main/DEBUG] [mixin/]: Adding mixin platform agents for container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
-[10:24:11] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
-[10:24:11] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
-[10:24:11] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
-[10:24:11] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
-[10:24:11] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
-[10:24:11] [main/DEBUG] [mixin/]: Registering mixin config: mixinextras.init.mixins.json source=composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
-[10:24:11] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
-[10:24:11] [main/DEBUG] [mixin/]: Registering mixin config: mixinextras.init.mixins.json source=composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
-[10:24:11] [main/DEBUG] [mixin/]: inject() running with 3 agents
-[10:24:11] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
-[10:24:11] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
-[10:24:11] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
-[10:24:11] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
-[10:24:11] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
-[10:24:11] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
-[10:24:11] [main/DEBUG] [mixin/]: Preparing mixins for MixinEnvironment[DEFAULT]
-[10:24:11] [main/DEBUG] [mixin/]: Selecting config neoforge.mixins.json
-[10:24:11] [main/DEBUG] [mixin/]: Selecting config mixinextras.init.mixins.json
-[10:24:11] [main/DEBUG] [MixinExtras|Service/]: com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0) is taking over from null
-[10:24:11] [main/DEBUG] [mixin/]: Registering new injector for @Inject with org.spongepowered.asm.mixin.injection.struct.CallbackInjectionInfo
-[10:24:11] [main/DEBUG] [mixin/]: Registering new injector for @ModifyArg with org.spongepowered.asm.mixin.injection.struct.ModifyArgInjectionInfo
-[10:24:11] [main/DEBUG] [mixin/]: Registering new injector for @ModifyArgs with org.spongepowered.asm.mixin.injection.struct.ModifyArgsInjectionInfo
-[10:24:11] [main/DEBUG] [mixin/]: Registering new injector for @Redirect with org.spongepowered.asm.mixin.injection.struct.RedirectInjectionInfo
-[10:24:11] [main/DEBUG] [mixin/]: Registering new injector for @ModifyVariable with org.spongepowered.asm.mixin.injection.struct.ModifyVariableInjectionInfo
-[10:24:11] [main/DEBUG] [mixin/]: Registering new injector for @ModifyConstant with org.spongepowered.asm.mixin.injection.struct.ModifyConstantInjectionInfo
-[10:24:11] [main/DEBUG] [mixin/]: Preparing neoforge.mixins.json (2)
-[10:24:11] [main/DEBUG] [mixin/]: Preparing mixinextras.init.mixins.json (0)
-[10:24:12] [main/DEBUG] [io.ne.ut.in.lo.InternalLoggerFactory/]: Using SLF4J as the default logging framework
-[10:24:12] [main/DEBUG] [io.ne.ut.ResourceLeakDetector/]: -Dio.netty.leakDetection.level: simple
-[10:24:12] [main/DEBUG] [io.ne.ut.ResourceLeakDetector/]: -Dio.netty.leakDetection.targetRecords: 4
-[10:24:13] [Datafixer Bootstrap/INFO] [mojang/DataFixerBuilder]: 290 Datafixer optimizations took 726 milliseconds
-[10:24:13] [main/WARN] [os.dr.wi.pe.PerfmonDisabled/]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
-[10:24:13] [pool-8-thread-1/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0).
-[10:24:13] [pool-8-thread-1/DEBUG] [mixin/]: Registering new injector for @SugarWrapper with com.llamalad7.mixinextras.sugar.impl.SugarWrapperInjectionInfo
-[10:24:13] [pool-8-thread-1/DEBUG] [mixin/]: Registering new injector for @FactoryRedirectWrapper with com.llamalad7.mixinextras.wrapper.factory.FactoryRedirectWrapperInjectionInfo
-[10:24:13] [pool-8-thread-1/DEBUG] [mixin/]: Registering new injector for @ExpressionInjectorWrapper with com.llamalad7.mixinextras.expression.impl.wrapper.ExpressionInjectorWrapperInjectionInfo
-[10:24:13] [pool-8-thread-1/DEBUG] [mixin/]: Mixing MappedRegistryAccessor from neoforge.mixins.json into net.minecraft.core.MappedRegistry
-[10:24:15] [pool-8-thread-1/DEBUG] [mixin/]: Mixing BlockEntityTypeAccessor from neoforge.mixins.json into net.minecraft.world.level.block.entity.BlockEntityType
-[10:24:20] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
-[10:24:20] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
-[10:24:20] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
-[10:24:20] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
-[10:24:20] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
-[10:24:20] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [waypoint, modify, waypoint, color, reset] and [waypoint, modify, waypoint, color, color] with inputs: [reset]
-[10:24:20] [main/DEBUG] [ne.ne.fm.ModWorkManager/LOADING]: Using 32 threads for parallel mod-loading
-[10:24:20] [main/DEBUG] [ne.ne.fm.ja.FMLModContainer/LOADING]: Creating FMLModContainer instance for automated_minecraft_bots with entrypoints [com.shayneomac08.automated_minecraft_bots.AutomatedMinecraftBots, com.shayneomac08.automated_minecraft_bots.AutomatedMinecraftBotsClient]
-[10:24:20] [main/DEBUG] [ne.ne.fm.ja.FMLModContainer/LOADING]: Creating FMLModContainer instance for neoforge with entrypoints [net.neoforged.neoforge.common.NeoForgeMod, net.neoforged.neoforge.common.OnlyInWarningsHandler, net.neoforged.neoforge.client.ClientNeoForgeMod]
-[10:24:20] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.11.38-beta, for MC 1.21.11
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file neoforge-server.toml for neoforge tracking
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file automated_minecraft_bots-common.toml for automated_minecraft_bots tracking
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Attempting to inject @EventBusSubscriber classes into the eventbus for automated_minecraft_bots
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file neoforge-common.toml for neoforge tracking
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class com.shayneomac08.automated_minecraft_bots.event.MobTargetingHandler for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void com.shayneomac08.automated_minecraft_bots.event.MobTargetingHandler.onMobChangeTarget(net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void com.shayneomac08.automated_minecraft_bots.event.MobTargetingHandler.onLivingAttack(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file neoforge-client.toml for neoforge tracking
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Attempting to inject @EventBusSubscriber classes into the eventbus for neoforge
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.attachment.AttachmentInternals for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.attachment.AttachmentInternals.onLivingConvert(net.neoforged.neoforge.event.entity.living.LivingConversionEvent$Post) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.attachment.AttachmentInternals.onPlayerClone(net.neoforged.neoforge.event.entity.player.PlayerEvent$Clone) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.attachment.AttachmentSync for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.attachment.AttachmentSync.onChunkSent(net.neoforged.neoforge.event.level.ChunkWatchEvent$Sent) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer.onRenderLevelStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent$AfterEntities) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer.onRegisterClientCommands(net.neoforged.neoforge.client.event.RegisterClientCommandsEvent) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer.onExtractLevelRenderState(net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.client.NeoForgeRenderPipelines for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method static void net.neoforged.neoforge.client.NeoForgeRenderPipelines.registerPipelines(net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent) to the event bus of mod neoforge
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.client.network.ClientPayloadHandler for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.client.network.ClientPayloadHandler.register(net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent) to the event bus of mod neoforge
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.common.MonsterRoomHooks for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.common.MonsterRoomHooks.onDataMapsUpdated(net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.model.data.ModelDataManager for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.model.data.ModelDataManager.onChunkUnload(net.neoforged.neoforge.event.level.ChunkEvent$Unload) to the game event bus
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.network.ConfigurationInitialization for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.network.ConfigurationInitialization.configureModdedClient(net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent) to the event bus of mod neoforge
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.network.NetworkInitialization for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.network.NetworkInitialization.register(net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent) to the event bus of mod neoforge
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.network.filters.GenericPacketSplitter for @SubscribeEvent-annotated methods
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: Java version: 21
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: -Dio.netty.noUnsafe: false
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: sun.misc.Unsafe.theUnsafe: available
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: sun.misc.Unsafe base methods: all available
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: java.nio.Buffer.address: available
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: direct buffer constructor: unavailable: Reflective setAccessible(true) disabled
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: java.nio.Bits.unaligned: available, true
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable: symbolic reference class is not accessible: class jdk.internal.misc.Unsafe, from class io.netty.util.internal.PlatformDependent0 (unnamed module @1a0dcaa)
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: java.nio.DirectByteBuffer.<init>(long, {int,long}): unavailable
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: sun.misc.Unsafe: available
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.tmpdir: C:\Users\shayn\AppData\Local\Temp (java.io.tmpdir)
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.bitMode: 64 (sun.arch.data.model)
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: Platform: Windows
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.maxDirectMemory: -1 bytes
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.CleanerJava9/]: java.nio.ByteBuffer.cleaner(): available
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.noPreferDirect: false
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.jfr.enabled: true
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.bu.AbstractByteBuf/]: -Dio.netty.buffer.checkAccessible: true
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.bu.AbstractByteBuf/]: -Dio.netty.buffer.checkBounds: true
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.ResourceLeakDetectorFactory/]: Loaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@6a7d5810
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.InternalThreadLocalMap/]: -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.in.InternalThreadLocalMap/]: -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.bu.AdaptiveByteBufAllocator/]: -Dio.netty.allocator.useCachedMagazinesForNonEventLoopThreads: false
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.maxCapacityPerThread: 4096
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.ratio: 8
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.chunkSize: 32
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.blocking: false
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.batchFastThreadLocalOnly: true
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.bu.ByteBufUtil/]: -Dio.netty.allocator.type: adaptive
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.bu.ByteBufUtil/]: -Dio.netty.threadLocalDirectBufferSize: 0
-[10:24:20] [modloading-worker-0/DEBUG] [io.ne.bu.ByteBufUtil/]: -Dio.netty.maxThreadLocalCharBufferSize: 16384
-[10:24:20] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.network.filters.GenericPacketSplitter.register(net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent) to the event bus of mod neoforge
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loading configs type CLIENT
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.ne.co.NeoForgeMod/FORGEMOD]: Loaded NeoForge config file neoforge-client.toml
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-client.toml
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-client.toml for changes
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loading configs type COMMON
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\automated_minecraft_bots-common.toml
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\automated_minecraft_bots-common.toml for changes
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.ne.co.NeoForgeMod/FORGEMOD]: Loaded NeoForge config file neoforge-common.toml
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-common.toml
-[10:24:21] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-common.toml for changes
-[10:24:21] [Render thread/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
-[10:24:21] [Render thread/INFO] [minecraft/Minecraft]: Setting user: Dev
-[10:24:21] [Render thread/INFO] [minecraft/Minecraft]: Backend library: LWJGL version 3.3.3+5
-[10:24:21] [Render thread/INFO] [minecraft/Minecraft]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
-[10:24:22] [Render thread/INFO] [minecraft/ReloadableResourceManager]: Reloading ResourceManager: vanilla, mod_resources, mod/automated_minecraft_bots, mod/neoforge
-[10:24:22] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: HELLO FROM COMMON SETUP
-[10:24:22] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: DIRT BLOCK >> minecraft:dirt
-[10:24:22] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: The magic number is... 42
-[10:24:22] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: ITEM >> minecraft:iron_ingot
-[10:24:22] [Render thread/DEBUG] [ne.ne.fm.DeferredWorkQueue/LOADING]: Dispatching synchronous work for work queue Common setup: 1 jobs
-[10:24:22] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_pua-17.0.01.hex, loading
-[10:24:22] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_all_no_pua-17.0.01.hex, loading
-[10:24:22] [Render thread/DEBUG] [ne.ne.fm.DeferredWorkQueue/LOADING]: Synchronous work queue completed in 13.87 ms
-[10:24:22] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: HELLO FROM CLIENT SETUP
-[10:24:22] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: MINECRAFT NAME >> Dev
-[10:24:22] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_jp_patch-17.0.01.hex, loading
-[10:24:24] [resourceLoad/WARN] [minecraft/ModelManager]: Missing model for variant: 'Block{automated_minecraft_bots:example_block}'
-[10:24:24] [Render thread/INFO] [mojang/Library]: OpenAL initialized on device OpenAL Soft on Speakers (Razer Kraken Ultimate)
-[10:24:24] [Render thread/INFO] [minecraft/SoundEngine]: Sound engine started
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x2048x4 minecraft:textures/atlas/blocks.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
-[10:24:24] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
-[10:24:24] [Render thread/WARN] [minecraft/ModelManager]: No model loaded for default item model ID automated_minecraft_bots:example_block of automated_minecraft_bots:example_block
-[10:24:24] [Render thread/INFO] [ne.ne.ne.cl.en.an.js.AnimationLoader/]: Loaded 0 entity animations
-[10:24:25] [Render thread/DEBUG] [ne.ne.fm.cl.tr.ClassTransformStatistics/]: Transformed/total loaded classes: 382/7145 (5.35%) and 5 parsed for mixin
-[10:24:31] [Worker-Main-14/INFO] [co.sh.au.AutomatedMinecraftBots/]: Registered AMB commands
-[10:24:32] [Render thread/INFO] [minecraft/RecipeManager]: Loaded 1470 recipes
-[10:24:32] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 1584 advancements
-[10:24:32] [Render thread/INFO] [ne.ne.ne.co.cr.RecipePriorityManager/]: Loaded 0 recipe priority overrides
-[10:24:32] [Render thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
-[10:24:32] [Server thread/INFO] [minecraft/IntegratedServer]: Starting integrated minecraft server version 1.21.11
-[10:24:32] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
-[10:24:32] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loading configs type SERVER
-[10:24:32] [Server thread/DEBUG] [ne.ne.ne.co.NeoForgeMod/FORGEMOD]: Loaded NeoForge config file neoforge-server.toml
-[10:24:32] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-server.toml
-[10:24:32] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-server.toml for changes
-[10:24:32] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 0 persistent chunks...
-[10:24:32] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
-[10:24:33] [Render thread/DEBUG] [io.ne.ch.MultithreadEventLoopGroup/]: -Dio.netty.eventLoopThreads: 64
-[10:24:33] [Render thread/DEBUG] [io.ne.ut.co.GlobalEventExecutor/]: -Dio.netty.globalEventExecutor.quietPeriodSeconds: 1
-[10:24:33] [Render thread/DEBUG] [io.ne.ut.in.PlatformDependent/]: org.jctools-core.MpscChunkedArrayQueue: available
-[10:24:33] [Render thread/DEBUG] [io.ne.ch.DefaultChannelId/]: -Dio.netty.processId: 47940 (auto-detected)
-[10:24:33] [Render thread/DEBUG] [io.ne.ut.NetUtil/]: -Djava.net.preferIPv4Stack: false
-[10:24:33] [Render thread/DEBUG] [io.ne.ut.NetUtil/]: -Djava.net.preferIPv6Addresses: system
-[10:24:33] [Render thread/DEBUG] [io.ne.ut.NetUtilInitializations/]: Loopback interface: loopback_0 (Software Loopback Interface 1, 0:0:0:0:0:0:0:1)
-[10:24:33] [Render thread/DEBUG] [io.ne.ut.NetUtil/]: Failed to get SOMAXCONN from sysctl and file \proc\sys\net\core\somaxconn. Default: 200
-[10:24:33] [Render thread/DEBUG] [io.ne.ch.DefaultChannelId/]: -Dio.netty.machineId: 2c:f0:5d:ff:fe:0e:bf:b1 (auto-detected)
-[10:24:33] [Render thread/DEBUG] [io.ne.bo.ChannelInitializerExtensions/]: -Dio.netty.bootstrap.extensions: null
-[10:24:33] [Netty Local IO #1/DEBUG] [ne.ne.ne.ne.fi.NetworkFilters/]: Injected net.neoforged.neoforge.network.filters.GenericPacketSplitter@5218d169 into net.minecraft.network.Connection@77c7a4c3
-[10:24:33] [Netty Local IO #0/DEBUG] [ne.ne.ne.ne.fi.NetworkFilters/]: Injected net.neoforged.neoforge.network.filters.GenericPacketSplitter@c209da5 into net.minecraft.network.Connection@60dbcb64
-[10:24:33] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 49 chunks for player spawn...
-[10:24:33] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
-[10:24:33] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
-[10:24:33] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Time elapsed: 917 ms
-[10:24:34] [Netty Local IO #1/DEBUG] [ne.ne.ne.ne.fi.NetworkFilters/]: Injected net.neoforged.neoforge.network.filters.GenericPacketSplitter@b282d52 into net.minecraft.network.Connection@77c7a4c3
-[10:24:34] [Server thread/INFO] [minecraft/PlayerList]: Dev[local:E:3d12505a] logged in with entity id 1 at (-2.2193562655852355, 57.74293160172488, 6.650291916065477)
-[10:24:34] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/]: Sending 0 recipes of the following types: []
-[10:24:34] [Server thread/INFO] [minecraft/MinecraftServer]: Dev joined the game
-[10:24:34] [Server thread/INFO] [minecraft/IntegratedServer]: Changing view distance to 16, from 10
-[10:24:34] [Server thread/INFO] [minecraft/IntegratedServer]: Changing simulation distance to 12, from 0
-[10:24:34] [Render thread/WARN] [minecraft/ClientPacketListener]: Ignoring chat session from Dev due to missing Services public key
-[10:24:34] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 78 advancements
-[10:24:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[10:24:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[10:24:34] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[10:24:34] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[10:24:34] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[10:24:34] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[10:24:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[10:24:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 8.
-[10:24:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[10:24:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[10:24:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[10:24:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
-[10:24:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
-[10:24:37] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
+[13:17:39] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Built game content classloader in 56ms
+[13:17:39] [main/DEBUG] [mixin/]: Processing launch tasks for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[13:17:39] [main/DEBUG] [mixin/]: Processing launch tasks for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[13:17:39] [main/DEBUG] [mixin/]: Adding agents for Mixin Container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[13:17:39] [main/DEBUG] [mixin/]: Adding mixin platform agents for container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[13:17:39] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[13:17:39] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[13:17:39] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[13:17:39] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)
+[13:17:39] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
+[13:17:39] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
+[13:17:39] [main/DEBUG] [mixin/]: Adding agents for Mixin Container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[13:17:39] [main/DEBUG] [mixin/]: Adding mixin platform agents for container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[13:17:39] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[13:17:39] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[13:17:39] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[13:17:39] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[13:17:39] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
+[13:17:39] [main/DEBUG] [mixin/]: Registering mixin config: mixinextras.init.mixins.json source=composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[13:17:39] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
+[13:17:39] [main/DEBUG] [mixin/]: Registering mixin config: mixinextras.init.mixins.json source=composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)
+[13:17:39] [main/DEBUG] [mixin/]: inject() running with 3 agents
+[13:17:39] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[13:17:39] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:ContainerHandleVirtual(fml:18c85)]
+[13:17:39] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
+[13:17:39] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > net.neoforged.neoforge-coremods-21.11.38-beta.jar)]
+[13:17:39] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
+[13:17:39] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:composite(filtered(jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar))) > jar(G:/Automated_Minecraft_Bots/build/moddev/artifacts/neoforge-21.11.38-beta.jar > mixinextras-neoforge-0.5.0.jar)]
+[13:17:39] [main/DEBUG] [mixin/]: Preparing mixins for MixinEnvironment[DEFAULT]
+[13:17:39] [main/DEBUG] [mixin/]: Selecting config neoforge.mixins.json
+[13:17:39] [main/DEBUG] [mixin/]: Selecting config mixinextras.init.mixins.json
+[13:17:39] [main/DEBUG] [MixinExtras|Service/]: com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0) is taking over from null
+[13:17:39] [main/DEBUG] [mixin/]: Registering new injector for @Inject with org.spongepowered.asm.mixin.injection.struct.CallbackInjectionInfo
+[13:17:39] [main/DEBUG] [mixin/]: Registering new injector for @ModifyArg with org.spongepowered.asm.mixin.injection.struct.ModifyArgInjectionInfo
+[13:17:39] [main/DEBUG] [mixin/]: Registering new injector for @ModifyArgs with org.spongepowered.asm.mixin.injection.struct.ModifyArgsInjectionInfo
+[13:17:39] [main/DEBUG] [mixin/]: Registering new injector for @Redirect with org.spongepowered.asm.mixin.injection.struct.RedirectInjectionInfo
+[13:17:39] [main/DEBUG] [mixin/]: Registering new injector for @ModifyVariable with org.spongepowered.asm.mixin.injection.struct.ModifyVariableInjectionInfo
+[13:17:39] [main/DEBUG] [mixin/]: Registering new injector for @ModifyConstant with org.spongepowered.asm.mixin.injection.struct.ModifyConstantInjectionInfo
+[13:17:39] [main/DEBUG] [mixin/]: Preparing neoforge.mixins.json (2)
+[13:17:39] [main/DEBUG] [mixin/]: Preparing mixinextras.init.mixins.json (0)
+[13:17:39] [main/DEBUG] [io.ne.ut.in.lo.InternalLoggerFactory/]: Using SLF4J as the default logging framework
+[13:17:39] [main/DEBUG] [io.ne.ut.ResourceLeakDetector/]: -Dio.netty.leakDetection.level: simple
+[13:17:39] [main/DEBUG] [io.ne.ut.ResourceLeakDetector/]: -Dio.netty.leakDetection.targetRecords: 4
+[13:17:41] [Datafixer Bootstrap/INFO] [mojang/DataFixerBuilder]: 290 Datafixer optimizations took 576 milliseconds
+[13:17:41] [main/WARN] [os.dr.wi.pe.PerfmonDisabled/]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[13:17:41] [pool-8-thread-1/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0).
+[13:17:41] [pool-8-thread-1/DEBUG] [mixin/]: Registering new injector for @SugarWrapper with com.llamalad7.mixinextras.sugar.impl.SugarWrapperInjectionInfo
+[13:17:41] [pool-8-thread-1/DEBUG] [mixin/]: Registering new injector for @FactoryRedirectWrapper with com.llamalad7.mixinextras.wrapper.factory.FactoryRedirectWrapperInjectionInfo
+[13:17:41] [pool-8-thread-1/DEBUG] [mixin/]: Registering new injector for @ExpressionInjectorWrapper with com.llamalad7.mixinextras.expression.impl.wrapper.ExpressionInjectorWrapperInjectionInfo
+[13:17:41] [pool-8-thread-1/DEBUG] [mixin/]: Mixing MappedRegistryAccessor from neoforge.mixins.json into net.minecraft.core.MappedRegistry
+[13:17:42] [pool-8-thread-1/DEBUG] [mixin/]: Mixing BlockEntityTypeAccessor from neoforge.mixins.json into net.minecraft.world.level.block.entity.BlockEntityType
+[13:17:47] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[13:17:47] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[13:17:47] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[13:17:47] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[13:17:47] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[13:17:47] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [waypoint, modify, waypoint, color, reset] and [waypoint, modify, waypoint, color, color] with inputs: [reset]
+[13:17:47] [main/DEBUG] [ne.ne.fm.ModWorkManager/LOADING]: Using 32 threads for parallel mod-loading
+[13:17:47] [main/DEBUG] [ne.ne.fm.ja.FMLModContainer/LOADING]: Creating FMLModContainer instance for automated_minecraft_bots with entrypoints [com.shayneomac08.automated_minecraft_bots.AutomatedMinecraftBots, com.shayneomac08.automated_minecraft_bots.AutomatedMinecraftBotsClient]
+[13:17:47] [main/DEBUG] [ne.ne.fm.ja.FMLModContainer/LOADING]: Creating FMLModContainer instance for neoforge with entrypoints [net.neoforged.neoforge.common.NeoForgeMod, net.neoforged.neoforge.common.OnlyInWarningsHandler, net.neoforged.neoforge.client.ClientNeoForgeMod]
+[13:17:47] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.11.38-beta, for MC 1.21.11
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file neoforge-server.toml for neoforge tracking
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file automated_minecraft_bots-common.toml for automated_minecraft_bots tracking
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file neoforge-common.toml for neoforge tracking
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Attempting to inject @EventBusSubscriber classes into the eventbus for automated_minecraft_bots
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class com.shayneomac08.automated_minecraft_bots.event.MobTargetingHandler for @SubscribeEvent-annotated methods
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void com.shayneomac08.automated_minecraft_bots.event.MobTargetingHandler.onLivingAttack(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent) to the game event bus
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void com.shayneomac08.automated_minecraft_bots.event.MobTargetingHandler.onMobChangeTarget(net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent) to the game event bus
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Config file neoforge-client.toml for neoforge tracking
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Attempting to inject @EventBusSubscriber classes into the eventbus for neoforge
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.attachment.AttachmentInternals for @SubscribeEvent-annotated methods
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.attachment.AttachmentInternals.onLivingConvert(net.neoforged.neoforge.event.entity.living.LivingConversionEvent$Post) to the game event bus
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.attachment.AttachmentInternals.onPlayerClone(net.neoforged.neoforge.event.entity.player.PlayerEvent$Clone) to the game event bus
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.attachment.AttachmentSync for @SubscribeEvent-annotated methods
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.attachment.AttachmentSync.onChunkSent(net.neoforged.neoforge.event.level.ChunkWatchEvent$Sent) to the game event bus
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer for @SubscribeEvent-annotated methods
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer.onExtractLevelRenderState(net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent) to the game event bus
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer.onRegisterClientCommands(net.neoforged.neoforge.client.event.RegisterClientCommandsEvent) to the game event bus
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.client.BlockEntityRenderBoundsDebugRenderer.onRenderLevelStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent$AfterEntities) to the game event bus
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.client.NeoForgeRenderPipelines for @SubscribeEvent-annotated methods
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method static void net.neoforged.neoforge.client.NeoForgeRenderPipelines.registerPipelines(net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent) to the event bus of mod neoforge
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.client.network.ClientPayloadHandler for @SubscribeEvent-annotated methods
+[13:17:47] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.client.network.ClientPayloadHandler.register(net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent) to the event bus of mod neoforge
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.common.MonsterRoomHooks for @SubscribeEvent-annotated methods
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.common.MonsterRoomHooks.onDataMapsUpdated(net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent) to the game event bus
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.model.data.ModelDataManager for @SubscribeEvent-annotated methods
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method public static void net.neoforged.neoforge.model.data.ModelDataManager.onChunkUnload(net.neoforged.neoforge.event.level.ChunkEvent$Unload) to the game event bus
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.network.ConfigurationInitialization for @SubscribeEvent-annotated methods
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.network.ConfigurationInitialization.configureModdedClient(net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent) to the event bus of mod neoforge
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.network.NetworkInitialization for @SubscribeEvent-annotated methods
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.network.NetworkInitialization.register(net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent) to the event bus of mod neoforge
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Scanning class net.neoforged.neoforge.network.filters.GenericPacketSplitter for @SubscribeEvent-annotated methods
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: Java version: 21
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: -Dio.netty.noUnsafe: false
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: sun.misc.Unsafe.theUnsafe: available
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: sun.misc.Unsafe base methods: all available
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: java.nio.Buffer.address: available
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: direct buffer constructor: unavailable: Reflective setAccessible(true) disabled
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: java.nio.Bits.unaligned: available, true
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable: symbolic reference class is not accessible: class jdk.internal.misc.Unsafe, from class io.netty.util.internal.PlatformDependent0 (unnamed module @1a0dcaa)
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent0/]: java.nio.DirectByteBuffer.<init>(long, {int,long}): unavailable
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: sun.misc.Unsafe: available
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.tmpdir: C:\Users\shayn\AppData\Local\Temp (java.io.tmpdir)
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.bitMode: 64 (sun.arch.data.model)
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: Platform: Windows
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.maxDirectMemory: -1 bytes
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.CleanerJava9/]: java.nio.ByteBuffer.cleaner(): available
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.noPreferDirect: false
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.PlatformDependent/]: -Dio.netty.jfr.enabled: true
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.bu.AbstractByteBuf/]: -Dio.netty.buffer.checkAccessible: true
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.bu.AbstractByteBuf/]: -Dio.netty.buffer.checkBounds: true
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.ResourceLeakDetectorFactory/]: Loaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@557b0be6
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.InternalThreadLocalMap/]: -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.in.InternalThreadLocalMap/]: -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.bu.AdaptiveByteBufAllocator/]: -Dio.netty.allocator.useCachedMagazinesForNonEventLoopThreads: false
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.maxCapacityPerThread: 4096
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.ratio: 8
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.chunkSize: 32
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.blocking: false
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.ut.Recycler/]: -Dio.netty.recycler.batchFastThreadLocalOnly: true
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.bu.ByteBufUtil/]: -Dio.netty.allocator.type: adaptive
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.bu.ByteBufUtil/]: -Dio.netty.threadLocalDirectBufferSize: 0
+[13:17:48] [modloading-worker-0/DEBUG] [io.ne.bu.ByteBufUtil/]: -Dio.netty.maxThreadLocalCharBufferSize: 16384
+[13:17:48] [modloading-worker-0/DEBUG] [ne.ne.fm.ja.AutomaticEventSubscriber/LOADING]: Subscribing method private static void net.neoforged.neoforge.network.filters.GenericPacketSplitter.register(net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent) to the event bus of mod neoforge
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loading configs type CLIENT
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.ne.co.NeoForgeMod/FORGEMOD]: Loaded NeoForge config file neoforge-client.toml
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-client.toml
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-client.toml for changes
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loading configs type COMMON
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\automated_minecraft_bots-common.toml
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\automated_minecraft_bots-common.toml for changes
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.ne.co.NeoForgeMod/FORGEMOD]: Loaded NeoForge config file neoforge-common.toml
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-common.toml
+[13:17:48] [modloading-sync-worker/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-common.toml for changes
+[13:17:48] [Render thread/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[13:17:48] [Render thread/INFO] [minecraft/Minecraft]: Setting user: Dev
+[13:17:48] [Render thread/INFO] [minecraft/Minecraft]: Backend library: LWJGL version 3.3.3+5
+[13:17:48] [Render thread/INFO] [minecraft/Minecraft]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+[13:17:49] [Render thread/INFO] [minecraft/ReloadableResourceManager]: Reloading ResourceManager: vanilla, mod_resources, mod/automated_minecraft_bots, mod/neoforge
+[13:17:49] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: HELLO FROM COMMON SETUP
+[13:17:49] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: DIRT BLOCK >> minecraft:dirt
+[13:17:49] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: The magic number is... 42
+[13:17:49] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: ITEM >> minecraft:iron_ingot
+[13:17:49] [Render thread/DEBUG] [ne.ne.fm.DeferredWorkQueue/LOADING]: Dispatching synchronous work for work queue Common setup: 1 jobs
+[13:17:49] [Render thread/DEBUG] [ne.ne.fm.DeferredWorkQueue/LOADING]: Synchronous work queue completed in 10.97 ms
+[13:17:49] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_all_no_pua-17.0.01.hex, loading
+[13:17:49] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_pua-17.0.01.hex, loading
+[13:17:49] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: HELLO FROM CLIENT SETUP
+[13:17:49] [resourceLoad/INFO] [co.sh.au.AutomatedMinecraftBots/]: MINECRAFT NAME >> Dev
+[13:17:49] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_jp_patch-17.0.01.hex, loading
+[13:17:51] [resourceLoad/WARN] [minecraft/ModelManager]: Missing model for variant: 'Block{automated_minecraft_bots:example_block}'
+[13:17:51] [Render thread/INFO] [mojang/Library]: OpenAL initialized on device OpenAL Soft on Speakers (Razer Kraken Ultimate)
+[13:17:51] [Render thread/INFO] [minecraft/SoundEngine]: Sound engine started
+[13:17:51] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[13:17:51] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[13:17:51] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[13:17:51] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[13:17:51] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[13:17:51] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x2048x4 minecraft:textures/atlas/blocks.png-atlas
+[13:17:52] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[13:17:52] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[13:17:52] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[13:17:52] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
+[13:17:52] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
+[13:17:52] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[13:17:52] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[13:17:52] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
+[13:17:52] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[13:17:52] [Render thread/WARN] [minecraft/ModelManager]: No model loaded for default item model ID automated_minecraft_bots:example_block of automated_minecraft_bots:example_block
+[13:17:52] [Render thread/INFO] [ne.ne.ne.cl.en.an.js.AnimationLoader/]: Loaded 0 entity animations
+[13:17:52] [Render thread/DEBUG] [ne.ne.fm.cl.tr.ClassTransformStatistics/]: Transformed/total loaded classes: 382/7149 (5.34%) and 5 parsed for mixin
+[13:17:58] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[13:17:59] [Worker-Main-1/INFO] [co.sh.au.AutomatedMinecraftBots/]: Registered AMB commands
+[13:18:00] [Render thread/INFO] [minecraft/RecipeManager]: Loaded 1470 recipes
+[13:18:00] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 1584 advancements
+[13:18:00] [Render thread/INFO] [ne.ne.ne.co.cr.RecipePriorityManager/]: Loaded 0 recipe priority overrides
+[13:18:00] [Render thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
+[13:18:00] [Server thread/INFO] [minecraft/IntegratedServer]: Starting integrated minecraft server version 1.21.11
+[13:18:00] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[13:18:00] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loading configs type SERVER
+[13:18:00] [Server thread/DEBUG] [ne.ne.ne.co.NeoForgeMod/FORGEMOD]: Loaded NeoForge config file neoforge-server.toml
+[13:18:00] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Loaded TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-server.toml
+[13:18:00] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Watching TOML config file G:\Automated_Minecraft_Bots\run\config\neoforge-server.toml for changes
+[13:18:01] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 0 persistent chunks...
+[13:18:01] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[13:18:01] [Render thread/DEBUG] [io.ne.ch.MultithreadEventLoopGroup/]: -Dio.netty.eventLoopThreads: 64
+[13:18:01] [Render thread/DEBUG] [io.ne.ut.co.GlobalEventExecutor/]: -Dio.netty.globalEventExecutor.quietPeriodSeconds: 1
+[13:18:01] [Render thread/DEBUG] [io.ne.ut.in.PlatformDependent/]: org.jctools-core.MpscChunkedArrayQueue: available
+[13:18:01] [Render thread/DEBUG] [io.ne.ch.DefaultChannelId/]: -Dio.netty.processId: 46544 (auto-detected)
+[13:18:01] [Render thread/DEBUG] [io.ne.ut.NetUtil/]: -Djava.net.preferIPv4Stack: false
+[13:18:01] [Render thread/DEBUG] [io.ne.ut.NetUtil/]: -Djava.net.preferIPv6Addresses: system
+[13:18:01] [Render thread/DEBUG] [io.ne.ut.NetUtilInitializations/]: Loopback interface: loopback_0 (Software Loopback Interface 1, 0:0:0:0:0:0:0:1)
+[13:18:01] [Render thread/DEBUG] [io.ne.ut.NetUtil/]: Failed to get SOMAXCONN from sysctl and file \proc\sys\net\core\somaxconn. Default: 200
+[13:18:01] [Render thread/DEBUG] [io.ne.ch.DefaultChannelId/]: -Dio.netty.machineId: 2c:f0:5d:ff:fe:0e:bf:b1 (auto-detected)
+[13:18:01] [Render thread/DEBUG] [io.ne.bo.ChannelInitializerExtensions/]: -Dio.netty.bootstrap.extensions: null
+[13:18:01] [Netty Local IO #1/DEBUG] [ne.ne.ne.ne.fi.NetworkFilters/]: Injected net.neoforged.neoforge.network.filters.GenericPacketSplitter@63f273e7 into net.minecraft.network.Connection@3a1686e0
+[13:18:01] [Netty Local IO #0/DEBUG] [ne.ne.ne.ne.fi.NetworkFilters/]: Injected net.neoforged.neoforge.network.filters.GenericPacketSplitter@733c9b4e into net.minecraft.network.Connection@2a9a91e3
+[13:18:01] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 49 chunks for player spawn...
+[13:18:01] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
+[13:18:01] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
+[13:18:01] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Time elapsed: 884 ms
+[13:18:02] [Netty Local IO #1/DEBUG] [ne.ne.ne.ne.fi.NetworkFilters/]: Injected net.neoforged.neoforge.network.filters.GenericPacketSplitter@4c6a6fdb into net.minecraft.network.Connection@3a1686e0
+[13:18:02] [Server thread/INFO] [minecraft/PlayerList]: Dev[local:E:10db9cb2] logged in with entity id 1 at (3.163249122649735, 56.0625, 2.9129242729342884)
+[13:18:02] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/]: Sending 0 recipes of the following types: []
+[13:18:02] [Server thread/INFO] [minecraft/MinecraftServer]: Dev joined the game
+[13:18:02] [Server thread/INFO] [minecraft/IntegratedServer]: Changing view distance to 16, from 10
+[13:18:02] [Server thread/INFO] [minecraft/IntegratedServer]: Changing simulation distance to 12, from 0
+[13:18:02] [Render thread/WARN] [minecraft/ClientPacketListener]: Ignoring chat session from Dev due to missing Services public key
+[13:18:02] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 78 advancements
+[13:18:03] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[13:18:03] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[13:18:03] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[13:18:03] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[13:18:03] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[13:18:03] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 8.
+[13:18:03] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[13:18:04] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[13:18:04] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[13:18:04] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
+[13:18:04] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
+[13:18:05] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
 [AMB] Created FakePlayer bot: beavis
 [AMB] beavis brain set to ON
 [AMB] Spawned FakePlayer bot: beavis in group: grok (brain: ON)
 [AMB] beavis brain set to ON
-[10:24:44] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned beavis (grok) - FakePlayer mode]
+[13:18:18] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned beavis (grok) - FakePlayer mode]
 [AMB] Spawned FakePlayer bot: beavis (LLM: grok)
-[10:24:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned beavis (grok) - FakePlayer mode
+[13:18:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned beavis (grok) - FakePlayer mode
 [AMB] Loading config for bot: beavis using LLM: grok
-[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 84
-[AMB] beavis thinking at position: -2,56,7
-[AMB] ? SUCCESSFULLY EXTRACTED CONTENT (Grok): {"actions":[{"type":"set_goal","goal":"gather_wood","minutes":3}]}
-[10:24:45] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[AMB] beavis received LLM response, executing plan...
-[AMB] beavis starting task: gather_wood
-[AMB] beavis task set to: gather_wood for 3 minutes
-[10:24:45] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:24:47] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:24:47] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:24:48] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:24:48] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:24:49] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 58.5, -0.5 (dist: 9.3)
-[10:24:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 58.5, -0.5 (dist: 9.3)
-[10:24:50] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:24:50] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:24:52] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:24:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:24:53] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:24:53] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:24:54] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 10.6)
-[10:24:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 10.6)
-[10:24:55] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:24:55] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:24:56] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:24:56] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:24:58] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:24:58] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:24:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 10.6)
-[10:24:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 10.6)
-[10:24:59] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:24:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:01] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:01] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:03] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:03] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 57.5, -0.5 (dist: 7.5)
-[10:25:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 57.5, -0.5 (dist: 7.5)
-[10:25:04] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:06] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:07] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:07] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 7.4)
-[10:25:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 7.4)
-[10:25:09] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:10] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:10] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:12] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:12] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:14] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 7.5)
-[10:25:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 7.5)
-[10:25:15] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:15] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:17] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:17] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:18] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:19] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 6.2)
-[10:25:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 6.2)
-[10:25:20] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:21] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:21] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:23] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:23] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 6.2)
-[10:25:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 6.2)
-[10:25:24] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:26] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:26] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:28] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:28] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 6.5)
-[10:25:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 6.5)
-[10:25:29] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:31] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:31] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:32] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:32] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:34] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 6.7)
-[10:25:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 56.5, -0.5 (dist: 6.7)
-[10:25:35] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:35] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:37] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:37] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:38] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:38] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:39] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Moving to: 2.5, 57.5, -0.5 (dist: 6.6)
-[10:25:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Moving to: 2.5, 57.5, -0.5 (dist: 6.6)
-[10:25:40] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:40] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
-[10:25:42] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Found escape route, jumping out!
-[10:25:42] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Found escape route, jumping out!
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[AMB] Created FakePlayer bot: butthead
+[AMB] butthead brain set to ON
+[AMB] Spawned FakePlayer bot: butthead in group: gemini (brain: ON)
+[AMB] butthead brain set to ON
+[13:18:25] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned butthead (gemini) - FakePlayer mode]
+[AMB] Spawned FakePlayer bot: butthead (LLM: gemini)
+[13:18:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned butthead (gemini) - FakePlayer mode
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[AMB] Bot appears stuck at BlockPos{x=-11, y=56, z=8} - Attempting jump escape
+[AMB] Created FakePlayer bot: cornholio
+[AMB] cornholio brain set to ON
+[AMB] Spawned FakePlayer bot: cornholio in group: openai (brain: ON)
+[AMB] cornholio brain set to ON
+[13:18:34] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned cornholio (openai) - FakePlayer mode]
+[AMB] Spawned FakePlayer bot: cornholio (LLM: openai)
+[13:18:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned cornholio (openai) - FakePlayer mode
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:18:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[AMB] Bot appears stuck at BlockPos{x=-11, y=56, z=8} - Attempting jump escape
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[AMB] Bot appears stuck at BlockPos{x=-11, y=56, z=8} - Attempting jump escape
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:18:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] beavis brain: ON Γ£ô
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:19:12] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[13:19:12] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 planks from 1 logs
+[13:19:12] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 4 sticks from planks
+[13:19:12] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[13:19:12] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 planks from 1 logs
+[13:19:12] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 4 sticks from planks
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 8 planks from 2 logs
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted crafting table! Need to place it to craft tools.
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 8 planks from 2 logs
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted crafting table! Need to place it to craft tools.
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Crafted 8 planks from 2 logs
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Crafted 4 sticks from planks
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Crafted crafting table! Need to place it to craft tools.
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Crafted 8 planks from 2 logs
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Crafted 4 sticks from planks
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Crafted crafting table! Need to place it to craft tools.
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Picked up 3 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Picked up 2 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Crafted 8 planks from 2 logs
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Crafted 4 sticks from planks
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Crafted crafting table! Need to place it to craft tools.
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Picked up 3 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Picked up 2 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Crafted 8 planks from 2 logs
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Crafted 4 sticks from planks
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Crafted crafting table! Need to place it to craft tools.
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Picked up 1 Oak Log
+[13:19:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Crafted 8 planks from 2 logs
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Picked up 1 Oak Log
+[13:19:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Crafted 8 planks from 2 logs
+[13:19:14] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Picked up 1 Oak Log
+[13:19:14] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Picked up 1 Oak Log
+[13:19:14] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Picked up 1 Oak Log
+[13:19:14] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Crafted 8 planks from 2 logs
+[13:19:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Picked up 1 Oak Log
+[13:19:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Picked up 1 Oak Log
+[13:19:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Picked up 1 Oak Log
+[13:19:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Crafted 8 planks from 2 logs
+[13:19:14] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Picked up 4 Oak Log
+[13:19:14] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Picked up 2 Oak Log
+[13:19:14] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Crafted 8 planks from 2 logs
+[13:19:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Picked up 4 Oak Log
+[13:19:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Picked up 2 Oak Log
+[13:19:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Crafted 8 planks from 2 logs
+[13:19:14] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:19:15] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:19:15] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:19:18] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:18] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Squad vote complete ΓÇö we're building a base together!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:19:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:19:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Squad vote complete ΓÇö we're building a base together!
+[13:19:19] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:19:20] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:19:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:19:23] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:23] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:19:24] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:19:25] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:19:25] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Squad vote complete ΓÇö we're building a base together!
+[13:19:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:19:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Squad vote complete ΓÇö we're building a base together!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:19:28] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:28] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:19:29] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:19:30] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:19:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:19:33] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:33] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:19:34] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:34] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Squad vote complete ΓÇö we're building a base together!
+[13:19:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:19:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Squad vote complete ΓÇö we're building a base together!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:19:35] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:19:35] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:19:38] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:38] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:19:39] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:19:40] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:19:40] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:19:43] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:43] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:19:44] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:19:45] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:19:45] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:19:48] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:48] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:19:49] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:19:50] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:19:50] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:19:53] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:53] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:19:54] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:19:55] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:19:55] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:19:58] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:19:58] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:19:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening beavis's inventory
+[13:19:59] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:19:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:20:00] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:00] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:20:03] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:03] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:20:04] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:20:05] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:05] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:20:08] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:08] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:20:09] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:20:10] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening butthead's inventory
+[13:20:10] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:10] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:20:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:20:14] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:20:15] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:15] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:20:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening cornholio's inventory
+[13:20:18] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:18] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Squad vote complete ΓÇö we're building a base together!
+[13:20:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:20:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Squad vote complete ΓÇö we're building a base together!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:20:19] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:20:20] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:20:23] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:23] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:20:24] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:20:25] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:25] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Squad vote complete ΓÇö we're building a base together!
+[13:20:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:20:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Squad vote complete ΓÇö we're building a base together!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:20:28] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:28] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:20:29] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:20:30] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:20:33] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:33] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:20:34] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:34] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Squad vote complete ΓÇö we're building a base together!
+[13:20:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:20:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Squad vote complete ΓÇö we're building a base together!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:20:35] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:35] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:20:38] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:38] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:20:39] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:20:40] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:40] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:20:43] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:43] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:20:44] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:20:45] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:45] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:20:48] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:48] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:20:49] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:20:50] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:50] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:20:53] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:53] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:20:54] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:54] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:20:55] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:20:55] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:20:58] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:20:58] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:20:59] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:20:59] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:21:00] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:21:00] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:21:03] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:21:03] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:21:04] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:21:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:21:05] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:21:05] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:21:08] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:21:08] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:21:09] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:21:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:21:10] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:21:10] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:21:13] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:21:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:21:14] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:21:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:21:15] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:21:15] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:21:18] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:21:18] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Squad vote complete ΓÇö we're building a base together!
+[13:21:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:21:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Squad vote complete ΓÇö we're building a base together!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:21:19] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:21:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:21:20] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:21:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:21:23] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:21:23] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:21:24] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:21:24] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:21:25] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:21:25] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Squad vote complete ΓÇö we're building a base together!
+[13:21:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:21:25] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Squad vote complete ΓÇö we're building a base together!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
+[13:21:28] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:21:28] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: beavis using LLM: grok
+[AMB] Grok - Model: grok-4-1-fast-reasoning, Key length: 0
+[13:21:29] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:21:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:21:30] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:21:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[13:21:33] [Server thread/INFO] [minecraft/MinecraftServer]: <beavis> Need to place crafting table to craft tools!
+[13:21:33] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <beavis> Need to place crafting table to craft tools!
+[13:21:34] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:21:34] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Squad vote complete ΓÇö we're building a base together!
+[13:21:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:21:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Squad vote complete ΓÇö we're building a base together!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[13:21:35] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:21:35] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: butthead using LLM: gemini
+[AMB] Gemini - Model: gemini-2.5-flash, Key length: 0
 [AMB] Removing bot: beavis
-[10:25:42] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: beavis]
+[13:21:36] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: beavis]
 [AMB] Bot removed: beavis
-[10:25:42] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: beavis
-[10:25:44] [Server thread/INFO] [minecraft/IntegratedServer]: Saving and pausing game...
-[10:25:44] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
-[10:25:44] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
-[10:25:44] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
-[10:25:44] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
-[10:25:45] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Dev lost connection: Disconnected
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: Dev left the game
-[10:25:45] [Server thread/INFO] [minecraft/ServerCommonPacketListenerImpl]: Stopping singleplayer server as player logged out
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
-[10:25:45] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (New World): All chunks are saved
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
-[10:25:45] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
-[10:25:45] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Unloading configs type SERVER
-[10:25:47] [Render thread/DEBUG] [ne.ne.fm.cl.tr.ClassTransformStatistics/]: Transformed/total loaded classes: 419/8748 (4.79%) and 5 parsed for mixin
-[10:25:47] [Render thread/INFO] [minecraft/Minecraft]: Stopping!
+[13:21:36] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: beavis
+[13:21:39] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:21:39] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[13:21:40] [Server thread/INFO] [minecraft/MinecraftServer]: <butthead> Need to place crafting table to craft tools!
+[13:21:40] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <butthead> Need to place crafting table to craft tools!
+[AMB] Removing bot: butthead
+[13:21:42] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: butthead]
+[AMB] Bot removed: butthead
+[13:21:42] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: butthead
+[13:21:44] [Server thread/INFO] [minecraft/MinecraftServer]: <cornholio> Need to place crafting table to craft tools!
+[13:21:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] <cornholio> Need to place crafting table to craft tools!
+[AMB] Loading config for bot: cornholio using LLM: openai
+[AMB] OpenAI - Model: gpt-4o-mini, Key length: 0
+[AMB] Tried env fallback, Key length: 0
+[AMB] Removing bot: cornholio
+[13:21:49] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: cornholio]
+[AMB] Bot removed: cornholio
+[13:21:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: cornholio
+[13:21:52] [Server thread/INFO] [minecraft/IntegratedServer]: Saving and pausing game...
+[13:21:52] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[13:21:52] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[13:21:52] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[13:21:52] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
+[13:21:53] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Dev lost connection: Disconnected
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: Dev left the game
+[13:21:53] [Server thread/INFO] [minecraft/ServerCommonPacketListenerImpl]: Stopping singleplayer server as player logged out
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[13:21:53] [Server thread/DEBUG] [ne.ne.ne.co.CommonHooks/WP]: Gathered mod list to write to world save New World
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (New World): All chunks are saved
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[13:21:53] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+[13:21:53] [Server thread/DEBUG] [ne.ne.fm.co.ConfigTracker/CONFIG]: Unloading configs type SERVER
+[13:21:54] [Render thread/DEBUG] [ne.ne.fm.cl.tr.ClassTransformStatistics/]: Transformed/total loaded classes: 421/8781 (4.79%) and 5 parsed for mixin
+[13:21:54] [Render thread/INFO] [minecraft/Minecraft]: Stopping!
