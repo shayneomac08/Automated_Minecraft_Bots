@@ -65,14 +65,13 @@ public class AmbNpcEntity extends FakePlayer {
 
     // Navigation optimization
     private int pathCooldown = 0;
-    private int stuckTimer = 0;
-    private int stuckCheckTimer = 0; // For smart unstick system
-    private BlockPos lastPos = BlockPos.ZERO;
     private int obstacleAvoidanceCooldown = 0;
     private Vec3 avoidanceDirection = null;
 
-    // FakePlayer-safe jump cooldown (USER MANDATE LEVEL 10)
+    // CALMER FAKEPLAYER-ONLY UNSTICK SYSTEM
+    private int stuckTimer = 0;
     private int jumpCooldown = 0;
+    private BlockPos lastStablePos = BlockPos.ZERO;
 
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
@@ -207,26 +206,10 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         super.tick(); // FakePlayer tick - handles inventory, movement, etc.
 
-        // ===== FAKEPLAYER-SAFE JUMP COOLDOWN FIX (USER MANDATE LEVEL 10) =====
-        attemptSafeUnstick();
+        // ===== CALMER FAKEPLAYER-ONLY UNSTICK SYSTEM =====
+        attemptCalmUnstick();
 
         if (!brainEnabled) return;
-
-        // ===== OPTIMIZED STUCK RECOVERY + INTELLIGENT ESCAPE =====
-        stuckTimer++;
-        if (stuckTimer > 30 && blockPosition().distSqr(lastPos) < 0.5) {
-            // Try to escape intelligently
-            boolean escaped = attemptEscapeFromHole();
-
-            if (!escaped && onGround()) {
-                // If still stuck, jump using proper player jump
-                jumpFromGround();
-                broadcastGroupChat("Jumping to escape!");
-            }
-
-            stuckTimer = 0;
-        }
-        lastPos = blockPosition();
 
         // ===== AUTO JUMP WHEN OBSTACLE IN FRONT =====
         // Only jump if not on cooldown to prevent spam
@@ -234,9 +217,6 @@ public class AmbNpcEntity extends FakePlayer {
             jumpFromGround();
             pathCooldown = 15; // Set cooldown after collision jump
         }
-
-        // ===== SMART JUMP AND UNSTICK SYSTEM =====
-        attemptSmartJumpAndUnstick();
 
         // ===== FEATURE 2: AUTO DOOR OPENING =====
         attemptOpenDoors();
@@ -294,50 +274,29 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== MOVEMENT CONTROL ====================
 
     /**
-     * FakePlayer-safe unstick with proper jump cooldown (USER MANDATE LEVEL 10)
-     * Uses real player jump field to prevent looking like idiots
+     * CALMER FAKEPLAYER-ONLY UNSTICK SYSTEM
+     * Waits 4 full seconds before jumping, 3-second cooldown to prevent spam
      */
-    private void attemptSafeUnstick() {
+    private void attemptCalmUnstick() {
         if (jumpCooldown > 0) {
             jumpCooldown--;
             return;
         }
 
-        if (blockPosition().equals(lastPos)) {  // stuck in same spot
-            this.jumping = true;                // real player jump field
-            jumpCooldown = 25;                  // ~1.25 seconds cooldown so they stop looking like idiots
-            if (random.nextInt(3) == 0) {
-                broadcastGroupChat("Ugh, got stuck again — hopping free!");
-            }
-        }
-        lastPos = blockPosition();
-    }
-
-    /**
-     * Smart jump and unstick system - FakePlayer compatible
-     * Detects when bot is stuck and helps it get free
-     */
-    private void attemptSmartJumpAndUnstick() {
-        stuckCheckTimer++;
-
-        // Check if we're stuck (not moving for a while)
-        if (horizontalCollision || stuckCheckTimer > 35) {
-            if (onGround()) {
-                // FakePlayer-safe jump
-                jumpFromGround();
-
-                // Add a small random direction change to help escape
-                if (moveTarget != null) {
-                    double offsetX = (random.nextDouble() - 0.5) * 2.0;
-                    double offsetZ = (random.nextDouble() - 0.5) * 2.0;
-                    moveTarget = moveTarget.add(offsetX, 0, offsetZ);
+        stuckTimer++;
+        if (stuckTimer > 80) {  // 4 full seconds of no movement
+            double moved = blockPosition().distSqr(lastStablePos);
+            if (moved < 1.0) {  // barely moved at all
+                this.jumping = true;           // real player jump
+                jumpCooldown = 60;             // 3-second cooldown so they calm down
+                stuckTimer = 0;
+                if (random.nextInt(3) == 0) {
+                    broadcastGroupChat("Ugh... stuck again. Hopping free!");
                 }
-
-                if (random.nextInt(4) == 0) {
-                    broadcastGroupChat("Ugh, got stuck again — jumping free!");
-                }
+            } else {
+                lastStablePos = blockPosition();
+                stuckTimer = 0;
             }
-            stuckCheckTimer = 0;
         }
     }
 
