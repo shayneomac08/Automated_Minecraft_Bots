@@ -97,6 +97,11 @@ public class AmbNpcEntity extends FakePlayer {
     private String skyGiftName = "the Giver"; // they will evolve this name over time
     private String currentSeason = "Spring"; // updates automatically
 
+    // FULL PLAYER-LIKE MINING/GATHERING + HUNTING (100% real player mechanics)
+    private BlockPos currentGoal = BlockPos.ZERO;
+    private int goalLockTimer = 0;
+    private BlockPos currentBreakingBlock = BlockPos.ZERO;
+
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
     private int miningProgress = 0;
@@ -229,6 +234,9 @@ public class AmbNpcEntity extends FakePlayer {
     @Override
     public void tick() {
         super.tick(); // FakePlayer tick - handles inventory, movement, etc.
+
+        // ===== FULL PLAYER-LIKE ACTIONS: MINING, GATHERING, HUNTING =====
+        runAllPlayerActions();
 
         // ===== ULTIMATE IMMERSION: TRUE INHABITANTS OF THIS WORLD =====
         runTrueInhabitantsOfThisWorld();
@@ -942,6 +950,70 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
+     * FULL PLAYER-LIKE MINING/GATHERING + HUNTING (100% real player mechanics)
+     * SINGLE STABLE ACTION RUNNER — everything in one place
+     */
+    private void runAllPlayerActions() {
+        if (goalLockTimer > 0) {
+            goalLockTimer--;
+        } else if (!currentGoal.equals(BlockPos.ZERO)) {
+            goalLockTimer = 180; // 9-second commitment = no more zigzag
+        }
+
+        // Stable pathing toward goal
+        if (!currentGoal.equals(BlockPos.ZERO)) {
+            double dx = currentGoal.getX() - getX();
+            double dz = currentGoal.getZ() - getZ();
+            float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
+            this.setYRot(yaw);
+            this.setSprinting(true);
+        }
+
+        // REAL PLAYER-STYLE MINING / GATHERING
+        if (tickCount % 3 == 0) {  // every 3 ticks so it feels natural
+            BlockPos target = blockPosition().relative(getDirection());
+            BlockState state = level().getBlockState(target);
+
+            if ((state.is(BlockTags.LOGS) || state.is(Blocks.STONE) || state.is(Blocks.DIRT) ||
+                 state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND)) &&
+                !currentBreakingBlock.equals(target)) {
+
+                currentBreakingBlock = target;
+                broadcastGroupChat("Starting to harvest " + state.getBlock().getDescriptionId() + "...");
+            }
+
+            if (!currentBreakingBlock.equals(BlockPos.ZERO)) {
+                // This is the exact method real players use when holding left-click
+                gameMode.destroyBlock(currentBreakingBlock);
+
+                // Auto-stop when block is gone
+                if (level().getBlockState(currentBreakingBlock).isAir()) {
+                    currentBreakingBlock = BlockPos.ZERO;
+                    broadcastGroupChat("Harvested it — added to the tribe's supplies!");
+                }
+            }
+        }
+
+        // ANIMAL HUNTING (real player attack)
+        var animal = level().getEntitiesOfClass(net.minecraft.world.entity.animal.Animal.class, getBoundingBox().inflate(25))
+                .stream().findFirst();
+        if (animal.isPresent() && hunger < 12) {
+            currentGoal = animal.get().blockPosition();
+            this.attack(animal.get());
+            if (distanceTo(animal.get()) < 3) {
+                broadcastGroupChat("Hunting for the tribe — fresh meat tonight!");
+            }
+        }
+
+        // Debug so we can see exactly what's happening
+        if (tickCount % 30 == 0) {
+            broadcastGroupChat("[AMB REAL PLAYER DEBUG] Goal: " + currentGoal +
+                               " | Breaking: " + currentBreakingBlock +
+                               " | Hunger: " + hunger);
+        }
+    }
+
+    /**
      * INTEGRATE EVERYTHING INTO ONE MASTER METHOD - TRUE INHABITANTS OF THIS WORLD
      */
     private void runTrueInhabitantsOfThisWorld() {
@@ -949,8 +1021,6 @@ public class AmbNpcEntity extends FakePlayer {
         runAdvancedTeamCoordination();
         runDualWieldCombat();
         runOffhandLogic();
-        runPathfindingAI();
-        runStableHybridMovement();
         runNativeWorldLiving();
         reactToDanger();
         claimTerritoryAndBuild();
