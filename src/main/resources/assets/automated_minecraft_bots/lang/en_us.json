@@ -1,0 +1,13 @@
+{
+  "itemGroup.automated_minecraft_bots": "Example Mod Tab",
+  "block.automated_minecraft_bots.example_block": "Example Block",
+  "item.automated_minecraft_bots.example_item": "Example Item",
+
+  "automated_minecraft_bots.configuration.title": "Automated_Minecraft_Bots Configs",
+  "automated_minecraft_bots.configuration.section.automated_minecraft_bots.common.toml": "Automated_Minecraft_Bots Configs",
+  "automated_minecraft_bots.configuration.section.automated_minecraft_bots.common.toml.title": "Automated_Minecraft_Bots Configs",
+  "automated_minecraft_bots.configuration.items": "Item List",
+  "automated_minecraft_bots.configuration.logDirtBlock": "Log Dirt Block",
+  "automated_minecraft_bots.configuration.magicNumberIntroduction": "Magic Number Text",
+  "automated_minecraft_bots.configuration.magicNumber": "Magic Number"
+}

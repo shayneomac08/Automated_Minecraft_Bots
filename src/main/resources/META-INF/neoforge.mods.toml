@@ -1,0 +1,24 @@
+license="All Rights Reserved"
+
+[[mods]]
+modId="automated_minecraft_bots"
+version="${file.jarVersion}"
+displayName="Automated_Minecraft_Bots"
+authors="shayneomac08"
+description='''
+Fully automated AI powered bots for Minecraft exploration, survival, basic and advanced living, and thriving. Societies will be built, civilization will thrive. Or, they could all just get wiped out repeatedly. It's totally their call.
+'''
+
+[[dependencies.automated_minecraft_bots]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neo_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.automated_minecraft_bots]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
