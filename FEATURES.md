@@ -38,25 +38,29 @@ This file lists the active, supported features. For detailed developer notes, te
 
 ## Recent Updates
 
-### Final Master Method - Real Cracking Animation (Latest)
+### Final Calm & Human - Smooth Movement (Latest)
 **Status**: ✅ Implemented and tested
 
 **New Features**:
-- **Real Cracking Animation**: Mining now uses correct timing (every 4 ticks) for authentic block-breaking visuals
+- **Permanent No-Dirt Particles**: `spawnSprintParticle()` override prevents all sprint particles
+- **Completely Silent**: `getSoundVolume()` returns 0.0F, `isSilent()` returns true, no step sounds
+- **Smooth Human Movement**: Yaw updates only every 8 ticks with natural sway (±2 degrees)
+- **15-Second Calm Commitment**: Goal lock timer increased to 300 ticks for more deliberate movement
+- **Real Cracking Animation**: Mining uses correct timing (every 4 ticks) for authentic block-breaking visuals
 - **Mining Lock**: 80-tick movement lock while mining for realistic player behavior
-- **Mining Announcements**: Bots announce what they're mining ("Starting to mine block.oak_log...")
 - **Auto-Equip on Pickup**: Tools automatically equipped every 20 ticks (1 second)
-- **Single Shared Crafting Table**: Simplified memory system with `knownCraftingTable` field
 - **Enhanced Ore Mining**: Detects and mines all ore types (coal, iron, copper, redstone, gold, lapis, diamond)
 - **Visible Hands**: Always-visible tool display with priority (axe > pickaxe > sword)
 
 **Technical Details**:
+- Yaw update interval: Every 8 ticks (0.4 seconds) with random sway
+- Goal lock: 300 ticks (15 seconds) for calm, deliberate movement
 - Mining check interval: Every 4 ticks (0.2 seconds) for proper cracking animation
 - Movement lock: 80 ticks (4 seconds) while actively mining
 - Tool equip check: Every 20 ticks (1 second)
 - Uses `gameMode.destroyBlock()` for FakePlayer-safe mining
-- Single `knownCraftingTable` BlockPos instead of Set for simplicity
 - 100% FakePlayer-safe implementation
+- No visual or audio pollution (silent, no particles)
 
 ---
 

@@ -107,6 +107,7 @@ public class AmbNpcEntity extends FakePlayer {
     private int toolEquipTimer = 0;
     private int visionScanTimer = 0;
     private int equipmentSyncTicker = 0;
+    private int yawUpdateTimer = 0; // for smooth human-like movement
 
     // MEMORY SYSTEMS - ULTIMATE LIVING TRIBE
     private final Set<BlockPos> knownCraftingTables = new HashSet<>();
@@ -226,6 +227,7 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     // ==================== FAKEPLAYER OVERRIDES ====================
+    // FINAL CALM & HUMAN - PERMANENT NO-DIRT + SILENT MOVEMENT
 
     @Override
     public boolean isSilent() {
@@ -238,21 +240,21 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     @Override
+    public void spawnSprintParticle() {
+        // No sprint particles (dirt/grass particles)
+    }
+
+    @Override
+    public float getSoundVolume() {
+        return 0.0F; // Completely silent
+    }
+
+    @Override
     public void playSound(SoundEvent sound, float volume, float pitch) {
         // Only play hurt/death sounds
         if (sound == SoundEvents.PLAYER_HURT || sound == SoundEvents.PLAYER_DEATH) {
             super.playSound(sound, volume, pitch);
         }
-    }
-
-    @Override
-    public float getSoundVolume() {
-        return 0.0f; // Silent
-    }
-
-    @Override
-    protected void spawnSprintParticle() {
-        // No sprint particles
     }
 
     // ==================== LIFECYCLE METHODS ====================
@@ -1045,7 +1047,7 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * FINAL MASTER METHOD — REAL CRACKING ANIMATION + VISIBLE HANDS + MINING LOCK + PICKUP EQUIP
+     * FINAL CALM & HUMAN MASTER METHOD — PERMANENT NO-DIRT + SMOOTH MOVEMENT
      * 100% FakePlayer-safe: mining lock, crafting table placement, role on spawn, always visible hands
      */
     private void runAllPlayerActions() {
@@ -1061,18 +1063,20 @@ public class AmbNpcEntity extends FakePlayer {
         }
 
         if (goalLockTimer > 0) goalLockTimer--;
-        else if (!currentGoal.equals(BlockPos.ZERO)) goalLockTimer = 200;
+        else if (!currentGoal.equals(BlockPos.ZERO)) goalLockTimer = 300; // 15-second calm commitment
 
-        // Stable movement
-        if (!currentGoal.equals(BlockPos.ZERO)) {
+        // SMOOTH HUMAN MOVEMENT — yaw only every 8 ticks with natural sway
+        yawUpdateTimer++;
+        if (yawUpdateTimer > 8 && !currentGoal.equals(BlockPos.ZERO)) {
             double dx = currentGoal.getX() - getX();
             double dz = currentGoal.getZ() - getZ();
             float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
-            this.setYRot(yaw);
+            this.setYRot(yaw + (random.nextFloat() * 4 - 2)); // subtle human sway
             this.setSprinting(true);
+            yawUpdateTimer = 0;
         }
 
-        // ALWAYS VISIBLE HANDS + AUTO-EQUIP ON PICKUP
+        // ALWAYS VISIBLE HANDS
         toolEquipTimer++;
         if (toolEquipTimer > 20) {
             if (getInventory().countItem(Items.WOODEN_AXE) > 0 && !getMainHandItem().is(Items.WOODEN_AXE)) {
@@ -1085,8 +1089,8 @@ public class AmbNpcEntity extends FakePlayer {
             toolEquipTimer = 0;
         }
 
-        // REAL PLAYER MINING WITH CRACKING ANIMATION + LOCK
-        if (tickCount % 4 == 0) {  // correct timing for cracking animation
+        // REAL MINING LOCK + CRACKING
+        if (tickCount % 4 == 0) {
             BlockPos target = blockPosition().relative(getDirection());
             BlockState state = level().getBlockState(target);
             if ((state.is(BlockTags.LOGS) || state.is(Blocks.STONE) || state.is(Blocks.DIRT) ||
@@ -1095,27 +1099,14 @@ public class AmbNpcEntity extends FakePlayer {
                  state.is(Blocks.GOLD_ORE) || state.is(Blocks.LAPIS_ORE) || state.is(Blocks.DIAMOND_ORE)) &&
                 !currentBreakingBlock.equals(target)) {
                 currentBreakingBlock = target;
-                goalLockTimer = 80; // LOCK MOVEMENT while mining (real player feel)
-                broadcastGroupChat("Starting to mine " + state.getBlock().getDescriptionId() + "...");
+                goalLockTimer = 80;
             }
             if (!currentBreakingBlock.equals(BlockPos.ZERO)) {
-                gameMode.destroyBlock(currentBreakingBlock); // real left-click mining with cracking
+                gameMode.destroyBlock(currentBreakingBlock);
                 if (level().getBlockState(currentBreakingBlock).isAir()) {
                     currentBreakingBlock = BlockPos.ZERO;
                     goalLockTimer = 0;
                 }
-            }
-        }
-
-        // CRAFTING TABLE PLACEMENT (single shared one)
-        if (getInventory().countItem(Items.CRAFTING_TABLE) > 0 && knownCraftingTable.equals(BlockPos.ZERO)) {
-            BlockPos placePos = blockPosition().below().relative(getDirection());
-            if (level().getBlockState(placePos).isAir()) {
-                level().setBlock(placePos, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
-                knownCraftingTable = placePos;
-                removeItemFromInventory(Items.CRAFTING_TABLE, 1);
-                broadcastGroupChat("Placing our shared crafting table here for the whole tribe!");
-                goalLockTimer = 40;
             }
         }
 
