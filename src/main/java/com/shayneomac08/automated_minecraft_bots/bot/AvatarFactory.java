@@ -21,7 +21,12 @@ public final class AvatarFactory {
         body.setCustomName(Component.literal(name));
         body.setCustomNameVisible(true);
 
+        // FakePlayers must be added to the entity list to be visible
         level.addFreshEntity(body);
+
+        // Ensure the bot is visible as a normal player
+        body.setInvisible(false);
+
         return body;
     }
 }

@@ -38,7 +38,36 @@ This file lists the active, supported features. For detailed developer notes, te
 
 ## Recent Updates
 
-### Clean Architecture Rebuild - Streamlined FakePlayer (Latest)
+### FakePlayer Visibility Fix (Latest)
+**Status**: ✅ Implemented - Testing Required
+
+**Problem**: Bots were spawning but completely invisible and not moving.
+
+**Root Cause**: FakePlayers extend ServerPlayer and need explicit visibility initialization. While `addFreshEntity()` adds them to the entity list, visibility flags must be set manually.
+
+**Solution Implemented**:
+1. **Constructor Initialization**: Added `setInvisible(false)` and `setInvulnerable(false)` in AmbNpcEntity constructor
+2. **Spawn Enhancement**: Explicitly set `setInvisible(false)` in spawn methods to ensure visibility
+3. **Clean Rendering**: No glow effects or special rendering - bots render as normal players
+
+**Files Modified**:
+- `AmbNpcEntity.java` - Constructor, spawnAtPlayer(), and tick() method
+- `AvatarFactory.java` - spawn() method
+
+**Testing Instructions**:
+1. Run: `./gradlew.bat runClient`
+2. Spawn: `/amb spawn TestBot openai`
+3. **Expected**: Bot appears as normal player with visible nametag, stands still 5 seconds, then moves/mines
+
+**Technical Notes**:
+- FakePlayers don't need custom EntityType or renderer registration
+- They use Minecraft's built-in player rendering system
+- Visibility flags must be explicitly set despite automatic rendering
+- Bots render as normal players with standard player models and skins
+
+---
+
+### Clean Architecture Rebuild - Streamlined FakePlayer
 **Status**: ✅ Implemented and tested - **MAJOR REFACTOR**
 
 **What Changed**:

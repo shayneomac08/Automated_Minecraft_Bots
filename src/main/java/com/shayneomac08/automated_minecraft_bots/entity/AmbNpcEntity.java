@@ -55,6 +55,10 @@ public class AmbNpcEntity extends FakePlayer {
         this.setGameMode(GameType.SURVIVAL);
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
         this.setHealth(20.0F);
+
+        // Make the bot visible and properly initialized
+        this.setInvisible(false);
+        this.setInvulnerable(false);
     }
 
     // ==================== PERMANENT NO DIRT KICKING ====================
@@ -157,7 +161,12 @@ public class AmbNpcEntity extends FakePlayer {
         bot.setYRot(player.getYRot());
         bot.setYHeadRot(player.getYRot());
 
+        // FakePlayers must be added to the entity list to be visible
         level.addFreshEntity(bot);
+
+        // Ensure the bot is visible as a normal player
+        bot.setInvisible(false);
+
         return bot;
     }
 
