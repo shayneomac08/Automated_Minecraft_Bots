@@ -136,7 +136,7 @@ public class RealisticMovement {
         BlockState blockAhead = entity.level().getBlockState(ahead);
         BlockState blockAbove = entity.level().getBlockState(aboveAhead);
 
-        return blockAhead.isSolid() && !blockAbove.isSolid() && entity.onGround();
+        return blockAhead.canOcclude() && !blockAbove.canOcclude() && entity.onGround();
     }
 
     /**
@@ -187,7 +187,7 @@ public class RealisticMovement {
         // Check for cliff (fall > 3 blocks)
         int fallDistance = 0;
         BlockPos checkPos = below;
-        while (fallDistance < 5 && !entity.level().getBlockState(checkPos).isSolid()) {
+        while (fallDistance < 5 && !entity.level().getBlockState(checkPos).canOcclude()) {
             checkPos = checkPos.below();
             fallDistance++;
         }
@@ -270,10 +270,10 @@ public class RealisticMovement {
         BlockState headState = level.getBlockState(head);
 
         // Must have solid ground
-        if (!belowState.isSolid()) return false;
+        if (!belowState.canOcclude()) return false;
 
         // Must have space for body
-        if (feetState.isSolid() || headState.isSolid()) return false;
+        if (feetState.canOcclude() || headState.canOcclude()) return false;
 
         // Avoid lava
         if (feetState.is(Blocks.LAVA) || belowState.is(Blocks.LAVA)) return false;
