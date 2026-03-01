@@ -35,3 +35,9 @@ run/config/automated_minecraft_bots-common.toml
 gradle.properties
 !run/config/.gitignore
 src/main/java/com/shayneomac08/automated_minecraft_bots/automated_minecraft_bots.properties
+
+# Archive/temporary documentation (keep docs minimal in root)
+COMPREHENSIVE_FIX_REPORT.md
+CODE_CHANGES_DETAIL.md
+FIXES_TESTING_GUIDE.md
+API_KEYS_SETUP.md

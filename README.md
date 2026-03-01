@@ -6,14 +6,15 @@ AI-powered autonomous bots for Minecraft using LLM decision-making.
 **Minecraft:** 1.21.1
 **Mod Loader:** NeoForge 21.1.38-beta
 
-## Features
+## Overview
 
-- **LLM-Driven AI** - Bots use Grok API for autonomous decision-making
-- **Real Player Rules** - Enforces crafting tables, tool requirements, mining speeds
-- **Auto-Crafting** - Automatically crafts planks, sticks, and tools from gathered materials
-- **Task System** - Supports gather_wood, mine_stone, build_shelter, explore, hunt_animals, etc.
-- **Chat Commands** - Give bots commands via chat for manual override
-- **Autonomous Problem-Solving** - Bots build scaffolding, adapt strategies when stuck
+Automated Minecraft Bots are LLM-driven FakePlayer entities that behave like real players: they move with player physics, mine with progressive block-breaking, craft using crafting tables, fight, hunt, and coordinate as a group.
+
+## Recent fixes (2026-02-28)
+- Stabilized movement (no zigzagging) with FakePlayer-safe straight-line motion.
+- Replaced instant block destruction with player-like mining (progressive, tool-aware, correct drops).
+- Tool equipping is visible and task-aware.
+- Bots include position info in LLM snapshots and chat messages for better coordination.
 
 ## Quick Start
 
@@ -36,23 +37,17 @@ grok_api_key = "your-api-key-here"
 /amb give <name> <item>     - Give item to bot
 ```
 
-### Chat with Bots
-Just type the bot's name in chat:
-```
-botname, gather wood
-botname, build a shelter
-```
+## Documentation (consolidated)
+Keep the number of markdown files to a minimum. Primary docs are:
+- `CHANGELOG.md` — Version history and recent fixes
+- `FEATURES.md` — Feature list and commands (concise)
+- `README.md` — Quick start and overview
 
-## Documentation
-
-- **CHANGELOG.md** - Version history and recent changes
-- **API_KEYS_SETUP.md** - API key configuration guide
-- **SWEEP.md** - Development guidelines
-- **Debug_console.txt** - Paste game logs here for debugging
+Temporary or developer notes should be archived or consolidated into the above files to avoid clutter.
 
 ## Build
 
-```bash
+```powershell
 ./gradlew clean build
 ```
 

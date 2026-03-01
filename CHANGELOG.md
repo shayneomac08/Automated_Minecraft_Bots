@@ -2,6 +2,17 @@
 
 ## Version 1.0.0 (Current)
 
+### Recent Changes (2026-02-28)
+
+#### HOTFIX: Realistic Player-Like Bot Behavior
+- **FIXED:** Zigzag / jittery movement — bots now use stable straight-line movement with proper FakePlayer physics (gravity, friction, step-up jump behavior) so they move like real players.
+- **FIXED:** Instant block destruction replaced with proper player-like mining: progressive crack animation, mining timing based on block hardness and tool speed, correct item drops, and stat awarding.
+- **FIXED:** Tools now visibly equip in the bot's main hand and switch based on task (axe for wood, pickaxe for stone, sword for combat) with proper client synchronization.
+- **FIXED:** Bots now include position coordinates in status messages and LLM snapshots to improve awareness and coordination.
+- **IMPROVED:** Mining enforces correct tool requirements (bots abort mining and announce required tool instead of destroying blocks without drops).
+
+> Note: Detailed technical notes and testing guides have been consolidated into the main project documentation: `CHANGELOG.md`, `FEATURES.md`, and `README.md`. Additional temporary markdown files were archived to reduce clutter.
+
 ### Recent Changes (2026-02-26)
 
 #### CRITICAL FIX: Human-Like Behavior & Resource Management!
@@ -33,15 +44,7 @@
 
 #### MAJOR FIX: Complete FakePlayer Movement System Overhaul
 - **CRITICAL:** Eliminated ALL FakePlayer incompatible movement code across entire project
-- **FIXED:** Replaced all `setDeltaMovement()` calls with FakePlayer-compatible alternatives:
-  - `BotMovementHelper.java`: Removed 2 incompatible velocity calls, now uses `stopMovement()`
-  - `BotTicker.java`: Removed 4 incompatible velocity calls, now uses `setMoveTarget()` and `stopMovement()`
-  - `ActionExecutor.java`: Removed 1 incompatible velocity call
-- **FIXED:** Replaced all Mob navigation (`getNavigation().moveTo()`) with `setMoveTarget()`:
-  - `BotMovementHelper.java`: Unstick system now uses `setMoveTarget()` instead of navigation
-  - `BotTicker.java`: Shelter seeking now uses `setMoveTarget()` with sprint speed (0.13f)
-  - `BotTicker.java`: Follow system now uses `setMoveTarget()` for proper player movement
-- **FIXED:** Removed Mob-specific combat/targeting code - FakePlayers use task system instead
+- **FIXED:** Replaced problematic movement and navigation with FakePlayer-safe methods and goal-based movement
 - **RESULT:** Bots now move with proper player physics - no more movement conflicts or stuck issues!
 
 #### Previous Fixes
