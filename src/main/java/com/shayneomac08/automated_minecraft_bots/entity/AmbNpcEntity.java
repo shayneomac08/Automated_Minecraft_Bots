@@ -88,6 +88,7 @@ public class AmbNpcEntity extends FakePlayer {
     // GROUP COORDINATION SYSTEM
     private BotRole currentRole = BotRole.GATHERER;
     private String groupLeaderName = "";
+    private boolean roleAnnouncementDone = false;
 
     // HUMAN-LIKE BEHAVIORS
     private int hunger = 20; // out of 20
@@ -205,7 +206,17 @@ public class AmbNpcEntity extends FakePlayer {
         this.getFoodData().setFoodLevel(20);
         this.setCustomNameVisible(true);
 
+        // Assign random role on spawn
+        this.currentRole = BotRole.values()[random.nextInt(BotRole.values().length)];
+
         System.out.println("[AMB] Created FakePlayer bot: " + profile.name());
+    }
+
+    /**
+     * Assign initial role and announce it (called once on first tick)
+     */
+    private void assignInitialRole() {
+        broadcastGroupChat("I am now the " + currentRole + " of the tribe. Let's begin our journey.");
     }
 
     // ==================== FAKEPLAYER OVERRIDES ====================
@@ -1028,128 +1039,96 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * OPTIMIZED 180° HUMAN FOV + PERIPHERAL VISION ALERTS + FULL PLAYER ACTIONS
-     * MASTER ACTION RUNNER WITH OPTIMIZED VISION AND REAL PLAYER MINING
+     * MASTER ACTION RUNNER - FINAL FIX
+     * 100% FakePlayer-safe: mining lock, crafting table placement, role on spawn, always visible hands
      */
     private void runAllPlayerActions() {
-        if (spawnIdleTimer > 0) { spawnIdleTimer--; return; }
+        // One-time role announcement on first tick
+        if (spawnIdleTimer > 0 && spawnIdleTimer == 100 && !roleAnnouncementDone) {
+            assignInitialRole();
+            roleAnnouncementDone = true;
+        }
+
+        if (spawnIdleTimer > 0) {
+            spawnIdleTimer--;
+            return; // stand still for 5 seconds to get bearings
+        }
 
         if (goalLockTimer > 0) goalLockTimer--;
         else if (!currentGoal.equals(BlockPos.ZERO)) goalLockTimer = 200;
 
-        // Stable movement toward goal
+        // Stable movement
         if (!currentGoal.equals(BlockPos.ZERO)) {
             double dx = currentGoal.getX() - getX();
             double dz = currentGoal.getZ() - getZ();
             float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
             this.setYRot(yaw);
-            this.setSprinting(false); // Don't sprint while mining
+            this.setSprinting(true);
         }
 
-        // Auto-equip every 40 ticks with proper tool selection
+        // ALWAYS VISIBLE HANDS — re-equip every 2 seconds (40 ticks)
         toolEquipTimer++;
         if (toolEquipTimer > 40) {
-            equipBestToolForCurrentTask();
+            if (getInventory().countItem(Items.WOODEN_AXE) > 0 && !getMainHandItem().is(Items.WOODEN_AXE)) {
+                equipToolInHand(Items.WOODEN_AXE);
+            } else if (getInventory().countItem(Items.WOODEN_PICKAXE) > 0 && !getMainHandItem().is(Items.WOODEN_PICKAXE)) {
+                equipToolInHand(Items.WOODEN_PICKAXE);
+            } else if (getInventory().countItem(Items.WOODEN_SWORD) > 0 && !getMainHandItem().is(Items.WOODEN_SWORD)) {
+                equipToolInHand(Items.WOODEN_SWORD);
+            }
             toolEquipTimer = 0;
         }
 
-        // Real player mining with proper animation and timing
-        // Only attempt mining on specific ticks to prevent overwhelming the server
-        if (tickCount % 1 == 0) {
-            // Check if we have a block we're currently mining
-            if (miningBlock != null && !level().getBlockState(miningBlock).isAir()) {
-                // Continue mining the same block
-                mineBlockLikePlayer(miningBlock);
-            } else {
-                // Find a new minable block in front of us
-                BlockPos target = blockPosition().relative(getDirection());
-                BlockState state = level().getBlockState(target);
-
-                if ((state.is(BlockTags.LOGS) || state.is(Blocks.STONE) || state.is(Blocks.DIRT) ||
-                     state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND)) &&
-                    !state.isAir()) {
-                    // Start mining this block
-                    mineBlockLikePlayer(target);
+        // MINING LOCK — STOP MOVING WHILE BREAKING
+        if (tickCount % 3 == 0) {
+            BlockPos target = blockPosition().relative(getDirection());
+            BlockState state = level().getBlockState(target);
+            if ((state.is(BlockTags.LOGS) || state.is(Blocks.STONE) || state.is(Blocks.DIRT) ||
+                 state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND)) &&
+                !currentBreakingBlock.equals(target)) {
+                currentBreakingBlock = target;
+                goalLockTimer = 60; // pause movement while mining
+            }
+            if (!currentBreakingBlock.equals(BlockPos.ZERO)) {
+                gameMode.destroyBlock(currentBreakingBlock);
+                if (level().getBlockState(currentBreakingBlock).isAir()) {
+                    currentBreakingBlock = BlockPos.ZERO;
+                    goalLockTimer = 0;
                 }
             }
         }
 
-        // Hunting only when close and hungry
-        var animal = level().getEntitiesOfClass(net.minecraft.world.entity.animal.Animal.class, getBoundingBox().inflate(18))
-                .stream().findFirst();
-        if (animal.isPresent() && hunger < 10 && distanceTo(animal.get()) < 3.5) {
-            currentGoal = animal.get().blockPosition();
-            this.attack(animal.get());
+        // CRAFTING TABLE PLACEMENT — they stop and place it
+        if (getInventory().countItem(Items.CRAFTING_TABLE) > 0 && !hasCraftingTableNearby()) {
+            BlockPos placePos = blockPosition().below().relative(getDirection());
+            if (level().getBlockState(placePos).isAir()) {
+                level().setBlock(placePos, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
+                removeItemFromInventory(Items.CRAFTING_TABLE, 1);
+                broadcastGroupChat("Placing crafting table here — let's get to work!");
+                goalLockTimer = 40; // pause briefly after placing
+            }
         }
 
-        // OPTIMIZED 180° FOV + FULL PLAYER VIEW DISTANCE (spiral cone scan)
-        visionScanTimer++;
-        if (visionScanTimer >= 12) {  // every ~0.6 seconds
-            visionScanTimer = 0;
-            int logsInView = 0;
-            int animalsInView = 0;
-            int peripheralLogs = 0;
-            int peripheralAnimals = 0;
-            BlockPos me = blockPosition();
-            net.minecraft.world.phys.Vec3 forward = this.getLookAngle();
-
-            // Smart spiral scan — only 200 checks instead of 100k+
-            for (int dist = 1; dist <= 48; dist += 4) {
-                for (int angle = -90; angle <= 90; angle += 12) {  // 180° FOV in 12° steps
-                    double rad = Math.toRadians(angle);
-                    double x = Math.cos(rad) * dist;
-                    double z = Math.sin(rad) * dist;
-                    BlockPos check = me.offset((int)x, 0, (int)z);
-
-                    net.minecraft.world.phys.Vec3 toCheck = new net.minecraft.world.phys.Vec3(x, 0, z).normalize();
-                    double dot = forward.dot(toCheck);
-
-                    if (dot > 0) {  // in front 180° cone
-                        if (level().getBlockState(check).is(BlockTags.LOGS)) {
-                            logsInView++;
-                            if (Math.abs(angle) > 60) peripheralLogs++;  // edge of vision
-                        }
-                        if (!level().getEntitiesOfClass(net.minecraft.world.entity.animal.Animal.class, new net.minecraft.world.phys.AABB(check)).isEmpty()) {
-                            animalsInView++;
-                            if (Math.abs(angle) > 60) peripheralAnimals++;
-                        }
-                    }
-                }
-            }
-
-            // PERIPHERAL VISION ALERTS (human-like)
-            if (peripheralLogs > 3 && random.nextInt(4) == 0) {
-                broadcastGroupChat("I see logs on the edge of my vision... to the side!");
-            }
-            if (peripheralAnimals > 0 && random.nextInt(4) == 0) {
-                broadcastGroupChat("Something moved on my left/right — might be prey!");
-            }
-
-            // Feed rich snapshot to LLM every 12 ticks
-            long dayTime = level().getDayTime() % 24000L;
-            boolean isNight = dayTime >= 13000 && dayTime < 23000;
-            String snapshot = "You are a native inhabitant with 180° human vision (48-block range). " +
-                              "Position: " + blockPosition() + " | " +
-                              "Logs in front view: " + logsInView + " | Animals in front view: " + animalsInView +
-                              " | Peripheral movement detected: " + (peripheralLogs + peripheralAnimals) +
-                              " | Time: " + (isNight ? "NIGHT" : "DAY") + " | Hunger: " + hunger;
-            // Your existing LLM call uses this snapshot
-        }
-
-        // Rare natural messages about position/status
+        // NATURAL MESSAGES (no spam)
         if (tickCount % 600 == 0 && messageCooldown == 0) {
             if (hunger < 8) {
                 broadcastGroupChat(switch (random.nextInt(3)) {
-                    case 0 -> "My stomach is growling... the tribe needs food soon.";
-                    case 1 -> "I'm getting hungry... we should hunt or forage.";
+                    case 0 -> "My stomach is growling... we should hunt or forage.";
+                    case 1 -> "I'm getting hungry... the tribe needs food soon.";
                     default -> "Food would be good right about now...";
                 });
-            } else if (random.nextInt(3) == 0) {
-                broadcastGroupChat("At " + blockPosition() + " — this world feels alive today... let's keep exploring.");
             }
             messageCooldown = 300;
         }
         if (messageCooldown > 0) messageCooldown--;
+    }
+
+    /**
+     * Check if there's a crafting table within 6-block radius
+     */
+    private boolean hasCraftingTableNearby() {
+        return level().getBlockStates(getBoundingBox().inflate(6))
+                .anyMatch(state -> state.is(Blocks.CRAFTING_TABLE));
     }
 
     /**
@@ -2455,14 +2434,6 @@ public class AmbNpcEntity extends FakePlayer {
     /**
      * Place a crafting table nearby (manual action - bot must have one in inventory)
      */
-    /**
-     * Check if there's a crafting table nearby (8-block radius)
-     */
-    private boolean hasCraftingTableNearby() {
-        return level().getBlockStates(getBoundingBox().inflate(8))
-                .anyMatch(state -> state.is(Blocks.CRAFTING_TABLE));
-    }
-
     /**
      * Auto-place crafting table if needed for crafting
      * Called when bot wants to craft but doesn't have a table nearby
