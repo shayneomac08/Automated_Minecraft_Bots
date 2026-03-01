@@ -269,7 +269,7 @@ public class AmbNpcEntity extends FakePlayer {
         // ===== HUMAN-LIKE FEATURES: EYES + VOTING =====
         // Every 5 seconds: Build rich snapshot with eyes, call LLM, execute JSON action
         if (tickCount % 100 == 0) {
-            String snapshot = buildRichEyesSnapshot();
+            String snapshot = buildRichSurroundingsPrompt();
             // Note: LLM call happens through BotBrain system - this snapshot feeds into it
             // The snapshot is stored for BotBrain to use
             this.surroundingsInfo = snapshot;
@@ -955,7 +955,7 @@ public class AmbNpcEntity extends FakePlayer {
 
     /**
      * OPTIMIZED 180° HUMAN FOV + PERIPHERAL VISION ALERTS + FULL PLAYER ACTIONS
-     * MASTER ACTION RUNNER WITH OPTIMIZED VISION
+     * MASTER ACTION RUNNER WITH OPTIMIZED VISION AND REAL PLAYER MINING
      */
     private void runAllPlayerActions() {
         if (spawnIdleTimer > 0) { spawnIdleTimer--; return; }
@@ -963,43 +963,44 @@ public class AmbNpcEntity extends FakePlayer {
         if (goalLockTimer > 0) goalLockTimer--;
         else if (!currentGoal.equals(BlockPos.ZERO)) goalLockTimer = 200;
 
-        // Stable movement
+        // Stable movement toward goal
         if (!currentGoal.equals(BlockPos.ZERO)) {
             double dx = currentGoal.getX() - getX();
             double dz = currentGoal.getZ() - getZ();
             float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
             this.setYRot(yaw);
-            this.setSprinting(true);
+            this.setSprinting(false); // Don't sprint while mining
         }
 
-        // Auto-equip
+        // Auto-equip every 40 ticks with proper tool selection
         toolEquipTimer++;
         if (toolEquipTimer > 40) {
-            if (getInventory().countItem(Items.WOODEN_AXE) > 0 && !getMainHandItem().is(Items.WOODEN_AXE)) equipToolInHand(Items.WOODEN_AXE);
-            else if (getInventory().countItem(Items.WOODEN_PICKAXE) > 0 && !getMainHandItem().is(Items.WOODEN_PICKAXE)) equipToolInHand(Items.WOODEN_PICKAXE);
-            else if (getInventory().countItem(Items.WOODEN_SWORD) > 0 && !getMainHandItem().is(Items.WOODEN_SWORD)) equipToolInHand(Items.WOODEN_SWORD);
+            equipBestToolForCurrentTask();
             toolEquipTimer = 0;
         }
 
-        // Real player mining
-        if (tickCount % 3 == 0) {
-            BlockPos target = blockPosition().relative(getDirection());
-            BlockState state = level().getBlockState(target);
+        // Real player mining with proper animation and timing
+        // Only attempt mining on specific ticks to prevent overwhelming the server
+        if (tickCount % 1 == 0) {
+            // Check if we have a block we're currently mining
+            if (miningBlock != null && !level().getBlockState(miningBlock).isAir()) {
+                // Continue mining the same block
+                mineBlockLikePlayer(miningBlock);
+            } else {
+                // Find a new minable block in front of us
+                BlockPos target = blockPosition().relative(getDirection());
+                BlockState state = level().getBlockState(target);
 
-            if ((state.is(BlockTags.LOGS) || state.is(Blocks.STONE) || state.is(Blocks.DIRT) ||
-                 state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND)) &&
-                !currentBreakingBlock.equals(target)) {
-
-                currentBreakingBlock = target;
-            }
-
-            if (!currentBreakingBlock.equals(BlockPos.ZERO)) {
-                gameMode.destroyBlock(currentBreakingBlock);
-                if (level().getBlockState(currentBreakingBlock).isAir()) currentBreakingBlock = BlockPos.ZERO;
+                if ((state.is(BlockTags.LOGS) || state.is(Blocks.STONE) || state.is(Blocks.DIRT) ||
+                     state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND)) &&
+                    !state.isAir()) {
+                    // Start mining this block
+                    mineBlockLikePlayer(target);
+                }
             }
         }
 
-        // Hunting only when close
+        // Hunting only when close and hungry
         var animal = level().getEntitiesOfClass(net.minecraft.world.entity.animal.Animal.class, getBoundingBox().inflate(18))
                 .stream().findFirst();
         if (animal.isPresent() && hunger < 10 && distanceTo(animal.get()) < 3.5) {
@@ -1007,7 +1008,7 @@ public class AmbNpcEntity extends FakePlayer {
             this.attack(animal.get());
         }
 
-        // OPTIMIZED 180° FOV + FULL PLAYER VIEW DISTANCE (spiral cone scan — super efficient)
+        // OPTIMIZED 180° FOV + FULL PLAYER VIEW DISTANCE (spiral cone scan)
         visionScanTimer++;
         if (visionScanTimer >= 12) {  // every ~0.6 seconds
             visionScanTimer = 0;
@@ -1054,14 +1055,14 @@ public class AmbNpcEntity extends FakePlayer {
             long dayTime = level().getDayTime() % 24000L;
             boolean isNight = dayTime >= 13000 && dayTime < 23000;
             String snapshot = "You are a native inhabitant with 180° human vision (48-block range). " +
+                              "Position: " + blockPosition() + " | " +
                               "Logs in front view: " + logsInView + " | Animals in front view: " + animalsInView +
                               " | Peripheral movement detected: " + (peripheralLogs + peripheralAnimals) +
-                              " | Position: " + blockPosition() + " | Time: " + (isNight ? "NIGHT" : "DAY") +
-                              " | Hunger: " + hunger;
+                              " | Time: " + (isNight ? "NIGHT" : "DAY") + " | Hunger: " + hunger;
             // Your existing LLM call uses this snapshot
         }
 
-        // Rare natural messages
+        // Rare natural messages about position/status
         if (tickCount % 600 == 0 && messageCooldown == 0) {
             if (hunger < 8) {
                 broadcastGroupChat(switch (random.nextInt(3)) {
@@ -1070,7 +1071,7 @@ public class AmbNpcEntity extends FakePlayer {
                     default -> "Food would be good right about now...";
                 });
             } else if (random.nextInt(3) == 0) {
-                broadcastGroupChat("This world feels alive today... let's keep exploring.");
+                broadcastGroupChat("At " + blockPosition() + " — this world feels alive today... let's keep exploring.");
             }
             messageCooldown = 300;
         }
@@ -1205,8 +1206,9 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * ===== FEATURE 3: OPTIMIZED MOVEMENT WITH PROPER FAKEPLAYER PHYSICS =====
-     * Move towards target using player movement simulation (not simple velocity)
+     * ===== FEATURE 3: SIMPLE, STABLE MOVEMENT WITH PROPER FAKEPLAYER PHYSICS =====
+     * Move towards target using direct heading (no zigzagging obstacle avoidance)
+     * Real players don't strafe and change direction constantly - they just move forward
      */
     private void moveTowardsTargetOptimized() {
         if (moveTarget == null) return;
@@ -1217,100 +1219,14 @@ public class AmbNpcEntity extends FakePlayer {
         if (currentPos.distanceTo(moveTarget) < 0.5) {
             stopMovement();
             pathCooldown = 0;
-            obstacleAvoidanceCooldown = 0;
-            avoidanceDirection = null;
             return;
         }
 
-        // Calculate direction to target
+        // Calculate direction to target - STRAIGHT LINE, NO SIDESTEPPING
         Vec3 direction = moveTarget.subtract(currentPos).normalize();
 
-        // ===== CHECK IF TARGET IS ABOVE US =====
-        double heightDifference = moveTarget.y - currentPos.y;
-        boolean targetIsAbove = heightDifference > 0.5; // Target is at least half a block higher
-
-        // ===== OBSTACLE DETECTION AND AVOIDANCE =====
-        // Check if there's an obstacle blocking the direct path
-        boolean obstacleDetected = false;
-        Vec3 movementDirection = direction;
-
-        if (obstacleAvoidanceCooldown > 0) {
-            obstacleAvoidanceCooldown--;
-            // Continue using avoidance direction if set
-            if (avoidanceDirection != null) {
-                movementDirection = avoidanceDirection;
-            }
-        } else {
-            // Check for obstacles in front (up to 3 blocks ahead)
-            Vec3 checkPos = currentPos;
-            for (int i = 1; i <= 3; i++) {
-                checkPos = currentPos.add(direction.x * i, 0, direction.z * i);
-                BlockPos checkBlockPos = BlockPos.containing(checkPos);
-
-                // Check if there's a solid block at eye level or below
-                boolean blocked = false;
-                for (int y = 0; y <= 1; y++) {
-                    BlockPos testPos = checkBlockPos.above(y);
-                    BlockState state = level().getBlockState(testPos);
-                    if (!state.isAir() && state.canOcclude()) {
-                        blocked = true;
-                        break;
-                    }
-                }
-
-                if (blocked) {
-                    obstacleDetected = true;
-
-                    // Try to find a way around the obstacle
-                    // Test left and right directions (90 degrees from current direction)
-                    Vec3 leftDir = new Vec3(-direction.z, 0, direction.x).normalize();
-                    Vec3 rightDir = new Vec3(direction.z, 0, -direction.x).normalize();
-
-                    boolean leftClear = isPathClear(currentPos, leftDir, 2);
-                    boolean rightClear = isPathClear(currentPos, rightDir, 2);
-
-                    if (leftClear && rightClear) {
-                        // Both sides clear, choose the one that gets us closer to target
-                        Vec3 leftTest = currentPos.add(leftDir.scale(2));
-                        Vec3 rightTest = currentPos.add(rightDir.scale(2));
-
-                        if (leftTest.distanceTo(moveTarget) < rightTest.distanceTo(moveTarget)) {
-                            avoidanceDirection = leftDir;
-                        } else {
-                            avoidanceDirection = rightDir;
-                        }
-                    } else if (leftClear) {
-                        avoidanceDirection = leftDir;
-                    } else if (rightClear) {
-                        avoidanceDirection = rightDir;
-                    } else {
-                        // Both sides blocked, try diagonal directions
-                        Vec3 leftDiag = direction.add(leftDir).normalize();
-                        Vec3 rightDiag = direction.add(rightDir).normalize();
-
-                        if (isPathClear(currentPos, leftDiag, 2)) {
-                            avoidanceDirection = leftDiag;
-                        } else if (isPathClear(currentPos, rightDiag, 2)) {
-                            avoidanceDirection = rightDiag;
-                        } else {
-                            // Completely blocked, try backing up slightly
-                            avoidanceDirection = direction.scale(-1);
-                        }
-                    }
-
-                    movementDirection = avoidanceDirection;
-                    obstacleAvoidanceCooldown = 20; // Avoid for 1 second
-                    break;
-                }
-            }
-        }
-
-        // Calculate yaw angle to face movement direction
-        double dx = movementDirection.x;
-        double dz = movementDirection.z;
-        float targetYaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
-
-        // Smoothly rotate towards target
+        // Set yaw to face target directly
+        float targetYaw = (float) Math.toDegrees(Math.atan2(-direction.x, direction.z));
         setYRot(targetYaw);
         setYHeadRot(targetYaw);
         yBodyRot = targetYaw;
@@ -1318,122 +1234,61 @@ public class AmbNpcEntity extends FakePlayer {
         // Look at target for proper head rotation
         lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, moveTarget);
 
-        // PROPER PLAYER MOVEMENT PHYSICS
-        // We need to simulate player movement like the client does
+        // Apply simple, predictable movement like a real player
+        // Use realistic player walking speed: 0.1 blocks/tick
+        double targetSpeed = 0.1;
+        Vec3 horizontalMovement = new Vec3(direction.x, 0, direction.z).normalize();
 
-        // Get current velocity
+        // Get current velocity for gravity
         Vec3 currentVelocity = getDeltaMovement();
 
-        // Calculate horizontal movement direction
-        Vec3 horizontalMovement = new Vec3(movementDirection.x, 0, movementDirection.z).normalize();
-
-        // Player walking speed: ~0.1 blocks/tick, sprinting: ~0.13 blocks/tick
-        // We'll use a conservative 0.1 for walking speed
-        double targetSpeed = 0.1; // Realistic walking speed
-
-        // Apply movement with friction (0.91 is Minecraft's ground friction)
-        double friction = onGround() ? 0.91 : 0.98; // Air friction is less
-
-        // Calculate new horizontal velocity
+        // Calculate new velocity
         double newX = horizontalMovement.x * targetSpeed;
         double newZ = horizontalMovement.z * targetSpeed;
-
-        // Apply gravity to Y velocity
         double newY = currentVelocity.y;
+
+        // Apply gravity if not on ground
         if (!onGround()) {
-            newY -= 0.08; // Gravity acceleration
+            newY -= 0.08; // Gravity
             newY *= 0.98; // Air resistance
         } else {
-            // Only apply downward force if we're not jumping
-            // This allows jump velocity to work properly
+            // Keep on ground
             if (newY <= 0) {
-                newY = -0.0784; // Small downward force to keep on ground (prevents floating)
+                newY = -0.0784;
             }
         }
 
-        // Set the new velocity
+        // Set velocity
         setDeltaMovement(newX, newY, newZ);
 
-        // Apply the movement with collision detection
+        // Apply movement with collision detection (Minecraft physics)
         move(net.minecraft.world.entity.MoverType.SELF, getDeltaMovement());
 
-        // Apply friction after movement (like Minecraft does)
+        // Apply friction after movement
         Vec3 afterMove = getDeltaMovement();
         if (onGround()) {
-            setDeltaMovement(afterMove.x * friction, afterMove.y, afterMove.z * friction);
+            setDeltaMovement(afterMove.x * 0.91, afterMove.y, afterMove.z * 0.91);
         }
 
-        // Handle jumping over obstacles AND when target is above us
+        // Simple jump logic: only jump if there's an obstacle 1 block high directly in front
         if (pathCooldown <= 0 && onGround()) {
-            boolean shouldJump = false;
+            BlockPos frontFeet = blockPosition().offset((int)direction.x, 0, (int)direction.z);
+            BlockPos frontAbove = frontFeet.above();
+            BlockPos frontAboveAbove = frontAbove.above();
 
-            // REASON 1: Target is above us AND we're close enough to need jumping
-            // Only jump if target is above AND we're moving toward it AND close enough
-            if (targetIsAbove && currentPos.distanceTo(moveTarget) < 5.0) {
-                // Check if there's actually a block in front to jump over
-                Vec3 checkAhead = currentPos.add(movementDirection.x * 1.5, 0, movementDirection.z * 1.5);
-                BlockPos aheadPos = BlockPos.containing(checkAhead);
-
-                // Only jump if there's a block to climb or we're very close to target
-                if (!level().getBlockState(aheadPos).isAir() || currentPos.distanceTo(moveTarget) < 2.0) {
-                    shouldJump = true;
-                }
-            }
-
-            // REASON 2: Block directly in front that needs jumping
-            if (!shouldJump && !obstacleDetected) {
-                BlockPos frontPos = blockPosition().relative(getDirection());
-                BlockPos aboveFront = frontPos.above();
-
-                if (!level().getBlockState(frontPos).isAir() &&
-                    level().getBlockState(aboveFront).isAir()) {
-                    shouldJump = true;
-                }
-            }
-
-            // REASON 3: Check if there's a step/block in movement direction
-            if (!shouldJump) {
-                Vec3 checkAhead = currentPos.add(movementDirection.x, 0, movementDirection.z);
-                BlockPos aheadPos = BlockPos.containing(checkAhead);
-                BlockPos aheadAbove = aheadPos.above();
-
-                // If block ahead at feet level but clear above, jump
-                if (!level().getBlockState(aheadPos).isAir() &&
-                    level().getBlockState(aheadAbove).isAir()) {
-                    shouldJump = true;
-                }
-            }
-
-            if (shouldJump) {
+            // Only jump if there's a 1-block obstacle we can step over
+            if (!level().getBlockState(frontFeet).isAir() &&
+                level().getBlockState(frontAbove).isAir()) {
                 jumpFromGround();
-                pathCooldown = 15; // Longer cooldown to prevent spam jumping
+                pathCooldown = 10;
             } else {
-                pathCooldown = 5; // Shorter cooldown if not jumping
+                pathCooldown = 0;
             }
         } else if (pathCooldown > 0) {
             pathCooldown--;
         }
     }
 
-    /**
-     * Check if a path in a given direction is clear of obstacles
-     */
-    private boolean isPathClear(Vec3 startPos, Vec3 direction, int distance) {
-        for (int i = 1; i <= distance; i++) {
-            Vec3 checkPos = startPos.add(direction.x * i, 0, direction.z * i);
-            BlockPos checkBlockPos = BlockPos.containing(checkPos);
-
-            // Check at ground level and eye level
-            for (int y = 0; y <= 1; y++) {
-                BlockPos testPos = checkBlockPos.above(y);
-                BlockState state = level().getBlockState(testPos);
-                if (!state.isAir() && state.canOcclude()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 
     /**
      * ===== FEATURE 2: AUTO DOOR OPENING =====
@@ -2215,7 +2070,61 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
+     * Equip the best tool for the current task (visible to players)
+     * Called frequently to keep tools updated in main hand
+     */
+    private void equipBestToolForCurrentTask() {
+        Inventory inv = getInventory();
+
+        // Determine what tool we need based on current task/activity
+        Item preferredTool = determinePreferredTool();
+
+        if (preferredTool != null) {
+            // Check if we have this tool
+            if (inv.countItem(preferredTool) > 0) {
+                // Only equip if we're not already holding it
+                if (!getMainHandItem().is(preferredTool)) {
+                    setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(preferredTool));
+                    setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(preferredTool));
+                }
+            } else {
+                // Don't have preferred tool, equip best available
+                equipBestTool();
+            }
+        } else {
+            equipBestTool();
+        }
+    }
+
+    /**
+     * Determine the preferred tool based on current task/activity
+     */
+    private Item determinePreferredTool() {
+        switch (currentTask) {
+            case "gather_wood", "mine_wood", "chop_wood" -> {
+                // For wood: pickaxe > axe for generalized use
+                if (getInventory().countItem(Items.WOODEN_AXE) > 0) return Items.WOODEN_AXE;
+                if (getInventory().countItem(Items.WOODEN_PICKAXE) > 0) return Items.WOODEN_PICKAXE;
+            }
+            case "mine_stone", "gather_stone" -> {
+                // For stone: pickaxe (also works for stone)
+                if (getInventory().countItem(Items.WOODEN_PICKAXE) > 0) return Items.WOODEN_PICKAXE;
+                if (getInventory().countItem(Items.STONE_PICKAXE) > 0) return Items.STONE_PICKAXE;
+                if (getInventory().countItem(Items.WOODEN_AXE) > 0) return Items.WOODEN_AXE;
+            }
+            case "hunt_animals", "attack_mob" -> {
+                // For combat: sword > axe
+                if (getInventory().countItem(Items.WOODEN_SWORD) > 0) return Items.WOODEN_SWORD;
+                if (getInventory().countItem(Items.STONE_SWORD) > 0) return Items.STONE_SWORD;
+                if (getInventory().countItem(Items.WOODEN_AXE) > 0) return Items.WOODEN_AXE;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Equip the best tool in the main hand for rendering and use
+     * This is a fallback when no specific tool preference is set
      */
     private void equipBestTool() {
         Inventory inv = getInventory();
@@ -2595,15 +2504,24 @@ public class AmbNpcEntity extends FakePlayer {
             // Check specific tool requirements
             if (state.is(BlockTags.NEEDS_DIAMOND_TOOL)) {
                 broadcastGroupChat("Need diamond tool to mine " + state.getBlock().getName().getString());
-                level().destroyBlock(pos, false); // No drops
+                // Abort mining rather than destroying the block without drops
+                miningBlock = null;
+                miningProgress = 0;
+                miningTotalTime = 0;
                 return;
             } else if (state.is(BlockTags.NEEDS_IRON_TOOL)) {
                 broadcastGroupChat("Need iron tool to mine " + state.getBlock().getName().getString());
-                level().destroyBlock(pos, false); // No drops
+                // Abort mining rather than destroying the block without drops
+                miningBlock = null;
+                miningProgress = 0;
+                miningTotalTime = 0;
                 return;
             } else if (state.is(BlockTags.NEEDS_STONE_TOOL)) {
                 broadcastGroupChat("Need stone tool to mine " + state.getBlock().getName().getString());
-                level().destroyBlock(pos, false); // No drops
+                // Abort mining rather than destroying the block without drops
+                miningBlock = null;
+                miningProgress = 0;
+                miningTotalTime = 0;
                 return;
             }
         }
@@ -2761,224 +2679,6 @@ public class AmbNpcEntity extends FakePlayer {
         );
     }
 
-    /**
-     * RULE 4: Death & Respawn (real player style)
-     * Combat/fall damage = respawn at bed with inventory
-     * Other causes = permanent death (as designed)
-     */
-    @Override
-    public void die(DamageSource source) {
-        // Check if this is a "respawnable" death (combat, fall, etc.)
-        if (source.getEntity() instanceof Player ||
-            source.is(DamageTypes.FALL) ||
-            source.is(DamageTypes.MOB_ATTACK) ||
-            source.is(DamageTypes.PLAYER_ATTACK)) {
-
-            broadcastGroupChat("Oof, that hurt! Respawning...");
-
-            // Respawn at bed if set, otherwise near a player
-            if (bedPos != null && level().getBlockState(bedPos).is(net.minecraft.world.level.block.Blocks.RED_BED)) {
-                teleportTo(bedPos.getX() + 0.5, bedPos.getY() + 1, bedPos.getZ() + 0.5);
-                setHealth(20.0f);
-                getFoodData().setFoodLevel(20);
-                broadcastGroupChat("Respawned at bed!");
-                return;
-            } else {
-                // No bed - respawn near nearest player
-                ServerPlayer nearestPlayer = (ServerPlayer) level().getNearestPlayer(this, 128);
-                if (nearestPlayer != null) {
-                    teleportTo(nearestPlayer.getX(), nearestPlayer.getY(), nearestPlayer.getZ());
-                    setHealth(20.0f);
-                    getFoodData().setFoodLevel(20);
-                    broadcastGroupChat("Respawned near " + nearestPlayer.getName().getString());
-                    return;
-                }
-            }
-        }
-
-        // Permanent death for other causes (old age, void, etc.)
-        broadcastGroupChat("I have died permanently...");
-        super.die(source);
-    }
-
-    /**
-     * Set bed spawn point
-     */
-    public void setBedPos(BlockPos pos) {
-        this.bedPos = pos;
-        broadcastGroupChat("Bed spawn point set!");
-    }
-
-    /**
-     * Get bed spawn point
-     */
-    public BlockPos getBedPos() {
-        return bedPos;
-    }
-
-    /**
-     * Attempt to escape from a hole - SMART ESCAPE (like a real player)
-     * Priority: 1) Try walking/jumping out, 2) Break blocks only if completely trapped
-     * Returns true if escape was attempted, false otherwise
-     */
-    private boolean attemptEscapeFromHole() {
-        BlockPos pos = blockPosition();
-
-        // First, check if we're actually in a hole (surrounded by blocks)
-        Direction[] directions = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
-        int solidBlocksAround = 0;
-        for (Direction dir : directions) {
-            BlockPos checkPos = pos.relative(dir);
-            if (level().getBlockState(checkPos).canOcclude()) {
-                solidBlocksAround++;
-            }
-        }
-
-        // If we're NOT surrounded (less than 2 solid blocks), we're not in a hole - don't escape
-        if (solidBlocksAround < 2) {
-            return false;
-        }
-
-        // STEP 1: Check if we can just walk/jump out (like a real player would)
-        for (Direction dir : directions) {
-            BlockPos checkPos = pos.relative(dir);
-            BlockPos aboveCheck = checkPos.above();
-            BlockState blockState = level().getBlockState(checkPos);
-            BlockState aboveState = level().getBlockState(aboveCheck);
-
-            // If there's an open path (air or passable block), try to walk that way
-            if (blockState.isAir() || !blockState.canOcclude()) {
-                // Check if we can jump up if needed
-                if (aboveState.isAir() || !aboveState.canOcclude()) {
-                    // Found an escape route! Move that way and jump
-                    Vec3 escapeDir = new Vec3(dir.getStepX(), dir.getStepY(), dir.getStepZ());
-                    setMoveTarget(position().add(escapeDir.scale(2)), 0.2f);
-                    if (onGround()) {
-                        jumpFromGround();
-                    }
-                    broadcastGroupChat("Found escape route, jumping out!");
-                    return true;
-                }
-            }
-        }
-
-        // STEP 2: Check if we're in a shallow hole (can jump out)
-        BlockPos abovePos = pos.above();
-        BlockPos twoAbove = pos.above(2);
-        if (level().getBlockState(abovePos).isAir() && level().getBlockState(twoAbove).isAir()) {
-            // Try jumping - we might be able to get out
-            if (onGround()) {
-                jumpFromGround();
-                broadcastGroupChat("Trying to jump out of hole!");
-                return true;
-            }
-        }
-
-        // STEP 3: LAST RESORT - We're completely trapped, break blocks to escape
-        // Only do this if we've tried everything else
-        // We already calculated solidBlocksAround at the start, so reuse it
-
-        // Only break blocks if we're surrounded (3+ solid blocks around us)
-        if (solidBlocksAround >= 3) {
-            for (Direction dir : directions) {
-                BlockPos checkPos = pos.relative(dir);
-                BlockState blockState = level().getBlockState(checkPos);
-
-                // Break the first solid block we find
-                if (!blockState.isAir() && canBreakBlock(blockState)) {
-                    broadcastGroupChat("Completely trapped! Breaking " + blockState.getBlock().getName().getString() + " to escape!");
-                    mineBlockLikePlayer(checkPos);
-                    return true;
-                }
-            }
-
-            // Check above as last resort
-            BlockState aboveState = level().getBlockState(abovePos);
-            if (!aboveState.isAir() && canBreakBlock(aboveState)) {
-                broadcastGroupChat("Breaking block above to escape!");
-                mineBlockLikePlayer(abovePos);
-                return true;
-            }
-        }
-
-        // If we get here, we're not actually trapped - just stuck temporarily
-        // Try a random direction
-        Direction randomDir = directions[random.nextInt(directions.length)];
-        Vec3 randomMove = new Vec3(randomDir.getStepX(), randomDir.getStepY(), randomDir.getStepZ());
-        setMoveTarget(position().add(randomMove.scale(2)), 0.2f);
-        return false;
-    }
-
-    /**
-     * Check if a block can be broken (not bedrock, not air, etc.)
-     */
-    private boolean canBreakBlock(BlockState state) {
-        if (state.isAir()) return false;
-
-        // Don't break bedrock or other unbreakable blocks
-        if (state.getDestroySpeed(level(), blockPosition()) < 0) return false;
-
-        // Can break dirt, stone, wood, etc.
-        return true;
-    }
-
-    // ==================== HUMAN-LIKE FEATURES: EYES, PERSONALITY, VOTING ====================
-
-    /**
-     * Build rich snapshot with "eyes" - what the bot sees and knows
-     * This feeds into the LLM for human-like decision making
-     */
-    private String buildRichEyesSnapshot() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("You are ").append(getName().getString()).append(" (").append(group).append(" bot).\n");
-        sb.append("Position: ").append(blockPosition()).append("\n");
-        long dayTime = level().getDayTime() % 24000L;
-        boolean isNight = dayTime >= 13000 && dayTime < 23000;
-        sb.append("Time: ").append(isNight ? "NIGHT" : "DAY").append("\n");
-
-        // Inventory awareness
-        sb.append("Inventory: ")
-          .append(getInventory().countItem(Items.OAK_LOG)).append(" logs, ")
-          .append(getInventory().countItem(Items.OAK_PLANKS)).append(" planks, ")
-          .append(getInventory().countItem(Items.STICK)).append(" sticks, ")
-          .append(getInventory().countItem(Items.WOODEN_AXE)).append(" wooden axes, ")
-          .append(getInventory().countItem(Items.WOODEN_PICKAXE)).append(" wooden pickaxes\n");
-
-        // Nearby entities (what bot "sees")
-        List<String> nearbyMobs = level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
-            getBoundingBox().inflate(32))
-            .stream()
-            .map(e -> e.getName().getString())
-            .limit(5)
-            .toList();
-        sb.append("Nearby entities: ").append(nearbyMobs.isEmpty() ? "none" : nearbyMobs).append("\n");
-
-        // Player location awareness
-        Player nearestPlayer = level().getNearestPlayer(this, 64);
-        if (nearestPlayer != null) {
-            sb.append("Stranger nearby: ").append(nearestPlayer.blockPosition()).append(" (distance: ")
-              .append(String.format("%.1f", position().distanceTo(nearestPlayer.position()))).append(" blocks)\n");
-        } else {
-            sb.append("No strangers nearby\n");
-        }
-
-        // Group memories
-        List<String> memories = getLedger().getMemories(group);
-        if (!memories.isEmpty()) {
-            sb.append("Group memories: ").append(memories.subList(Math.max(0, memories.size() - 3), memories.size())).append("\n");
-        }
-
-        // Emotional state (HUMAN-LIKE FEATURE)
-        sb.append("Current mood: ").append(currentMood).append("\n");
-        if (!emotions.isEmpty()) {
-            sb.append("Recent emotions: ").append(emotions.subList(Math.max(0, emotions.size() - 3), emotions.size())).append("\n");
-        }
-
-        // JSON instruction for LLM
-        sb.append("Reply ONLY in JSON: {\"action\":\"gather_wood|mine_stone|build_shelter|attack_mob|follow_stranger|eat_food|explore|idle\", \"target\":\"specific thing or null\", \"reason\":\"short reason\"}");
-
-        return sb.toString();
-    }
 
     /**
      * Get personality prompt based on LLM type
