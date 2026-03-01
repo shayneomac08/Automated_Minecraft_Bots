@@ -14,11 +14,8 @@ public final class AvatarFactory {
     private AvatarFactory() {}
 
     public static AmbNpcEntity spawn(ServerLevel level, String name, double x, double y, double z) {
-        // Create GameProfile for the FakePlayer
-        GameProfile profile = new GameProfile(UUID.randomUUID(), name);
-
-        // Create FakePlayer bot
-        AmbNpcEntity body = new AmbNpcEntity(level, profile);
+        // Create FakePlayer bot with new simplified constructor
+        AmbNpcEntity body = new AmbNpcEntity(level, name);
 
         body.setPos(x, y, z);
         body.setCustomName(Component.literal(name));
