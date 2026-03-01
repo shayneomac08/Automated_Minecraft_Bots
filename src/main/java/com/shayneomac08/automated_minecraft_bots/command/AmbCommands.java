@@ -206,6 +206,39 @@ public final class AmbCommands {
                                 )
                         )
 
+                        // /amb inventory <name> - Alias for gui command
+                        .then(Commands.literal("inventory")
+                                .then(Commands.argument("name", StringArgumentType.word())
+                                        .executes(ctx -> {
+                                            String name = StringArgumentType.getString(ctx, "name");
+                                            String keyName = normalize(name);
+
+                                            BotPair pair = BotRegistry.get(keyName);
+                                            if (pair == null) {
+                                                ctx.getSource().sendFailure(Component.literal("[AMB] No bot named " + name));
+                                                return 0;
+                                            }
+
+                                            Player player = ctx.getSource().getPlayer();
+                                            if (!(player instanceof ServerPlayer serverPlayer)) {
+                                                ctx.getSource().sendFailure(Component.literal("[AMB] Must be a player"));
+                                                return 0;
+                                            }
+
+                                            if (pair.body() instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
+                                                ambBot.openGui(serverPlayer);
+                                                ctx.getSource().sendSuccess(() -> Component.literal(
+                                                        "[AMB] Opening " + name + "'s inventory"
+                                                ), false);
+                                                return 1;
+                                            }
+
+                                            ctx.getSource().sendFailure(Component.literal("[AMB] Bot is not a FakePlayer entity"));
+                                            return 0;
+                                        })
+                                )
+                        )
+
                         // /amb brain <name> on|off|status
                         .then(Commands.literal("brain")
                                 .then(Commands.argument("name", StringArgumentType.word())
@@ -353,10 +386,14 @@ public final class AmbCommands {
             ambBot.setYHeadRot(player.getYRot());
 
             // Register bot (bot IS the FakePlayer, so use it for both hands and body)
-            BotRegistry.put(keyName, new BotPair(ambBot, ambBot));
+            BotPair pair = new BotPair(ambBot, ambBot);
+            BotRegistry.put(keyName, pair);
 
             // Set LLM provider
             BotBrain.setLLMProvider(keyName, provider);
+
+            // Give bot an initial goal so it starts moving
+            BotBrain.setInitialGoal(ctx.getSource().getServer(), keyName, pair);
 
             src.sendSuccess(() -> Component.literal(
                     "[AMB] Spawned " + name + " (" + llmGroup + ") - FakePlayer mode"

@@ -1,17 +1,21 @@
 package com.shayneomac08.automated_minecraft_bots.registry;
 
 import com.shayneomac08.automated_minecraft_bots.AutomatedMinecraftBots;
-import com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity;
+import com.shayneomac08.automated_minecraft_bots.entity.BotVisualEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * Entity registration for FakePlayer-based bots with custom renderer
+ * Entity registration for visual bot entities
+ * The actual logic runs in FakePlayer (server-side), this is just for rendering
  */
 public final class ModEntities {
     private ModEntities() {}
@@ -19,11 +23,20 @@ public final class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(Registries.ENTITY_TYPE, AutomatedMinecraftBots.MODID);
 
-    // Register FakePlayer entity for custom rendering
-    public static final DeferredHolder<EntityType<?>, EntityType<AmbNpcEntity>> AMB_NPC = ENTITIES.register("amb_npc",
-        () -> EntityType.Builder.<AmbNpcEntity>of(AmbNpcEntity::new, MobCategory.CREATURE)
+    // Register visual entity that mirrors the FakePlayer
+    public static final DeferredHolder<EntityType<?>, EntityType<BotVisualEntity>> BOT_VISUAL = ENTITIES.register("bot_visual",
+        () -> EntityType.Builder.<BotVisualEntity>of(BotVisualEntity::new, MobCategory.CREATURE)
             .sized(0.6F, 1.8F)           // exact player hitbox
             .clientTrackingRange(64)     // visible from normal distance
-            .updateInterval(3)           // smooth updates
-            .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(AutomatedMinecraftBots.MODID, "amb_npc"))));
+            .updateInterval(1)           // very smooth updates to mirror FakePlayer
+            .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(AutomatedMinecraftBots.MODID, "bot_visual"))));
+
+    @EventBusSubscriber(modid = AutomatedMinecraftBots.MODID)
+    public static class EntityAttributeRegistration {
+        @SubscribeEvent
+        public static void registerAttributes(EntityAttributeCreationEvent event) {
+            // Register attributes for visual entity
+            event.put(BOT_VISUAL.get(), BotVisualEntity.createAttributes().build());
+        }
+    }
 }

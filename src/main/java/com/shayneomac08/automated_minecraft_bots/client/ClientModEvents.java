@@ -13,7 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 /**
- * CLIENT RENDERER REGISTRATION — MAKES THE BOTS VISIBLE AS REAL PLAYERS
+ * CLIENT RENDERER REGISTRATION — MAKES THE VISUAL BOTS VISIBLE AS REAL PLAYERS
  */
 @EventBusSubscriber(modid = AutomatedMinecraftBots.MODID, value = Dist.CLIENT)
 public class ClientModEvents {
@@ -21,7 +21,7 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void onRegisterRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(
-            ModEntities.AMB_NPC.get(),
+            ModEntities.BOT_VISUAL.get(),
             context -> new LivingEntityRenderer<>(
                 context,
                 new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)),

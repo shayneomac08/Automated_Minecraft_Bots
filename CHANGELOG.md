@@ -4,14 +4,20 @@
 
 ### Recent Changes (2026-02-28)
 
-#### HOTFIX: Realistic Player-Like Bot Behavior
-- **FIXED:** Zigzag / jittery movement — bots now use stable straight-line movement with proper FakePlayer physics (gravity, friction, step-up jump behavior) so they move like real players.
-- **FIXED:** Instant block destruction replaced with proper player-like mining: progressive crack animation, mining timing based on block hardness and tool speed, correct item drops, and stat awarding.
-- **FIXED:** Tools now visibly equip in the bot's main hand and switch based on task (axe for wood, pickaxe for stone, sword for combat) with proper client synchronization.
-- **FIXED:** Bots now include position coordinates in status messages and LLM snapshots to improve awareness and coordination.
-- **IMPROVED:** Mining enforces correct tool requirements (bots abort mining and announce required tool instead of destroying blocks without drops).
+#### Bot Visibility & Movement Implementation
+- **FIXED:** Bot visibility using hybrid FakePlayer + BotVisualEntity architecture
+- **FIXED:** Bot movement with task execution system (gather_wood, mine_stone, explore)
+- **FIXED:** Entity attribute registration for proper client synchronization
+- **IMPLEMENTED:** Hybrid architecture - FakePlayer handles logic/AI, BotVisualEntity handles rendering
+- **IMPLEMENTED:** Task execution system with block finding and movement goals
+- **IMPLEMENTED:** Inventory GUI system (`/amb gui` and `/amb inventory` commands)
 
-> Note: Detailed technical notes and testing guides have been consolidated into the main project documentation: `CHANGELOG.md`, `FEATURES.md`, and `README.md`. Additional temporary markdown files were archived to reduce clutter.
+#### Previous Fixes
+- **FIXED:** Zigzag / jittery movement — bots now use stable straight-line movement with proper FakePlayer physics
+- **FIXED:** Instant block destruction replaced with proper player-like mining with progressive crack animation
+- **FIXED:** Tools now visibly equip in the bot's main hand and switch based on task
+- **FIXED:** Bots now include position coordinates in status messages and LLM snapshots
+- **IMPROVED:** Mining enforces correct tool requirements
 
 ### Recent Changes (2026-02-26)
 

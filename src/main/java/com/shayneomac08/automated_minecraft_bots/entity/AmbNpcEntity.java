@@ -61,16 +61,8 @@ public class AmbNpcEntity extends FakePlayer {
         this.setInvulnerable(false);
     }
 
-    // Constructor for EntityType registration (required for renderer)
-    // Note: EntityType.Builder expects (EntityType, Level) signature
-    public AmbNpcEntity(EntityType<?> entityType, Level level) {
-        super(level instanceof ServerLevel serverLevel ? serverLevel : null, new GameProfile(UUID.randomUUID(), "Bot"));
-        this.setGameMode(GameType.SURVIVAL);
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
-        this.setHealth(20.0F);
-        this.setInvisible(false);
-        this.setInvulnerable(false);
-    }
+    // Visual entity that mirrors this FakePlayer
+    private BotVisualEntity visualEntity = null;
 
     // ==================== PERMANENT NO DIRT KICKING ====================
 
@@ -145,6 +137,26 @@ public class AmbNpcEntity extends FakePlayer {
         this.moveTarget = target;
         if (target != null) {
             this.currentGoal = new BlockPos((int)target.x, (int)target.y, (int)target.z);
+
+            // Actually move towards the target - FakePlayers need manual position updates
+            double dx = target.x - getX();
+            double dz = target.z - getZ();
+            double distance = Math.sqrt(dx * dx + dz * dz);
+
+            if (distance > 0.5) {
+                // Normalize and apply speed
+                double moveX = (dx / distance) * speed;
+                double moveZ = (dz / distance) * speed;
+
+                // Update position directly
+                this.setPos(this.getX() + moveX, this.getY(), this.getZ() + moveZ);
+
+                // Update rotation to face movement direction
+                float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
+                this.setYRot(yaw);
+                this.setYHeadRot(yaw);
+                this.setSprinting(speed > 0.11f);
+            }
         }
     }
 
@@ -155,7 +167,21 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     public void openGui(net.minecraft.server.level.ServerPlayer player) {
-        // Simple GUI - just send a message for now
+        // Open the bot's inventory as a chest GUI
+        player.openMenu(new net.minecraft.world.MenuProvider() {
+            @Override
+            public net.minecraft.network.chat.Component getDisplayName() {
+                return net.minecraft.network.chat.Component.literal(getName().getString() + "'s Inventory");
+            }
+
+            @Override
+            public net.minecraft.world.inventory.AbstractContainerMenu createMenu(int containerId,
+                    net.minecraft.world.entity.player.Inventory playerInventory,
+                    net.minecraft.world.entity.player.Player player) {
+                // Create a chest menu that shows the bot's inventory
+                return net.minecraft.world.inventory.ChestMenu.threeRows(containerId, playerInventory, getInventory());
+            }
+        });
         player.sendSystemMessage(net.minecraft.network.chat.Component.literal("Bot GUI for " + getName().getString()));
     }
 
@@ -165,6 +191,7 @@ public class AmbNpcEntity extends FakePlayer {
         double y = player.getY();
         double z = player.getZ();
 
+        // Create the FakePlayer bot (server-side logic)
         AmbNpcEntity bot = new AmbNpcEntity(level, name);
         bot.setPos(x, y, z);
         bot.setCustomName(net.minecraft.network.chat.Component.literal(name));
@@ -172,11 +199,15 @@ public class AmbNpcEntity extends FakePlayer {
         bot.setYRot(player.getYRot());
         bot.setYHeadRot(player.getYRot());
 
-        // FakePlayers must be added to the entity list to be visible
-        level.addFreshEntity(bot);
-
-        // Ensure the bot is visible as a normal player
-        bot.setInvisible(false);
+        // Create the visual entity (client-side rendering)
+        BotVisualEntity visual = new BotVisualEntity(
+            com.shayneomac08.automated_minecraft_bots.registry.ModEntities.BOT_VISUAL.get(),
+            level
+        );
+        visual.setPos(x, y, z);
+        visual.setLinkedBot(bot);
+        level.addFreshEntity(visual);
+        bot.visualEntity = visual;
 
         return bot;
     }
@@ -217,6 +248,10 @@ public class AmbNpcEntity extends FakePlayer {
 
         if (spawnIdleTimer > 0) {
             spawnIdleTimer--;
+            // On last idle tick, execute task to get initial goal
+            if (spawnIdleTimer == 0) {
+                executeCurrentTask();
+            }
             return; // stand still for 5 seconds to get bearings
         }
 
@@ -228,10 +263,36 @@ public class AmbNpcEntity extends FakePlayer {
         if (yawUpdateTimer > 15 && !currentGoal.equals(BlockPos.ZERO)) {
             double dx = currentGoal.getX() - getX();
             double dz = currentGoal.getZ() - getZ();
-            float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
-            this.setYRot(yaw + (random.nextFloat() * 3 - 1.5f)); // very subtle human sway
-            this.setSprinting(true);
+            double distance = Math.sqrt(dx * dx + dz * dz);
+
+            if (distance > 1.0) {
+                float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
+                this.setYRot(yaw + (random.nextFloat() * 3 - 1.5f)); // very subtle human sway
+                this.setYHeadRot(this.getYRot());
+
+                // Actually move towards the goal - FakePlayers need manual position updates
+                double speed = 0.15;
+                double moveX = (dx / distance) * speed;
+                double moveZ = (dz / distance) * speed;
+
+                // Move the FakePlayer directly
+                this.setPos(this.getX() + moveX, this.getY(), this.getZ() + moveZ);
+                this.setSprinting(true);
+            } else {
+                // Reached goal, pick a new one
+                currentGoal = blockPosition().offset(
+                    random.nextInt(20) - 10,
+                    0,
+                    random.nextInt(20) - 10
+                );
+                goalLockTimer = 200;
+            }
             yawUpdateTimer = 0;
+        } else if (currentGoal.equals(BlockPos.ZERO)) {
+            // Execute current task to find a goal
+            if (tickCount % 100 == 0) {
+                executeCurrentTask();
+            }
         }
 
         // ALWAYS VISIBLE HANDS
@@ -289,11 +350,137 @@ public class AmbNpcEntity extends FakePlayer {
         if (messageCooldown > 0) messageCooldown--;
     }
 
+    // ==================== TASK EXECUTION ====================
+
+    private void executeCurrentTask() {
+        if (currentTask == null || currentTask.isEmpty()) {
+            // No task - just wander
+            currentGoal = blockPosition().offset(
+                random.nextInt(20) - 10,
+                0,
+                random.nextInt(20) - 10
+            );
+            goalLockTimer = 200;
+            return;
+        }
+
+        switch (currentTask) {
+            case "gather_wood" -> {
+                // Find nearest tree (oak logs)
+                BlockPos tree = findNearestBlock(BlockTags.LOGS, 32);
+                if (tree != null) {
+                    currentGoal = tree;
+                    goalLockTimer = 400;
+                } else {
+                    // No tree found - explore
+                    currentGoal = blockPosition().offset(
+                        random.nextInt(40) - 20,
+                        0,
+                        random.nextInt(40) - 20
+                    );
+                    goalLockTimer = 300;
+                }
+            }
+            case "mine_stone" -> {
+                // Find nearest stone
+                BlockPos stone = findNearestBlock(Blocks.STONE, 32);
+                if (stone != null) {
+                    currentGoal = stone;
+                    goalLockTimer = 400;
+                } else {
+                    // No stone found - explore
+                    currentGoal = blockPosition().offset(
+                        random.nextInt(40) - 20,
+                        0,
+                        random.nextInt(40) - 20
+                    );
+                    goalLockTimer = 300;
+                }
+            }
+            case "explore" -> {
+                // Random exploration
+                currentGoal = blockPosition().offset(
+                    random.nextInt(60) - 30,
+                    0,
+                    random.nextInt(60) - 30
+                );
+                goalLockTimer = 400;
+            }
+            case "idle" -> {
+                // Do nothing
+                currentGoal = BlockPos.ZERO;
+                goalLockTimer = 100;
+            }
+            default -> {
+                // Unknown task - wander
+                currentGoal = blockPosition().offset(
+                    random.nextInt(20) - 10,
+                    0,
+                    random.nextInt(20) - 10
+                );
+                goalLockTimer = 200;
+            }
+        }
+    }
+
+    private BlockPos findNearestBlock(net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> tag, int radius) {
+        BlockPos myPos = blockPosition();
+        BlockPos nearest = null;
+        double nearestDist = Double.MAX_VALUE;
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -10; y <= 10; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    BlockPos check = myPos.offset(x, y, z);
+                    if (level().getBlockState(check).is(tag)) {
+                        double dist = myPos.distSqr(check);
+                        if (dist < nearestDist) {
+                            nearestDist = dist;
+                            nearest = check;
+                        }
+                    }
+                }
+            }
+        }
+        return nearest;
+    }
+
+    private BlockPos findNearestBlock(net.minecraft.world.level.block.Block block, int radius) {
+        BlockPos myPos = blockPosition();
+        BlockPos nearest = null;
+        double nearestDist = Double.MAX_VALUE;
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -10; y <= 10; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    BlockPos check = myPos.offset(x, y, z);
+                    if (level().getBlockState(check).is(block)) {
+                        double dist = myPos.distSqr(check);
+                        if (dist < nearestDist) {
+                            nearestDist = dist;
+                            nearest = check;
+                        }
+                    }
+                }
+            }
+        }
+        return nearest;
+    }
+
     // ==================== TICK - MAIN CONTROL LOOP ====================
 
     @Override
     public void tick() {
         super.tick();
         runAllPlayerActions();
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+        // Remove the visual entity when the FakePlayer is removed
+        if (visualEntity != null && !visualEntity.isRemoved()) {
+            visualEntity.discard();
+        }
     }
 }
