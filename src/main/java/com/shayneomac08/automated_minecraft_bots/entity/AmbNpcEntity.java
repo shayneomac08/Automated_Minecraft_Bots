@@ -115,6 +115,26 @@ public class AmbNpcEntity extends FakePlayer {
     private String surroundingsInfo = "";
     private BlockPos bedPos = null; // Respawn point
 
+    // ==================== CHAT RATE LIMITING & SHORT-TERM MEMORY ====================
+    // Prevent bots spamming chat and repeating the same message rapidly
+    // Target: max 2 messages per bot per 30 seconds
+    private final Map<String, Integer> recentMessageTick = new HashMap<>(); // message -> tick it was last broadcast
+    private int messageGlobalWindowStartTick = 0;
+    private int messageGlobalCountInWindow = 0;
+    private static final int MESSAGE_GLOBAL_WINDOW = 600; // ticks (~30s) - window for rate limiting
+    private static final int MESSAGE_GLOBAL_LIMIT = 2;    // max 2 messages per 30-second window
+    private static final int MESSAGE_REPEAT_COOLDOWN = 600; // ticks (~30s) per identical message - don't repeat same message for 30s
+
+    // Short-term memory of seen positions (so bots don't re-comment / re-target same spots)
+    private final Map<BlockPos, Integer> recentSeenPositions = new HashMap<>(); // pos -> tick last seen
+    private static final int SEEN_MEMORY_TICKS = 1200; // ticks (~1 minute)
+
+    // ==================== JUMP/SPAM PROTECTION ====================
+    private int lastJumpTick = 0;
+    private int jumpSpamCounter = 0;
+    private static final int JUMP_SPAM_WINDOW = 40; // ticks
+    private static final int JUMP_SPAM_LIMIT = 3;   // allow up to 3 jumps per window
+
     // ==================== SHARED MEMORY & HUMAN-LIKE FEATURES ====================
 
     // Shared memory per group
@@ -1148,9 +1168,24 @@ public class AmbNpcEntity extends FakePlayer {
             BlockPos frontFeet = blockPosition().relative(getDirection());
             BlockPos frontAbove = frontFeet.above();
             if (!level().getBlockState(frontFeet).isAir() && level().getBlockState(frontAbove).isAir()) {
-                this.jumping = true;
-                stepCooldown = 25; // 1.25s cooldown
-                broadcastGroupChat("Stepping up over this block — no problem!");
+                // Jump-spam prevention: detect repeated rapid jumps and give up briefly
+                if (tickCount - lastJumpTick <= JUMP_SPAM_WINDOW) {
+                    jumpSpamCounter++;
+                } else {
+                    jumpSpamCounter = 0;
+                }
+                lastJumpTick = tickCount;
+
+                if (jumpSpamCounter <= JUMP_SPAM_LIMIT) {
+                    this.jumping = true;
+                    stepCooldown = 25; // 1.25s cooldown
+                    // Use a quieter message (no spam) — only announce occasionally
+                    if (random.nextInt(6) == 0) broadcastGroupChat("Stepping up over this block — no problem!");
+                } else {
+                    // Too many jump attempts in short time — stop trying and wait
+                    stepCooldown = 120; // wait 6 seconds before trying again
+                    if (random.nextInt(6) == 0) broadcastGroupChat("Hmm, can't get over this — staying put for a bit.");
+                }
             }
         }
         if (stepCooldown > 0) stepCooldown--;
@@ -1724,7 +1759,7 @@ public class AmbNpcEntity extends FakePlayer {
 
         // Auto-craft sticks from planks (2x2 recipe - can do in inventory)
         // Only craft if we need sticks and don't have enough
-        if (planks >= 2 && sticks < 4) {
+        if (planks >=  2 && sticks < 4) {
             removeItemFromInventory(Items.OAK_PLANKS, 2);
             addItemToInventory(new ItemStack(Items.STICK, 4));
             broadcastGroupChat("Crafted 4 sticks from planks");
@@ -2428,6 +2463,23 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
+        // Prune old entries from recentSeenPositions
+        Iterator<Map.Entry<BlockPos, Integer>> it = recentSeenPositions.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<BlockPos, Integer> e = it.next();
+            if (tickCount - e.getValue() > SEEN_MEMORY_TICKS) it.remove();
+        }
+
+        // Record into short-term memory so we don't repeatedly target the same spot
+        if (nearest != null) {
+            Integer lastSeen = recentSeenPositions.get(nearest);
+            if (lastSeen != null && tickCount - lastSeen < SEEN_MEMORY_TICKS) {
+                // Consider it already known; return null so callers pick other actions
+                return null;
+            }
+            recentSeenPositions.put(nearest, tickCount);
+        }
+
         return nearest;
     }
 
@@ -2435,10 +2487,32 @@ public class AmbNpcEntity extends FakePlayer {
      * Broadcast chat message to all players
      */
     public void broadcastGroupChat(String msg) {
-        if (!level().isClientSide() && level().getServer() != null) {
-            Component chatMessage = Component.literal("<" + getName().getString() + "> " + msg);
-            level().getServer().getPlayerList().broadcastSystemMessage(chatMessage, false);
+        // Centralized rate-limited broadcaster: prevents spam and repeated identical messages
+        if (level().isClientSide() || level().getServer() == null) return;
+
+        int now = tickCount;
+
+        // Global window reset
+        if (now - messageGlobalWindowStartTick > MESSAGE_GLOBAL_WINDOW) {
+            messageGlobalWindowStartTick = now;
+            messageGlobalCountInWindow = 0;
         }
+
+        // If too many messages globally in the window, drop
+        if (messageGlobalCountInWindow >= MESSAGE_GLOBAL_LIMIT) return;
+
+        Integer last = recentMessageTick.get(msg);
+        if (last != null && now - last < MESSAGE_REPEAT_COOLDOWN) {
+            // Already said this recently
+            return;
+        }
+
+        // Record and broadcast
+        recentMessageTick.put(msg, now);
+        messageGlobalCountInWindow++;
+
+        Component chatMessage = Component.literal("<" + getName().getString() + "> " + msg);
+        level().getServer().getPlayerList().broadcastSystemMessage(chatMessage, false);
     }
 
     // ==================== REAL PLAYER RULES ENFORCEMENT ====================
