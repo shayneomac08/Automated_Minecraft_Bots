@@ -111,6 +111,7 @@ public class AmbNpcEntity extends FakePlayer {
     // MEMORY SYSTEMS - ULTIMATE LIVING TRIBE
     private final Set<BlockPos> knownCraftingTables = new HashSet<>();
     private final Map<BlockPos, net.minecraft.world.level.block.Block> discoveredResources = new HashMap<>(); // coordinate memory
+    private BlockPos baseLocation = BlockPos.ZERO; // home location for organized storage
 
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
@@ -1043,8 +1044,8 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * MASTER ACTION RUNNER - ULTIMATE LIVING TRIBE SYSTEM
-     * FULL PLAYER INTERACTIONS + MEMORY + VISIBLE HANDS + REAL MINING
+     * MASTER ACTION RUNNER - ULTIMATE TRIBE MASTER METHOD
+     * COMPLEX PLANNING + ORGANIZED CHESTS + STRICT CRAFTING + FULL MEMORY
      * 100% FakePlayer-safe: mining lock, crafting table placement, role on spawn, always visible hands
      */
     private void runAllPlayerActions() {
@@ -1084,7 +1085,7 @@ public class AmbNpcEntity extends FakePlayer {
             toolEquipTimer = 0;
         }
 
-        // REAL MINING WITH CRACKING + LOCK
+        // REAL MINING LOCK + CRACKING
         if (tickCount % 3 == 0) {
             BlockPos target = blockPosition().relative(getDirection());
             BlockState state = level().getBlockState(target);
@@ -1105,29 +1106,32 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
-        // CRAFTING TABLE MEMORY (single shared table)
-        if (getInventory().countItem(Items.CRAFTING_TABLE) > 0 && knownCraftingTables.isEmpty()) {
-            BlockPos placePos = blockPosition().below().relative(getDirection());
-            if (level().getBlockState(placePos).isAir()) {
-                level().setBlock(placePos, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
-                knownCraftingTables.add(placePos);
-                removeItemFromInventory(Items.CRAFTING_TABLE, 1);
-                broadcastGroupChat("Placing our one shared crafting table here for the tribe!");
-                goalLockTimer = 40;
+        // COMPLEX PLANNING: RETURN TO BASE WHEN INVENTORY FULL FOR A MATERIAL
+        if (getInventory().countItem(Items.OAK_LOG) >= 32 || getInventory().countItem(Items.STONE) >= 32 ||
+            getInventory().countItem(Items.IRON_ORE) >= 16 || getInventory().countItem(Items.DIAMOND) >= 4) {
+            if (baseLocation.equals(BlockPos.ZERO)) {
+                baseLocation = blockPosition(); // first time = set base
             }
+            currentGoal = baseLocation;
+            broadcastGroupChat("Inventory full — returning to base to store our haul!");
         }
 
-        // CHEST CRAFTING & STORAGE WHEN INVENTORY FULL
-        if (getInventory().countItem(Items.CHEST) == 0 && getInventory().getContainerSize() > 30) { // 75% full
-            // craft chest
-            addItemToInventory(new ItemStack(Items.CHEST));
-            broadcastGroupChat("Inventory getting full — crafting a chest to store our supplies!");
+        // ORGANIZED CHEST PLACEMENT AT BASE (1 or 2 side-by-side)
+        if (!baseLocation.equals(BlockPos.ZERO) && distanceToSqr(Vec3.atCenterOf(baseLocation)) < 9 &&
+            getInventory().countItem(Items.CHEST) == 0 && getInventory().getContainerSize() > 20) {
+            addItemToInventory(new ItemStack(Items.CHEST, 2)); // craft 2 chests
+            broadcastGroupChat("Crafting two chests for the tribe's storage.");
         }
-        if (getInventory().countItem(Items.CHEST) > 0 && random.nextInt(30) == 0) {
-            BlockPos chestPos = blockPosition().below().relative(getDirection());
-            if (level().getBlockState(chestPos).isAir()) {
-                level().setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 3);
-                broadcastGroupChat("Storing our treasures in this chest — the tribe's wealth grows!");
+        if (getInventory().countItem(Items.CHEST) > 0 && distanceToSqr(Vec3.atCenterOf(baseLocation)) < 9) {
+            BlockPos chest1 = baseLocation.below().relative(getDirection());
+            BlockPos chest2 = chest1.relative(getDirection().getClockWise());
+            if (level().getBlockState(chest1).isAir()) {
+                level().setBlock(chest1, Blocks.CHEST.defaultBlockState(), 3);
+                broadcastGroupChat("Placing the tribe's storage chest here.");
+            }
+            if (getInventory().countItem(Items.CHEST) > 0 && level().getBlockState(chest2).isAir()) {
+                level().setBlock(chest2, Blocks.CHEST.defaultBlockState(), 3);
+                broadcastGroupChat("Adding a second chest right beside the first — double storage!");
             }
         }
 
