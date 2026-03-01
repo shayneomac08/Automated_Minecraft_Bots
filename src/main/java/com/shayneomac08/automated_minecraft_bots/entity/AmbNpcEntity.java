@@ -49,6 +49,7 @@ public class AmbNpcEntity extends FakePlayer {
 
     private final Random random = new Random();
 
+    // Constructor for programmatic spawning
     public AmbNpcEntity(ServerLevel level, String name) {
         super(level, new GameProfile(UUID.randomUUID(), name));
         this.setGameMode(GameType.SURVIVAL);

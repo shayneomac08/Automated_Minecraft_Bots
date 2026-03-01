@@ -6,9 +6,9 @@ import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * Entity registration - DISABLED for FakePlayer-based bots
- * FakePlayer entities cannot be registered as EntityTypes
- * Bots are spawned directly using AmbNpcEntity.spawnAtPlayer()
+ * Entity registration - NOT NEEDED for FakePlayer-based bots
+ * FakePlayer entities are automatically rendered by Minecraft's player rendering system
+ * They don't need custom EntityType registration or renderer registration
  */
 public final class ModEntities {
     private ModEntities() {}
@@ -16,6 +16,6 @@ public final class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(Registries.ENTITY_TYPE, AutomatedMinecraftBots.MODID);
 
-    // NOTE: No entity registration for FakePlayer-based bots
-    // They are created and spawned programmatically
+    // NOTE: FakePlayers don't need EntityType registration
+    // They are spawned programmatically and rendered automatically as players
 }
