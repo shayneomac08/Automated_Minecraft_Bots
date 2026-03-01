@@ -38,28 +38,25 @@ This file lists the active, supported features. For detailed developer notes, te
 
 ## Recent Updates
 
-### Ultimate Tribe Master System (Latest)
+### Final Master Method - Real Cracking Animation (Latest)
 **Status**: ✅ Implemented and tested
 
 **New Features**:
-- **Memory Systems**:
-  - `knownCraftingTables` - Bots remember where they placed crafting tables
-  - `discoveredResources` - Map storing all discovered ore/resource locations with coordinates
-  - `baseLocation` - Home location for organized storage and planning
-- **Complex Planning**: Bots return to base when inventory is full (32+ logs, 32+ stone, 16+ iron ore, or 4+ diamonds)
-- **Organized Chest Placement**: Places 2 chests side-by-side at base location for double storage
-- **Full Surface Awareness**: Scans 97x97x17 block area every 4 seconds, remembers all resources
+- **Real Cracking Animation**: Mining now uses correct timing (every 4 ticks) for authentic block-breaking visuals
+- **Mining Lock**: 80-tick movement lock while mining for realistic player behavior
+- **Mining Announcements**: Bots announce what they're mining ("Starting to mine block.oak_log...")
+- **Auto-Equip on Pickup**: Tools automatically equipped every 20 ticks (1 second)
+- **Single Shared Crafting Table**: Simplified memory system with `knownCraftingTable` field
 - **Enhanced Ore Mining**: Detects and mines all ore types (coal, iron, copper, redstone, gold, lapis, diamond)
-- **Ultra-Detailed LLM Snapshot**: Generates memory string every 10 seconds with known resources, hunger, and time
-- **Tribe Coordination**: Shared base location, organized storage system, resource management
+- **Visible Hands**: Always-visible tool display with priority (axe > pickaxe > sword)
 
 **Technical Details**:
-- Base location set on first inventory-full event
-- Chests placed side-by-side using `getClockWise()` for proper orientation
-- Scan pattern: x/z stride of 4 blocks, y stride of 1 block (~24,000 blocks per scan)
-- Memory persists per bot instance
+- Mining check interval: Every 4 ticks (0.2 seconds) for proper cracking animation
+- Movement lock: 80 ticks (4 seconds) while actively mining
+- Tool equip check: Every 20 ticks (1 second)
+- Uses `gameMode.destroyBlock()` for FakePlayer-safe mining
+- Single `knownCraftingTable` BlockPos instead of Set for simplicity
 - 100% FakePlayer-safe implementation
-- Performance optimized with reasonable scan intervals
 
 ---
 

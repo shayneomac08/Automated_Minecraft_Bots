@@ -112,6 +112,7 @@ public class AmbNpcEntity extends FakePlayer {
     private final Set<BlockPos> knownCraftingTables = new HashSet<>();
     private final Map<BlockPos, net.minecraft.world.level.block.Block> discoveredResources = new HashMap<>(); // coordinate memory
     private BlockPos baseLocation = BlockPos.ZERO; // home location for organized storage
+    private BlockPos knownCraftingTable = BlockPos.ZERO; // single shared crafting table
 
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
@@ -1044,8 +1045,7 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * MASTER ACTION RUNNER - ULTIMATE TRIBE MASTER METHOD
-     * COMPLEX PLANNING + ORGANIZED CHESTS + STRICT CRAFTING + FULL MEMORY
+     * FINAL MASTER METHOD — REAL CRACKING ANIMATION + VISIBLE HANDS + MINING LOCK + PICKUP EQUIP
      * 100% FakePlayer-safe: mining lock, crafting table placement, role on spawn, always visible hands
      */
     private void runAllPlayerActions() {
@@ -1072,9 +1072,9 @@ public class AmbNpcEntity extends FakePlayer {
             this.setSprinting(true);
         }
 
-        // ALWAYS VISIBLE HANDS — re-equip every 2 seconds (40 ticks)
+        // ALWAYS VISIBLE HANDS + AUTO-EQUIP ON PICKUP
         toolEquipTimer++;
-        if (toolEquipTimer > 40) {
+        if (toolEquipTimer > 20) {
             if (getInventory().countItem(Items.WOODEN_AXE) > 0 && !getMainHandItem().is(Items.WOODEN_AXE)) {
                 equipToolInHand(Items.WOODEN_AXE);
             } else if (getInventory().countItem(Items.WOODEN_PICKAXE) > 0 && !getMainHandItem().is(Items.WOODEN_PICKAXE)) {
@@ -1085,8 +1085,8 @@ public class AmbNpcEntity extends FakePlayer {
             toolEquipTimer = 0;
         }
 
-        // REAL MINING LOCK + CRACKING
-        if (tickCount % 3 == 0) {
+        // REAL PLAYER MINING WITH CRACKING ANIMATION + LOCK
+        if (tickCount % 4 == 0) {  // correct timing for cracking animation
             BlockPos target = blockPosition().relative(getDirection());
             BlockState state = level().getBlockState(target);
             if ((state.is(BlockTags.LOGS) || state.is(Blocks.STONE) || state.is(Blocks.DIRT) ||
@@ -1095,10 +1095,11 @@ public class AmbNpcEntity extends FakePlayer {
                  state.is(Blocks.GOLD_ORE) || state.is(Blocks.LAPIS_ORE) || state.is(Blocks.DIAMOND_ORE)) &&
                 !currentBreakingBlock.equals(target)) {
                 currentBreakingBlock = target;
-                goalLockTimer = 60; // STOP MOVING WHILE MINING
+                goalLockTimer = 80; // LOCK MOVEMENT while mining (real player feel)
+                broadcastGroupChat("Starting to mine " + state.getBlock().getDescriptionId() + "...");
             }
             if (!currentBreakingBlock.equals(BlockPos.ZERO)) {
-                gameMode.destroyBlock(currentBreakingBlock); // real left-click mining
+                gameMode.destroyBlock(currentBreakingBlock); // real left-click mining with cracking
                 if (level().getBlockState(currentBreakingBlock).isAir()) {
                     currentBreakingBlock = BlockPos.ZERO;
                     goalLockTimer = 0;
@@ -1106,66 +1107,19 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
-        // COMPLEX PLANNING: RETURN TO BASE WHEN INVENTORY FULL FOR A MATERIAL
-        if (getInventory().countItem(Items.OAK_LOG) >= 32 || getInventory().countItem(Items.STONE) >= 32 ||
-            getInventory().countItem(Items.IRON_ORE) >= 16 || getInventory().countItem(Items.DIAMOND) >= 4) {
-            if (baseLocation.equals(BlockPos.ZERO)) {
-                baseLocation = blockPosition(); // first time = set base
-            }
-            currentGoal = baseLocation;
-            broadcastGroupChat("Inventory full — returning to base to store our haul!");
-        }
-
-        // ORGANIZED CHEST PLACEMENT AT BASE (1 or 2 side-by-side)
-        if (!baseLocation.equals(BlockPos.ZERO) && distanceToSqr(Vec3.atCenterOf(baseLocation)) < 9 &&
-            getInventory().countItem(Items.CHEST) == 0 && getInventory().getContainerSize() > 20) {
-            addItemToInventory(new ItemStack(Items.CHEST, 2)); // craft 2 chests
-            broadcastGroupChat("Crafting two chests for the tribe's storage.");
-        }
-        if (getInventory().countItem(Items.CHEST) > 0 && distanceToSqr(Vec3.atCenterOf(baseLocation)) < 9) {
-            BlockPos chest1 = baseLocation.below().relative(getDirection());
-            BlockPos chest2 = chest1.relative(getDirection().getClockWise());
-            if (level().getBlockState(chest1).isAir()) {
-                level().setBlock(chest1, Blocks.CHEST.defaultBlockState(), 3);
-                broadcastGroupChat("Placing the tribe's storage chest here.");
-            }
-            if (getInventory().countItem(Items.CHEST) > 0 && level().getBlockState(chest2).isAir()) {
-                level().setBlock(chest2, Blocks.CHEST.defaultBlockState(), 3);
-                broadcastGroupChat("Adding a second chest right beside the first — double storage!");
+        // CRAFTING TABLE PLACEMENT (single shared one)
+        if (getInventory().countItem(Items.CRAFTING_TABLE) > 0 && knownCraftingTable.equals(BlockPos.ZERO)) {
+            BlockPos placePos = blockPosition().below().relative(getDirection());
+            if (level().getBlockState(placePos).isAir()) {
+                level().setBlock(placePos, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
+                knownCraftingTable = placePos;
+                removeItemFromInventory(Items.CRAFTING_TABLE, 1);
+                broadcastGroupChat("Placing our shared crafting table here for the whole tribe!");
+                goalLockTimer = 40;
             }
         }
 
-        // FULL SURFACE AWARENESS MEMORY (smarter than human)
-        if (tickCount % 80 == 0) {
-            BlockPos me = blockPosition();
-            for (int x = -48; x <= 48; x += 4) {
-                for (int z = -48; z <= 48; z += 4) {
-                    for (int y = -8; y <= 8; y++) {
-                        BlockPos check = me.offset(x, y, z);
-                        net.minecraft.world.level.block.Block block = level().getBlockState(check).getBlock();
-                        if (block != Blocks.AIR && (block == Blocks.OAK_LOG || block == Blocks.COAL_ORE ||
-                            block == Blocks.IRON_ORE || block == Blocks.DIAMOND_ORE || block == Blocks.GOLD_ORE ||
-                            block == Blocks.COPPER_ORE || block == Blocks.REDSTONE_ORE || block == Blocks.LAPIS_ORE)) {
-                            discoveredResources.put(check, block);
-                        }
-                    }
-                }
-            }
-        }
-
-        // ULTRA-DETAILED LLM SNAPSHOT (dummy-proof)
-        if (tickCount % 200 == 0) {
-            StringBuilder memory = new StringBuilder("You are a native inhabitant with perfect memory. ");
-            memory.append("Known resources: ");
-            discoveredResources.forEach((pos, block) -> memory.append(block.getDescriptionId()).append(" at ").append(pos).append(" "));
-            memory.append(" | Known crafting table at ").append(knownCraftingTables.isEmpty() ? "none" : knownCraftingTables.iterator().next());
-            long dayTime = level().getDayTime() % 24000L;
-            boolean isNight = dayTime >= 13000 && dayTime < 23000;
-            memory.append(" | Hunger: ").append(hunger).append(" | Time: ").append(isNight ? "NIGHT" : "DAY");
-            // Your LLM call uses this memory string
-        }
-
-        // NATURAL MESSAGES (no spam)
+        // NATURAL RARE MESSAGES
         if (tickCount % 600 == 0 && messageCooldown == 0) {
             if (hunger < 8) {
                 broadcastGroupChat("My stomach is growling... the tribe needs food soon.");
