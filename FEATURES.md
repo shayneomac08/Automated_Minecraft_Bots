@@ -38,32 +38,46 @@ This file lists the active, supported features. For detailed developer notes, te
 
 ## Recent Updates
 
-### FakePlayer Visibility Fix (Latest)
-**Status**: ✅ Implemented - Testing Required
+### FakePlayer Visibility Fix with Custom Renderer (Latest)
+**Status**: ✅ Implemented - BUILD SUCCESSFUL - Ready for Testing
 
 **Problem**: Bots were spawning but completely invisible and not moving.
 
-**Root Cause**: FakePlayers extend ServerPlayer and need explicit visibility initialization. While `addFreshEntity()` adds them to the entity list, visibility flags must be set manually.
+**Root Cause**: FakePlayers extend ServerPlayer but need EntityType registration + custom renderer to be visible on the client side.
 
-**Solution Implemented**:
-1. **Constructor Initialization**: Added `setInvisible(false)` and `setInvulnerable(false)` in AmbNpcEntity constructor
-2. **Spawn Enhancement**: Explicitly set `setInvisible(false)` in spawn methods to ensure visibility
-3. **Clean Rendering**: No glow effects or special rendering - bots render as normal players
+**Solution Implemented** (KEEPING FakePlayer/ServerPlayer base):
+1. **EntityType Registration**: Registered `AMB_NPC` entity type in `ModEntities.java`
+2. **Dual Constructor**: Added EntityType constructor alongside programmatic spawning constructor
+3. **Custom Renderer**: Registered `LivingEntityRenderer` with `HumanoidModel` and `HumanoidRenderState`
+4. **Steve Skin**: Uses default Steve skin texture from Minecraft
+5. **Visibility Flags**: Set `setInvisible(false)` and `setInvulnerable(false)` in constructors
 
 **Files Modified**:
-- `AmbNpcEntity.java` - Constructor, spawnAtPlayer(), and tick() method
-- `AvatarFactory.java` - spawn() method
+- `AmbNpcEntity.java` - Added EntityType constructor, imported EntityType and Level
+- `ModEntities.java` - Registered AMB_NPC entity type with proper ResourceKey
+- `AutomatedMinecraftBotsClient.java` - Registered custom renderer with HumanoidModel
+- `AvatarFactory.java` - spawn() method with visibility flags
+
+**Technical Details**:
+- Entity Type: `automated_minecraft_bots:amb_npc`
+- Size: 0.6F x 1.8F (exact player hitbox)
+- Tracking Range: 64 blocks
+- Update Interval: 3 ticks
+- Model: HumanoidModel with PLAYER layer
+- Texture: Default Steve skin (`textures/entity/player/wide/steve.png`)
+- Renderer: LivingEntityRenderer with HumanoidRenderState
 
 **Testing Instructions**:
 1. Run: `./gradlew.bat runClient`
-2. Spawn: `/amb spawn TestBot openai`
-3. **Expected**: Bot appears as normal player with visible nametag, stands still 5 seconds, then moves/mines
+2. Spawn: `/amb spawn TestBot openai` (uses programmatic constructor)
+3. Or: `/summon automated_minecraft_bots:amb_npc ~ ~ ~` (uses EntityType constructor)
+4. **Expected**: Bot appears as Steve player model with visible nametag
 
-**Technical Notes**:
-- FakePlayers don't need custom EntityType or renderer registration
-- They use Minecraft's built-in player rendering system
-- Visibility flags must be explicitly set despite automatic rendering
-- Bots render as normal players with standard player models and skins
+**Important Notes**:
+- ✅ **KEPT FakePlayer/ServerPlayer base** - No PathfinderMob conversion
+- ✅ **Custom renderer registered** - Makes FakePlayers visible to clients
+- ✅ **Dual constructor support** - Works with both spawn methods
+- ✅ **Minecraft 1.21.11 compatible** - Uses Identifier instead of ResourceLocation
 
 ---
 

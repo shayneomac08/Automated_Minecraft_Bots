@@ -5,11 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.FakePlayer;
@@ -55,8 +57,17 @@ public class AmbNpcEntity extends FakePlayer {
         this.setGameMode(GameType.SURVIVAL);
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
         this.setHealth(20.0F);
+        this.setInvisible(false);
+        this.setInvulnerable(false);
+    }
 
-        // Make the bot visible and properly initialized
+    // Constructor for EntityType registration (required for renderer)
+    // Note: EntityType.Builder expects (EntityType, Level) signature
+    public AmbNpcEntity(EntityType<?> entityType, Level level) {
+        super(level instanceof ServerLevel serverLevel ? serverLevel : null, new GameProfile(UUID.randomUUID(), "Bot"));
+        this.setGameMode(GameType.SURVIVAL);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
+        this.setHealth(20.0F);
         this.setInvisible(false);
         this.setInvulnerable(false);
     }

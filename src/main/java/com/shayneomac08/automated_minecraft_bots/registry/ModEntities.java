@@ -1,14 +1,17 @@
 package com.shayneomac08.automated_minecraft_bots.registry;
 
 import com.shayneomac08.automated_minecraft_bots.AutomatedMinecraftBots;
+import com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * Entity registration - NOT NEEDED for FakePlayer-based bots
- * FakePlayer entities are automatically rendered by Minecraft's player rendering system
- * They don't need custom EntityType registration or renderer registration
+ * Entity registration for FakePlayer-based bots with custom renderer
  */
 public final class ModEntities {
     private ModEntities() {}
@@ -16,6 +19,11 @@ public final class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(Registries.ENTITY_TYPE, AutomatedMinecraftBots.MODID);
 
-    // NOTE: FakePlayers don't need EntityType registration
-    // They are spawned programmatically and rendered automatically as players
+    // Register FakePlayer entity for custom rendering
+    public static final DeferredHolder<EntityType<?>, EntityType<AmbNpcEntity>> AMB_NPC = ENTITIES.register("amb_npc",
+        () -> EntityType.Builder.<AmbNpcEntity>of(AmbNpcEntity::new, MobCategory.CREATURE)
+            .sized(0.6F, 1.8F)           // exact player hitbox
+            .clientTrackingRange(64)
+            .updateInterval(3)
+            .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(AutomatedMinecraftBots.MODID, "amb_npc"))));
 }
