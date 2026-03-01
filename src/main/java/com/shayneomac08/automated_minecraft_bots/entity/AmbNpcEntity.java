@@ -105,6 +105,7 @@ public class AmbNpcEntity extends FakePlayer {
     private int spawnIdleTimer = 100; // 5 seconds idle on spawn
     private int toolEquipTimer = 0;
     private int visionScanTimer = 0;
+    private int equipmentSyncTicker = 0;
 
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
@@ -284,6 +285,8 @@ public class AmbNpcEntity extends FakePlayer {
             equipBestTool();
             // Update surroundings for LLM awareness
             updateSurroundingsForLLM();
+            // Sync equipment display to clients every 10 ticks
+            syncEquipmentDisplay();
         }
 
         // ===== HUMAN-LIKE FEATURES: EYES + VOTING =====
@@ -605,6 +608,57 @@ public class AmbNpcEntity extends FakePlayer {
         if (random.nextInt(3) == 0) {
             broadcastGroupChat("Equipped my " + item.getDescriptionId() + " — ready to go!");
         }
+    }
+
+    /**
+     * Sync equipment display to ensure main hand item is always visible to clients
+     */
+    private void syncEquipmentDisplay() {
+        // Get the main hand item
+        ItemStack mainHand = getMainHandItem();
+
+        // Sync main hand to all equipment slots that clients track
+        setItemSlot(EquipmentSlot.MAINHAND, mainHand.copy());
+
+        // Occasionally equip best tool to ensure visibility
+        if (equipmentSyncTicker++ > 20) {
+            equipmentSyncTicker = 0;
+            ItemStack bestTool = findBestTool();
+            if (!bestTool.isEmpty() && !mainHand.equals(bestTool)) {
+                setItemInHand(InteractionHand.MAIN_HAND, bestTool);
+                setItemSlot(EquipmentSlot.MAINHAND, bestTool.copy());
+            }
+        }
+    }
+
+    /**
+     * Find and return the best tool from inventory (pickaxe > axe > sword)
+     */
+    private ItemStack findBestTool() {
+        Inventory inv = getInventory();
+        ItemStack best = ItemStack.EMPTY;
+        int bestTier = 0;
+
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            Item item = stack.getItem();
+
+            // Check tier
+            int itemTier = 0;
+            if (item == Items.NETHERITE_PICKAXE || item == Items.NETHERITE_AXE || item == Items.NETHERITE_SWORD) itemTier = 6;
+            else if (item == Items.DIAMOND_PICKAXE || item == Items.DIAMOND_AXE || item == Items.DIAMOND_SWORD) itemTier = 5;
+            else if (item == Items.IRON_PICKAXE || item == Items.IRON_AXE || item == Items.IRON_SWORD) itemTier = 4;
+            else if (item == Items.STONE_PICKAXE || item == Items.STONE_AXE || item == Items.STONE_SWORD) itemTier = 3;
+            else if (item == Items.WOODEN_PICKAXE || item == Items.WOODEN_AXE || item == Items.WOODEN_SWORD) itemTier = 2;
+
+            if (itemTier > bestTier) {
+                best = stack.copy();
+                best.setCount(1); // Only hold one item at a time
+                bestTier = itemTier;
+            }
+        }
+
+        return best;
     }
 
     /**
@@ -1327,31 +1381,67 @@ public class AmbNpcEntity extends FakePlayer {
 
     /**
      * ===== FEATURE 2: AUTO DOOR OPENING =====
-     * Automatically open doors the bot is looking at
+     * Automatically open doors and gates the bot encounters
      */
     private void attemptOpenDoors() {
-        // Check what the bot is looking at (4 blocks ahead)
-        HitResult hit = pick(4.0, 1.0f, false);
+        // Check blocks around the bot for doors/gates within reach
+        BlockPos centerPos = blockPosition();
 
-        if (hit.getType() == HitResult.Type.BLOCK) {
-            BlockHitResult blockHit = (BlockHitResult) hit;
-            BlockPos doorPos = blockHit.getBlockPos();
-            BlockState state = level().getBlockState(doorPos);
+        // Check directly in front first (most common)
+        BlockPos frontPos = centerPos.relative(getDirection());
+        BlockState frontState = level().getBlockState(frontPos);
 
-            // If it's a door, toggle it
-            if (state.getBlock() instanceof DoorBlock) {
-                boolean isOpen = state.getValue(DoorBlock.OPEN);
+        if (isOpenable(frontState)) {
+            openBlock(frontPos, frontState);
+            return;
+        }
 
-                // Open closed doors, close open doors
-                level().setBlock(doorPos, state.setValue(DoorBlock.OPEN, !isOpen), 3);
+        // Check nearby positions for doors/gates
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    if (x == 0 && y == 0 && z == 0) continue; // Skip center
 
-                // Play door sound
-                if (!isOpen) {
-                    playSound(SoundEvents.WOODEN_DOOR_OPEN, 1.0f, 1.0f);
-                } else {
-                    playSound(SoundEvents.WOODEN_DOOR_CLOSE, 1.0f, 1.0f);
+                    BlockPos checkPos = centerPos.offset(x, y, z);
+                    BlockState checkState = level().getBlockState(checkPos);
+
+                    if (isOpenable(checkState)) {
+                        // Check distance - only try if close
+                        if (position().distanceTo(Vec3.atCenterOf(checkPos)) < 3.0) {
+                            openBlock(checkPos, checkState);
+                            return;
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    private boolean isOpenable(BlockState state) {
+        return state.getBlock() instanceof DoorBlock ||
+               state.is(Blocks.IRON_DOOR) ||
+               state.is(Blocks.OAK_FENCE_GATE) ||
+               state.is(Blocks.ACACIA_FENCE_GATE) ||
+               state.is(Blocks.BIRCH_FENCE_GATE) ||
+               state.is(Blocks.DARK_OAK_FENCE_GATE) ||
+               state.is(Blocks.JUNGLE_FENCE_GATE) ||
+               state.is(Blocks.SPRUCE_FENCE_GATE) ||
+               state.is(Blocks.MANGROVE_FENCE_GATE) ||
+               state.is(Blocks.CHERRY_FENCE_GATE) ||
+               state.is(Blocks.PALE_OAK_FENCE_GATE);
+    }
+
+    private void openBlock(BlockPos pos, BlockState state) {
+        if (state.getBlock() instanceof DoorBlock) {
+            boolean isOpen = state.getValue(DoorBlock.OPEN);
+            level().setBlock(pos, state.setValue(DoorBlock.OPEN, !isOpen), 3);
+            playSound(isOpen ? SoundEvents.WOODEN_DOOR_CLOSE : SoundEvents.WOODEN_DOOR_OPEN, 1.0f, 1.0f);
+            if (random.nextInt(4) == 0) broadcastGroupChat("Opening door!");
+        } else if (state.hasProperty(net.minecraft.world.level.block.FenceGateBlock.OPEN)) {
+            boolean isOpen = state.getValue(net.minecraft.world.level.block.FenceGateBlock.OPEN);
+            level().setBlock(pos, state.setValue(net.minecraft.world.level.block.FenceGateBlock.OPEN, !isOpen), 3);
+            playSound(isOpen ? SoundEvents.FENCE_GATE_CLOSE : SoundEvents.FENCE_GATE_OPEN, 1.0f, 1.0f);
+            if (random.nextInt(4) == 0) broadcastGroupChat("Opening gate!");
         }
     }
 
@@ -1414,48 +1504,115 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== TASK IMPLEMENTATIONS ====================
 
     private void gatherWood() {
-        // Find nearest tree (oak log)
-        BlockPos nearestLog = findNearestBlock(Blocks.OAK_LOG, 32);
+        // Focused resource gathering: scan, target, mine, pickup, repeat
 
-        if (nearestLog != null) {
-            // Check if block is within reach (4.5 blocks for players)
-            double distance = position().distanceTo(Vec3.atCenterOf(nearestLog));
-            if (distance > 4.5) {
-                setMoveTarget(nearestLog, 0.2f);
-            } else {
-                // Stop moving and mine the log
-                stopMovement();
-                mineBlockLikePlayer(nearestLog);
+        // Auto-equip best tool for wood gathering
+        if (random.nextInt(10) == 0) {
+            if (getInventory().countItem(Items.WOODEN_AXE) > 0) {
+                setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WOODEN_AXE));
+                setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_AXE));
             }
+        }
+
+        // Pickup nearby drops FIRST before moving
+        pickupNearbyItems();
+
+        // If we don't have an active target or we've completed it
+        if (currentGoal.equals(BlockPos.ZERO) || level().getBlockState(currentGoal).isAir()) {
+            // Find nearest tree (oak log) within 40 block radius
+            BlockPos nearestLog = findNearestBlock(Blocks.OAK_LOG, 40);
+
+            if (nearestLog != null) {
+                currentGoal = nearestLog;
+                goalLockTimer = 300; // Lock goal for 15 seconds
+                if (random.nextInt(4) == 0) {
+                    broadcastGroupChat("Found wood! Moving to harvest...");
+                }
+            } else {
+                broadcastGroupChat("No trees nearby! Time to explore.");
+                currentTask = "explore";
+                currentGoal = BlockPos.ZERO;
+                return;
+            }
+        }
+
+        // Move to and mine the locked-in target
+        double distance = position().distanceTo(Vec3.atCenterOf(currentGoal));
+        if (distance > 4.5) {
+            // Walk directly to target (no sidestepping)
+            setMoveTarget(currentGoal, 0.15f);
         } else {
-            broadcastGroupChat("No trees nearby!");
-            currentTask = "idle";
+            // We're close enough - mine it
+            stopMovement();
+            mineBlockLikePlayer(currentGoal);
+
+            // When block is broken, pickup drops before continuing
+            if (level().getBlockState(currentGoal).isAir()) {
+                pickupNearbyItems();
+                currentGoal = BlockPos.ZERO; // Clear for next block
+                if (random.nextInt(5) == 0) {
+                    broadcastGroupChat("Got one! Looking for more...");
+                }
+            }
         }
     }
 
     private void mineStone() {
-        // Find nearest stone/cobblestone/dirt
-        BlockPos nearestStone = findNearestBlock(Blocks.STONE, 32);
-        if (nearestStone == null) {
-            nearestStone = findNearestBlock(Blocks.COBBLESTONE, 32);
-        }
-        if (nearestStone == null) {
-            nearestStone = findNearestBlock(Blocks.DIRT, 32);
+        // Focused resource gathering: scan, target, mine, pickup, repeat
+
+        // Auto-equip best tool for stone gathering
+        if (random.nextInt(10) == 0) {
+            if (getInventory().countItem(Items.WOODEN_PICKAXE) > 0) {
+                setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WOODEN_PICKAXE));
+                setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_PICKAXE));
+            } else if (getInventory().countItem(Items.STONE_PICKAXE) > 0) {
+                setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STONE_PICKAXE));
+                setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_PICKAXE));
+            }
         }
 
-        if (nearestStone != null) {
-            // Check if block is within reach (4.5 blocks for players)
-            double distance = position().distanceTo(Vec3.atCenterOf(nearestStone));
-            if (distance > 4.5) {
-                setMoveTarget(nearestStone, 0.2f);
+        // Pickup nearby drops FIRST before moving
+        pickupNearbyItems();
+
+        // If we don't have an active target or we've completed it
+        if (currentGoal.equals(BlockPos.ZERO) || level().getBlockState(currentGoal).isAir()) {
+            // Find nearest minable stone-type block
+            BlockPos nearestStone = findNearestBlock(Blocks.STONE, 40);
+            if (nearestStone == null) nearestStone = findNearestBlock(Blocks.COBBLESTONE, 40);
+            if (nearestStone == null) nearestStone = findNearestBlock(Blocks.DIRT, 40);
+
+            if (nearestStone != null) {
+                currentGoal = nearestStone;
+                goalLockTimer = 300; // Lock goal for 15 seconds
+                if (random.nextInt(4) == 0) {
+                    broadcastGroupChat("Found stone! Moving to harvest...");
+                }
             } else {
-                // Stop moving and mine the stone
-                stopMovement();
-                mineBlockLikePlayer(nearestStone);
+                broadcastGroupChat("No stone nearby! Exploring to find more...");
+                currentTask = "explore";
+                currentGoal = BlockPos.ZERO;
+                return;
             }
+        }
+
+        // Move to and mine the locked-in target
+        double distance = position().distanceTo(Vec3.atCenterOf(currentGoal));
+        if (distance > 4.5) {
+            // Walk directly to target (no sidestepping)
+            setMoveTarget(currentGoal, 0.15f);
         } else {
-            broadcastGroupChat("No stone or dirt nearby!");
-            currentTask = "idle";
+            // We're close enough - mine it
+            stopMovement();
+            mineBlockLikePlayer(currentGoal);
+
+            // When block is broken, pickup drops before continuing
+            if (level().getBlockState(currentGoal).isAir()) {
+                pickupNearbyItems();
+                currentGoal = BlockPos.ZERO; // Clear for next block
+                if (random.nextInt(5) == 0) {
+                    broadcastGroupChat("Got one! Looking for more...");
+                }
+            }
         }
     }
 
@@ -1637,16 +1794,20 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     private void craft() {
-        // Auto-place crafting table if we have one but none nearby (with anti-spam cooldown)
-        placeCraftingTableSafely();
-
-        if (!hasCraftingTableNearby() && getInventory().countItem(Items.CRAFTING_TABLE) > 0) {
-            return; // Wait for next tick to craft
+        // First, try to auto-place a crafting table if we have one and don't have one nearby
+        if (!hasCraftingTableNearby() && getInventory().countItem(Items.CRAFTING_TABLE) > 0 && craftingCooldown == 0) {
+            if (!placeCraftingTableInFrontOfBot()) {
+                // If placement failed, try spiral search
+                placeCraftingTable();
+            }
+            return; // Wait for next tick after placement attempt
         }
 
         // ENFORCE PLAYER CRAFTING RULES - must be at crafting table
         if (!enforcePlayerCraftingRules()) {
-            broadcastGroupChat("Need to be at a crafting table to craft!");
+            if (random.nextInt(8) == 0) {
+                broadcastGroupChat("Need to be at a crafting table to craft!");
+            }
             currentTask = "idle";
             return;
         }
@@ -1658,12 +1819,35 @@ public class AmbNpcEntity extends FakePlayer {
             // Remove 1 log, add 4 planks
             removeItemFromInventory(Items.OAK_LOG, 1);
             addItemToInventory(new ItemStack(Items.OAK_PLANKS, 4));
-            broadcastGroupChat("Crafted planks!");
+            broadcastGroupChat("Crafted 4 planks from oak log!");
         } else {
-            broadcastGroupChat("No logs to craft!");
+            broadcastGroupChat("No logs to craft! Need to gather wood first.");
+            currentTask = "gather_wood";
         }
+    }
 
-        currentTask = "idle";
+    /**
+     * Try to place crafting table directly in front of bot
+     * Returns true if successful, false if no space available
+     */
+    private boolean placeCraftingTableInFrontOfBot() {
+        BlockPos placePos = blockPosition().relative(getDirection());
+        BlockPos groundPos = placePos.below();
+        BlockPos abovePos = placePos.above();
+
+        // Check if there's solid ground, air at place position, and air above
+        if (!level().getBlockState(groundPos).isAir() &&
+            level().getBlockState(placePos).isAir() &&
+            level().getBlockState(abovePos).isAir()) {
+
+            // Place the crafting table
+            level().setBlock(placePos, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
+            removeItemFromInventory(Items.CRAFTING_TABLE, 1);
+            broadcastGroupChat("Placed crafting table!");
+            craftingCooldown = 300; // 15-second cooldown
+            return true;
+        }
+        return false;
     }
 
     // ==================== INVENTORY HELPERS ====================
