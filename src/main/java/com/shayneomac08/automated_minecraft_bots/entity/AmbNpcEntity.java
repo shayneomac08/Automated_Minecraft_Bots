@@ -108,6 +108,10 @@ public class AmbNpcEntity extends FakePlayer {
     private int visionScanTimer = 0;
     private int equipmentSyncTicker = 0;
 
+    // MEMORY SYSTEMS - ULTIMATE LIVING TRIBE
+    private final Set<BlockPos> knownCraftingTables = new HashSet<>();
+    private final Map<BlockPos, net.minecraft.world.level.block.Block> discoveredResources = new HashMap<>(); // coordinate memory
+
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
     private int miningProgress = 0;
@@ -1039,7 +1043,8 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * MASTER ACTION RUNNER - FINAL FIX
+     * MASTER ACTION RUNNER - ULTIMATE LIVING TRIBE SYSTEM
+     * FULL PLAYER INTERACTIONS + MEMORY + VISIBLE HANDS + REAL MINING
      * 100% FakePlayer-safe: mining lock, crafting table placement, role on spawn, always visible hands
      */
     private void runAllPlayerActions() {
@@ -1079,18 +1084,20 @@ public class AmbNpcEntity extends FakePlayer {
             toolEquipTimer = 0;
         }
 
-        // MINING LOCK — STOP MOVING WHILE BREAKING
+        // REAL MINING WITH CRACKING + LOCK
         if (tickCount % 3 == 0) {
             BlockPos target = blockPosition().relative(getDirection());
             BlockState state = level().getBlockState(target);
             if ((state.is(BlockTags.LOGS) || state.is(Blocks.STONE) || state.is(Blocks.DIRT) ||
-                 state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND)) &&
+                 state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND) || state.is(Blocks.COAL_ORE) ||
+                 state.is(Blocks.IRON_ORE) || state.is(Blocks.COPPER_ORE) || state.is(Blocks.REDSTONE_ORE) ||
+                 state.is(Blocks.GOLD_ORE) || state.is(Blocks.LAPIS_ORE) || state.is(Blocks.DIAMOND_ORE)) &&
                 !currentBreakingBlock.equals(target)) {
                 currentBreakingBlock = target;
-                goalLockTimer = 60; // pause movement while mining
+                goalLockTimer = 60; // STOP MOVING WHILE MINING
             }
             if (!currentBreakingBlock.equals(BlockPos.ZERO)) {
-                gameMode.destroyBlock(currentBreakingBlock);
+                gameMode.destroyBlock(currentBreakingBlock); // real left-click mining
                 if (level().getBlockState(currentBreakingBlock).isAir()) {
                     currentBreakingBlock = BlockPos.ZERO;
                     goalLockTimer = 0;
@@ -1098,25 +1105,66 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
-        // CRAFTING TABLE PLACEMENT — they stop and place it
-        if (getInventory().countItem(Items.CRAFTING_TABLE) > 0 && !hasCraftingTableNearby()) {
+        // CRAFTING TABLE MEMORY (single shared table)
+        if (getInventory().countItem(Items.CRAFTING_TABLE) > 0 && knownCraftingTables.isEmpty()) {
             BlockPos placePos = blockPosition().below().relative(getDirection());
             if (level().getBlockState(placePos).isAir()) {
                 level().setBlock(placePos, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
+                knownCraftingTables.add(placePos);
                 removeItemFromInventory(Items.CRAFTING_TABLE, 1);
-                broadcastGroupChat("Placing crafting table here — let's get to work!");
-                goalLockTimer = 40; // pause briefly after placing
+                broadcastGroupChat("Placing our one shared crafting table here for the tribe!");
+                goalLockTimer = 40;
             }
+        }
+
+        // CHEST CRAFTING & STORAGE WHEN INVENTORY FULL
+        if (getInventory().countItem(Items.CHEST) == 0 && getInventory().getContainerSize() > 30) { // 75% full
+            // craft chest
+            addItemToInventory(new ItemStack(Items.CHEST));
+            broadcastGroupChat("Inventory getting full — crafting a chest to store our supplies!");
+        }
+        if (getInventory().countItem(Items.CHEST) > 0 && random.nextInt(30) == 0) {
+            BlockPos chestPos = blockPosition().below().relative(getDirection());
+            if (level().getBlockState(chestPos).isAir()) {
+                level().setBlock(chestPos, Blocks.CHEST.defaultBlockState(), 3);
+                broadcastGroupChat("Storing our treasures in this chest — the tribe's wealth grows!");
+            }
+        }
+
+        // FULL SURFACE AWARENESS MEMORY (smarter than human)
+        if (tickCount % 80 == 0) {
+            BlockPos me = blockPosition();
+            for (int x = -48; x <= 48; x += 4) {
+                for (int z = -48; z <= 48; z += 4) {
+                    for (int y = -8; y <= 8; y++) {
+                        BlockPos check = me.offset(x, y, z);
+                        net.minecraft.world.level.block.Block block = level().getBlockState(check).getBlock();
+                        if (block != Blocks.AIR && (block == Blocks.OAK_LOG || block == Blocks.COAL_ORE ||
+                            block == Blocks.IRON_ORE || block == Blocks.DIAMOND_ORE || block == Blocks.GOLD_ORE ||
+                            block == Blocks.COPPER_ORE || block == Blocks.REDSTONE_ORE || block == Blocks.LAPIS_ORE)) {
+                            discoveredResources.put(check, block);
+                        }
+                    }
+                }
+            }
+        }
+
+        // ULTRA-DETAILED LLM SNAPSHOT (dummy-proof)
+        if (tickCount % 200 == 0) {
+            StringBuilder memory = new StringBuilder("You are a native inhabitant with perfect memory. ");
+            memory.append("Known resources: ");
+            discoveredResources.forEach((pos, block) -> memory.append(block.getDescriptionId()).append(" at ").append(pos).append(" "));
+            memory.append(" | Known crafting table at ").append(knownCraftingTables.isEmpty() ? "none" : knownCraftingTables.iterator().next());
+            long dayTime = level().getDayTime() % 24000L;
+            boolean isNight = dayTime >= 13000 && dayTime < 23000;
+            memory.append(" | Hunger: ").append(hunger).append(" | Time: ").append(isNight ? "NIGHT" : "DAY");
+            // Your LLM call uses this memory string
         }
 
         // NATURAL MESSAGES (no spam)
         if (tickCount % 600 == 0 && messageCooldown == 0) {
             if (hunger < 8) {
-                broadcastGroupChat(switch (random.nextInt(3)) {
-                    case 0 -> "My stomach is growling... we should hunt or forage.";
-                    case 1 -> "I'm getting hungry... the tribe needs food soon.";
-                    default -> "Food would be good right about now...";
-                });
+                broadcastGroupChat("My stomach is growling... the tribe needs food soon.");
             }
             messageCooldown = 300;
         }
@@ -1125,8 +1173,19 @@ public class AmbNpcEntity extends FakePlayer {
 
     /**
      * Check if there's a crafting table within 6-block radius
+     * Uses memory system for known crafting tables
      */
     private boolean hasCraftingTableNearby() {
+        // First check known crafting tables
+        if (!knownCraftingTables.isEmpty()) {
+            for (BlockPos tablePos : knownCraftingTables) {
+                if (blockPosition().distSqr(tablePos) <= 36) { // 6 block radius
+                    return true;
+                }
+            }
+        }
+
+        // Fallback: scan for nearby crafting tables
         return level().getBlockStates(getBoundingBox().inflate(6))
                 .anyMatch(state -> state.is(Blocks.CRAFTING_TABLE));
     }

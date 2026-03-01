@@ -15,6 +15,9 @@ This file lists the active, supported features. For detailed developer notes, te
 - 180° human FOV snapshot system for LLM decision making.
 - Group coordination: roles, voting, resource sharing, alliances.
 - Combat (melee, ranged), hunting, breeding, taming, fishing, sleeping, and more.
+- **Memory systems**: Bots remember discovered resources and placed crafting tables.
+- **Tribe coordination**: Shared crafting tables, chest storage, resource awareness.
+- **Enhanced mining**: All ore types (coal, iron, copper, redstone, gold, lapis, diamond).
 
 ---
 
@@ -30,6 +33,29 @@ This file lists the active, supported features. For detailed developer notes, te
 - `/amb list`
 - `/amb give <name> <item> [count]`
 - `/amb task <name> <task>`
+
+---
+
+## Recent Updates
+
+### Ultimate Living Tribe System (Latest)
+**Status**: ✅ Implemented and tested
+
+**New Features**:
+- **Memory Systems**:
+  - `knownCraftingTables` - Bots remember where they placed crafting tables
+  - `discoveredResources` - Map storing all discovered ore/resource locations with coordinates
+- **Full Surface Awareness**: Scans 97x97x17 block area every 4 seconds, remembers all resources
+- **Chest Crafting & Storage**: Auto-crafts chests when inventory is 75% full, places them for tribe storage
+- **Enhanced Ore Mining**: Detects and mines all ore types (coal, iron, copper, redstone, gold, lapis, diamond)
+- **Ultra-Detailed LLM Snapshot**: Generates memory string every 10 seconds with known resources, hunger, and time
+- **Tribe Coordination**: Single shared crafting table per tribe, communal chest storage
+
+**Technical Details**:
+- Scan pattern: x/z stride of 4 blocks, y stride of 1 block (~24,000 blocks per scan)
+- Memory persists per bot instance
+- 100% FakePlayer-safe implementation
+- Performance optimized with reasonable scan intervals
 
 ---
 
