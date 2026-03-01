@@ -4,12 +4,36 @@
 
 ### Recent Changes (2026-02-28)
 
+#### MAJOR UPDATE: Realistic Movement & Action System
+- **FIXED:** Bot movement now actually works - bots move to goals and navigate terrain
+  - Fixed FakePlayer position updates (was only setting velocity, now updates position)
+  - Disabled old BotMovementHelper stuck detection (was calling stopMovement() and preventing bots from moving)
+  - Added comprehensive debug logging to track movement and goal execution
+  - Bots now physically move towards goals instead of standing still
+- **IMPLEMENTED:** Fully functional realistic movement system with player-like physics
+  - Pathfinding around obstacles with automatic navigation
+  - Jumping over 1-block obstacles when blocked
+  - Gravity, swimming, and environmental awareness
+  - Danger avoidance (lava, cliffs, void)
+  - Stuck detection and alternative path finding
+  - Natural acceleration/deceleration
+- **IMPLEMENTED:** Realistic action system for human-like behavior
+  - Progressive block mining with proper tool usage and breaking animations
+  - Automatic tool switching based on task (axe for wood, pickaxe for stone, sword for combat)
+  - Realistic eating with hunger restoration
+  - Combat system with attack cooldowns
+  - Block placement and interaction
+  - Inventory management
+- **IMPLEMENTED:** Survival AI
+  - Automatic eating when hungry (hunger < 14)
+  - Health monitoring and retreat when critically low (< 5 HP)
+  - Tool efficiency awareness (uses best available tool)
+  - Task-based goal execution (gather_wood, mine_stone, hunt_animals, etc.)
+
 #### Bot Visibility & Movement Implementation
-- **FIXED:** Bot visibility using hybrid FakePlayer + BotVisualEntity architecture
-- **FIXED:** Bot movement with task execution system (gather_wood, mine_stone, explore)
+- **FIXED:** Bot visibility using hybrid FakePlayer + AmbNpcVisualEntity architecture
 - **FIXED:** Entity attribute registration for proper client synchronization
-- **IMPLEMENTED:** Hybrid architecture - FakePlayer handles logic/AI, BotVisualEntity handles rendering
-- **IMPLEMENTED:** Task execution system with block finding and movement goals
+- **IMPLEMENTED:** Hybrid architecture - FakePlayer handles logic/AI, AmbNpcVisualEntity handles rendering
 - **IMPLEMENTED:** Inventory GUI system (`/amb gui` and `/amb inventory` commands)
 
 #### Previous Fixes

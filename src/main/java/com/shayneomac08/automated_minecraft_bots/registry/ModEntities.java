@@ -1,7 +1,7 @@
 package com.shayneomac08.automated_minecraft_bots.registry;
 
 import com.shayneomac08.automated_minecraft_bots.AutomatedMinecraftBots;
-import com.shayneomac08.automated_minecraft_bots.entity.BotVisualEntity;
+import com.shayneomac08.automated_minecraft_bots.entity.AmbNpcVisualEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -24,19 +24,19 @@ public final class ModEntities {
             DeferredRegister.create(Registries.ENTITY_TYPE, AutomatedMinecraftBots.MODID);
 
     // Register visual entity that mirrors the FakePlayer
-    public static final DeferredHolder<EntityType<?>, EntityType<BotVisualEntity>> BOT_VISUAL = ENTITIES.register("bot_visual",
-        () -> EntityType.Builder.<BotVisualEntity>of(BotVisualEntity::new, MobCategory.CREATURE)
+    public static final DeferredHolder<EntityType<?>, EntityType<AmbNpcVisualEntity>> AMB_NPC_VISUAL = ENTITIES.register("amb_npc_visual",
+        () -> EntityType.Builder.<AmbNpcVisualEntity>of(AmbNpcVisualEntity::new, MobCategory.CREATURE)
             .sized(0.6F, 1.8F)           // exact player hitbox
             .clientTrackingRange(64)     // visible from normal distance
             .updateInterval(1)           // very smooth updates to mirror FakePlayer
-            .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(AutomatedMinecraftBots.MODID, "bot_visual"))));
+            .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(AutomatedMinecraftBots.MODID, "amb_npc_visual"))));
 
     @EventBusSubscriber(modid = AutomatedMinecraftBots.MODID)
     public static class EntityAttributeRegistration {
         @SubscribeEvent
         public static void registerAttributes(EntityAttributeCreationEvent event) {
             // Register attributes for visual entity
-            event.put(BOT_VISUAL.get(), BotVisualEntity.createAttributes().build());
+            event.put(AMB_NPC_VISUAL.get(), AmbNpcVisualEntity.createAttributes().build());
         }
     }
 }

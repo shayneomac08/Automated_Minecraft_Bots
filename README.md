@@ -11,12 +11,12 @@ AI-powered autonomous bots for Minecraft using LLM decision-making.
 Automated Minecraft Bots are LLM-driven FakePlayer entities that behave like real players: they move with player physics, mine with progressive block-breaking, craft using crafting tables, fight, hunt, and coordinate as a group.
 
 ## Recent fixes (2026-02-28)
-- **Bot visibility**: Hybrid FakePlayer + BotVisualEntity architecture for client rendering
-- **Bot movement**: Task execution system with block finding and movement goals
+- **REALISTIC MOVEMENT**: Bots now move like real players with physics, pathfinding, jumping, and obstacle avoidance
+- **REALISTIC ACTIONS**: Progressive mining, automatic tool switching, eating, combat, and environmental interaction
+- **SURVIVAL AI**: Automatic hunger management, health monitoring, and intelligent task execution
+- **Bot visibility**: Hybrid FakePlayer + AmbNpcVisualEntity architecture for client rendering
 - **Inventory GUI**: `/amb gui` and `/amb inventory` commands to view bot inventories
-- **Entity attributes**: Proper registration for client synchronization
-- **Player-like mining**: Progressive block-breaking with tool awareness and correct drops
-- **Tool equipping**: Visible and task-aware tool switching
+- **LLM Control**: Full integration with OpenAI/Gemini/Grok for autonomous decision-making
 
 ## Quick Start
 

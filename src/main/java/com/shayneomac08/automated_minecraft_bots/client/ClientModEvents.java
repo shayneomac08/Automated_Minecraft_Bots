@@ -21,7 +21,7 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void onRegisterRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(
-            ModEntities.BOT_VISUAL.get(),
+            ModEntities.AMB_NPC_VISUAL.get(),
             context -> new LivingEntityRenderer<>(
                 context,
                 new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)),

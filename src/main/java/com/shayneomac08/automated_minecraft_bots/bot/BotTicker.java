@@ -31,6 +31,8 @@ public final class BotTicker {
             ServerLevel level = (ServerLevel) body.level();
             String botName = body.getName().getString();
             BotBrain.tick(server, botName, pair);
+
+            // AmbNpcEntity is added to the world and ticks normally; avoid double-ticking
             BotBrain.State brain = BotBrain.stateForName(botName);
 
             // Check for stuck movement and fix it

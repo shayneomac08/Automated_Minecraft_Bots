@@ -25,6 +25,12 @@ public final class BotMovementHelper {
     public static boolean checkAndFixStuck(ServerLevel level, LivingEntity body, MovementState state, int currentTick) {
         if (body == null || body.isRemoved()) return false;
 
+        // DISABLED: Stuck detection interferes with new realistic movement system
+        // The new movement system has its own stuck detection built-in
+        // This old system was calling stopMovement() and preventing bots from moving
+        return false;
+
+        /* OLD CODE - DISABLED
         Vec3 currentPos = body.position();
 
         if (currentTick % STUCK_CHECK_INTERVAL == 0) {
@@ -45,6 +51,7 @@ public final class BotMovementHelper {
         }
 
         return false;
+        */
     }
 
     private static boolean unstickBot(ServerLevel level, LivingEntity body, MovementState state) {

@@ -38,20 +38,39 @@ This file lists the active, supported features. For detailed developer notes, te
 
 ## Recent Updates
 
-### Bot Visibility & Movement (Latest)
+### Realistic Movement & Action System (Latest)
 **Status**: ✅ Implemented - BUILD SUCCESSFUL
 
-**Architecture**: Hybrid FakePlayer + BotVisualEntity
+**Architecture**: Hybrid FakePlayer + AmbNpcVisualEntity + Realistic Physics
 - **FakePlayer (AmbNpcEntity)**: Handles all bot logic, AI, inventory, tasks (server-side)
-- **BotVisualEntity**: PathfinderMob that mirrors FakePlayer position for client rendering
-- **Result**: Bots are visible and moving with task-based AI
+- **AmbNpcVisualEntity**: PathfinderMob that mirrors FakePlayer position for client rendering
+- **RealisticMovement**: Player-like physics with pathfinding, jumping, obstacle avoidance
+- **RealisticActions**: Progressive mining, tool switching, eating, combat
+- **Result**: Bots move and act like real Minecraft players
 
-**Key Features**:
-- Entity attribute registration for proper synchronization
-- HumanoidMobRenderer with Steve skin texture
-- Task execution system (gather_wood, mine_stone, explore)
-- Inventory GUI (`/amb gui` and `/amb inventory` commands)
-- Movement goals with block finding logic
+**Movement Features**:
+- ✅ Realistic physics (gravity, jumping, swimming)
+- ✅ Intelligent pathfinding around obstacles
+- ✅ Automatic jumping over 1-block obstacles
+- ✅ Danger avoidance (lava, cliffs, void)
+- ✅ Stuck detection and recovery
+- ✅ Natural rotation and sprinting
+- ✅ Dynamic speed based on terrain
+
+**Action Features**:
+- ✅ Progressive block mining with breaking animations
+- ✅ Automatic tool switching (axe for wood, pickaxe for stone, sword for combat)
+- ✅ Realistic eating with hunger management
+- ✅ Combat system with attack cooldowns
+- ✅ Block placement and interaction
+- ✅ Inventory management
+
+**Survival AI**:
+- ✅ Automatic eating when hungry (< 14 hunger)
+- ✅ Health monitoring and retreat when critical (< 5 HP)
+- ✅ Tool efficiency awareness
+- ✅ Task-based goal execution
+- ✅ Environmental awareness
 
 ---
 
