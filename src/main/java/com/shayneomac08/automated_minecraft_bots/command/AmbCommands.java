@@ -7,12 +7,15 @@ import com.shayneomac08.automated_minecraft_bots.bot.BotBrain;
 import com.shayneomac08.automated_minecraft_bots.bot.BotPair;
 import com.shayneomac08.automated_minecraft_bots.bot.BotRegistry;
 import com.shayneomac08.automated_minecraft_bots.llm.LLMProvider;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Minimal command set for FakePlayer-based bots
@@ -21,7 +24,7 @@ import net.minecraft.world.entity.player.Player;
 public final class AmbCommands {
     private AmbCommands() {}
 
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
         dispatcher.register(
                 Commands.literal("amb")
 
@@ -280,6 +283,18 @@ public final class AmbCommands {
                                         )
                                 )
                         )
+
+                        // /amb give <name> <item> [count]
+                        .then(Commands.literal("give")
+                                .then(Commands.argument("name", StringArgumentType.word())
+                                        .then(Commands.argument("item", ItemArgument.item(context))
+                                                .executes(ctx -> giveItemToBot(ctx, 1))
+                                                .then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
+                                                        .executes(ctx -> giveItemToBot(ctx, IntegerArgumentType.getInteger(ctx, "count")))
+                                                )
+                                        )
+                                )
+                        )
         );
     }
 
@@ -409,6 +424,43 @@ public final class AmbCommands {
             ), true);
 
             return spawnedCount;
+
+        } catch (Exception e) {
+            ctx.getSource().sendFailure(Component.literal("[AMB] Error: " + e.getMessage()));
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    private static int giveItemToBot(com.mojang.brigadier.context.CommandContext<CommandSourceStack> ctx, int count) {
+        try {
+            String name = StringArgumentType.getString(ctx, "name");
+            String keyName = normalize(name);
+
+            BotPair pair = BotRegistry.get(keyName);
+            if (pair == null) {
+                ctx.getSource().sendFailure(Component.literal("[AMB] No bot named " + name));
+                return 0;
+            }
+
+            if (!(pair.body() instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity bot)) {
+                ctx.getSource().sendFailure(Component.literal("[AMB] Bot is not a FakePlayer entity"));
+                return 0;
+            }
+
+            // Get the item from the argument
+            var itemInput = ItemArgument.getItem(ctx, "item");
+            ItemStack stack = new ItemStack(itemInput.getItem(), count);
+
+            // Add to bot's inventory
+            bot.getInventory().add(stack);
+
+            String itemName = stack.getDisplayName().getString();
+            ctx.getSource().sendSuccess(() -> Component.literal(
+                    "[AMB] Gave " + count + " " + itemName + " to " + name
+            ), true);
+
+            return 1;
 
         } catch (Exception e) {
             ctx.getSource().sendFailure(Component.literal("[AMB] Error: " + e.getMessage()));

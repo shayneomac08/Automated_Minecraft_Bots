@@ -81,7 +81,7 @@ public class AutomatedMinecraftBots {
     }
 
     private void onRegisterCommands(RegisterCommandsEvent event) {
-        AmbCommands.register(event.getDispatcher());
+        AmbCommands.register(event.getDispatcher(), event.getBuildContext());
         LOGGER.info("Registered AMB commands");
     }
 

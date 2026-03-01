@@ -101,6 +101,7 @@ public class AmbNpcEntity extends FakePlayer {
     private BlockPos currentGoal = BlockPos.ZERO;
     private int goalLockTimer = 0;
     private BlockPos currentBreakingBlock = BlockPos.ZERO;
+    private int messageCooldown = 0;
 
     // Mining state (for player-like block breaking)
     private BlockPos miningBlock = null;
@@ -950,27 +951,23 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * FULL PLAYER-LIKE MINING/GATHERING + HUNTING (100% real player mechanics)
-     * SINGLE STABLE ACTION RUNNER — everything in one place
+     * FINAL DEEP FIX: REAL PLAYER MOVEMENT + MINING + HUNTING + ANTI-SPAM
      */
     private void runAllPlayerActions() {
-        if (goalLockTimer > 0) {
-            goalLockTimer--;
-        } else if (!currentGoal.equals(BlockPos.ZERO)) {
-            goalLockTimer = 180; // 9-second commitment = no more zigzag
-        }
+        if (goalLockTimer > 0) goalLockTimer--;
 
-        // Stable pathing toward goal
+        // STABLE MOVEMENT — no more zigzag
         if (!currentGoal.equals(BlockPos.ZERO)) {
             double dx = currentGoal.getX() - getX();
             double dz = currentGoal.getZ() - getZ();
             float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
             this.setYRot(yaw);
             this.setSprinting(true);
+            if (goalLockTimer == 0) goalLockTimer = 160; // 8-second commitment
         }
 
-        // REAL PLAYER-STYLE MINING / GATHERING
-        if (tickCount % 3 == 0) {  // every 3 ticks so it feels natural
+        // REAL PLAYER MINING (slow cracking, correct speed, durability drain)
+        if (tickCount % 3 == 0) {
             BlockPos target = blockPosition().relative(getDirection());
             BlockState state = level().getBlockState(target);
 
@@ -979,37 +976,39 @@ public class AmbNpcEntity extends FakePlayer {
                 !currentBreakingBlock.equals(target)) {
 
                 currentBreakingBlock = target;
-                broadcastGroupChat("Starting to harvest " + state.getBlock().getDescriptionId() + "...");
             }
 
             if (!currentBreakingBlock.equals(BlockPos.ZERO)) {
-                // This is the exact method real players use when holding left-click
-                gameMode.destroyBlock(currentBreakingBlock);
-
-                // Auto-stop when block is gone
+                gameMode.destroyBlock(currentBreakingBlock); // exact same as holding left-click
                 if (level().getBlockState(currentBreakingBlock).isAir()) {
                     currentBreakingBlock = BlockPos.ZERO;
-                    broadcastGroupChat("Harvested it — added to the tribe's supplies!");
                 }
             }
         }
 
-        // ANIMAL HUNTING (real player attack)
-        var animal = level().getEntitiesOfClass(net.minecraft.world.entity.animal.Animal.class, getBoundingBox().inflate(25))
+        // ANIMAL HUNTING — only when close and hungry (no random damage)
+        var animal = level().getEntitiesOfClass(net.minecraft.world.entity.animal.Animal.class, getBoundingBox().inflate(18))
                 .stream().findFirst();
-        if (animal.isPresent() && hunger < 12) {
+        if (animal.isPresent() && hunger < 10 && distanceTo(animal.get()) < 3.5) {
             currentGoal = animal.get().blockPosition();
             this.attack(animal.get());
-            if (distanceTo(animal.get()) < 3) {
-                broadcastGroupChat("Hunting for the tribe — fresh meat tonight!");
-            }
         }
 
-        // Debug so we can see exactly what's happening
-        if (tickCount % 30 == 0) {
-            broadcastGroupChat("[AMB REAL PLAYER DEBUG] Goal: " + currentGoal +
-                               " | Breaking: " + currentBreakingBlock +
-                               " | Hunger: " + hunger);
+        // NATURAL HUNGER MESSAGES (rare and human-like)
+        if (tickCount % 500 == 0 && hunger < 8 && messageCooldown == 0) {
+            broadcastGroupChat(switch (random.nextInt(4)) {
+                case 0 -> "My stomach is empty... the tribe needs food soon.";
+                case 1 -> "I'm starting to feel weak from hunger...";
+                case 2 -> "We should hunt or forage before it gets worse.";
+                default -> "Food would really help right now...";
+            });
+            messageCooldown = 300;
+        }
+        if (messageCooldown > 0) messageCooldown--;
+
+        // RARE DEBUG (only every 5 seconds)
+        if (tickCount % 100 == 0) {
+            broadcastGroupChat("[AMB] Pos: " + blockPosition() + " | Goal: " + currentGoal + " | Hunger: " + hunger);
         }
     }
 
