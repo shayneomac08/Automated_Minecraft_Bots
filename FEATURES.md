@@ -38,14 +38,17 @@ This file lists the active, supported features. For detailed developer notes, te
 
 ## Recent Updates
 
-### Final Calm & Human - Smooth Movement (Latest)
+### Final Calm + Persistent - Real Eating & NBT Save (Latest)
 **Status**: ✅ Implemented and tested
 
 **New Features**:
+- **Full NBT Persistence**: Role, hunger, base location, and crafting table position saved to world data
+- **Real Eating Mechanics**: Bots consume bread (+5 hunger) and apples (+4 hunger) when hungry
+- **Eating Messages**: "Eating some bread... feeling better already." / "Munching an apple... good stuff."
+- **20-Second Calm Commitment**: Goal lock timer increased to 400 ticks for ultra-deliberate movement
+- **Ultra-Smooth Movement**: Yaw updates only every 15 ticks with very subtle sway (±1.5 degrees)
 - **Permanent No-Dirt Particles**: `spawnSprintParticle()` override prevents all sprint particles
 - **Completely Silent**: `getSoundVolume()` returns 0.0F, `isSilent()` returns true, no step sounds
-- **Smooth Human Movement**: Yaw updates only every 8 ticks with natural sway (±2 degrees)
-- **15-Second Calm Commitment**: Goal lock timer increased to 300 ticks for more deliberate movement
 - **Real Cracking Animation**: Mining uses correct timing (every 4 ticks) for authentic block-breaking visuals
 - **Mining Lock**: 80-tick movement lock while mining for realistic player behavior
 - **Auto-Equip on Pickup**: Tools automatically equipped every 20 ticks (1 second)
@@ -53,12 +56,15 @@ This file lists the active, supported features. For detailed developer notes, te
 - **Visible Hands**: Always-visible tool display with priority (axe > pickaxe > sword)
 
 **Technical Details**:
-- Yaw update interval: Every 8 ticks (0.4 seconds) with random sway
-- Goal lock: 300 ticks (15 seconds) for calm, deliberate movement
+- NBT Save: Role, hunger, baseLocation, knownCraftingTable persist across world saves/loads
+- Eating threshold: Hunger < 10 triggers automatic eating
+- Yaw update interval: Every 15 ticks (0.75 seconds) with ±1.5° sway
+- Goal lock: 400 ticks (20 seconds) for ultra-calm, deliberate movement
 - Mining check interval: Every 4 ticks (0.2 seconds) for proper cracking animation
 - Movement lock: 80 ticks (4 seconds) while actively mining
 - Tool equip check: Every 20 ticks (1 second)
 - Uses `gameMode.destroyBlock()` for FakePlayer-safe mining
+- Uses `ValueOutput`/`ValueInput` for modern NBT persistence
 - 100% FakePlayer-safe implementation
 - No visual or audio pollution (silent, no particles)
 

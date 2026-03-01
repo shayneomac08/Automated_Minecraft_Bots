@@ -273,6 +273,24 @@ public class AmbNpcEntity extends FakePlayer {
         updateEmotion("hurt");
     }
 
+    // ==================== NBT PERSISTENCE - ROLE + HUNGER + MEMORY ====================
+
+    public void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putString("Role", currentRole.name());
+        tag.putInt("Hunger", hunger);
+        if (!baseLocation.equals(BlockPos.ZERO)) tag.putLong("BasePos", baseLocation.asLong());
+        if (!knownCraftingTable.equals(BlockPos.ZERO)) tag.putLong("TablePos", knownCraftingTable.asLong());
+    }
+
+    public void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        tag.getString("Role").ifPresent(role -> currentRole = BotRole.valueOf(role));
+        tag.getInt("Hunger").ifPresent(h -> hunger = h);
+        tag.getLong("BasePos").ifPresent(pos -> baseLocation = BlockPos.of(pos));
+        tag.getLong("TablePos").ifPresent(pos -> knownCraftingTable = BlockPos.of(pos));
+    }
+
     // ==================== TICK - MAIN CONTROL LOOP ====================
 
     @Override
@@ -1047,7 +1065,7 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * FINAL CALM & HUMAN MASTER METHOD — PERMANENT NO-DIRT + SMOOTH MOVEMENT
+     * FINAL CALM + PERSISTENT MASTER METHOD — NO DIRT, NO SPASM, REAL EATING, FULL NBT SAVE
      * 100% FakePlayer-safe: mining lock, crafting table placement, role on spawn, always visible hands
      */
     private void runAllPlayerActions() {
@@ -1063,15 +1081,15 @@ public class AmbNpcEntity extends FakePlayer {
         }
 
         if (goalLockTimer > 0) goalLockTimer--;
-        else if (!currentGoal.equals(BlockPos.ZERO)) goalLockTimer = 300; // 15-second calm commitment
+        else if (!currentGoal.equals(BlockPos.ZERO)) goalLockTimer = 400; // 20-second calm commitment
 
-        // SMOOTH HUMAN MOVEMENT — yaw only every 8 ticks with natural sway
+        // SMOOTH HUMAN MOVEMENT — yaw only every 15 ticks with tiny natural sway
         yawUpdateTimer++;
-        if (yawUpdateTimer > 8 && !currentGoal.equals(BlockPos.ZERO)) {
+        if (yawUpdateTimer > 15 && !currentGoal.equals(BlockPos.ZERO)) {
             double dx = currentGoal.getX() - getX();
             double dz = currentGoal.getZ() - getZ();
             float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
-            this.setYRot(yaw + (random.nextFloat() * 4 - 2)); // subtle human sway
+            this.setYRot(yaw + (random.nextFloat() * 3 - 1.5f)); // very subtle human sway
             this.setSprinting(true);
             yawUpdateTimer = 0;
         }
@@ -1110,7 +1128,18 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
-        // NATURAL RARE MESSAGES
+        // REAL EATING
+        if (hunger < 10 && getInventory().countItem(Items.BREAD) > 0) {
+            removeItemFromInventory(Items.BREAD, 1);
+            hunger = Math.min(20, hunger + 5);
+            broadcastGroupChat("Eating some bread... feeling better already.");
+        } else if (hunger < 10 && getInventory().countItem(Items.APPLE) > 0) {
+            removeItemFromInventory(Items.APPLE, 1);
+            hunger = Math.min(20, hunger + 4);
+            broadcastGroupChat("Munching an apple... good stuff.");
+        }
+
+        // NATURAL MESSAGES
         if (tickCount % 600 == 0 && messageCooldown == 0) {
             if (hunger < 8) {
                 broadcastGroupChat("My stomach is growling... the tribe needs food soon.");
