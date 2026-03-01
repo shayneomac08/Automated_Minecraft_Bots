@@ -23,7 +23,7 @@ public final class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<AmbNpcEntity>> AMB_NPC = ENTITIES.register("amb_npc",
         () -> EntityType.Builder.<AmbNpcEntity>of(AmbNpcEntity::new, MobCategory.CREATURE)
             .sized(0.6F, 1.8F)           // exact player hitbox
-            .clientTrackingRange(64)
-            .updateInterval(3)
+            .clientTrackingRange(64)     // visible from normal distance
+            .updateInterval(3)           // smooth updates
             .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(AutomatedMinecraftBots.MODID, "amb_npc"))));
 }

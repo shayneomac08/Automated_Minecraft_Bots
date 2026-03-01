@@ -1,12 +1,14 @@
 package com.shayneomac08.automated_minecraft_bots;
 
 import com.shayneomac08.automated_minecraft_bots.client.ConfigScreen;
+import com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity;
 import com.shayneomac08.automated_minecraft_bots.registry.ModEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -31,7 +33,7 @@ public class AutomatedMinecraftBotsClient {
     }
 
     private void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        // Register HumanoidModel renderer for FakePlayer-based bots to make them visible
+        // CLIENT RENDERER REGISTRATION — MAKES SERVERPLAYER BOTS VISIBLE AS REAL PLAYERS
         event.registerEntityRenderer(
             ModEntities.AMB_NPC.get(),
             context -> new LivingEntityRenderer<>(
@@ -45,9 +47,9 @@ public class AutomatedMinecraftBotsClient {
                 }
 
                 @Override
-                public net.minecraft.resources.Identifier getTextureLocation(HumanoidRenderState state) {
+                public Identifier getTextureLocation(HumanoidRenderState state) {
                     // Use default Steve skin
-                    return net.minecraft.resources.Identifier.withDefaultNamespace("textures/entity/player/wide/steve.png");
+                    return Identifier.withDefaultNamespace("textures/entity/player/wide/steve.png");
                 }
             }
         );
