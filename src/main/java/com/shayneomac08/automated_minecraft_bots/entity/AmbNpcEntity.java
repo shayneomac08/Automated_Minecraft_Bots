@@ -17,6 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -292,6 +293,21 @@ public class AmbNpcEntity extends FakePlayer {
                 stillMoving = RealisticMovement.moveTowards(this, currentGoal, speed);
             }
 
+            // Smooth human-like yaw sway while traveling
+            yawUpdateTimer++;
+            if (yawUpdateTimer > 12) {
+                double dx = currentGoal.getX() - getX();
+                double dz = currentGoal.getZ() - getZ();
+                if (Math.abs(dx) + Math.abs(dz) > 0.0001) {
+                    float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
+                    this.setYRot(yaw + (random.nextFloat() * 4 - 2));
+                    this.setYHeadRot(this.getYRot());
+                    this.yBodyRot = this.getYRot();
+                    this.setSprinting(true);
+                }
+                yawUpdateTimer = 0;
+            }
+
             // Debug logging every 2 seconds
             if (tickCount % 40 == 0) {
                 System.out.println("[AMB] " + getName().getString() + " moving to goal " + currentGoal +
@@ -325,6 +341,16 @@ public class AmbNpcEntity extends FakePlayer {
                 stuckTimer = 0;
                 lastPosition = blockPosition();
                 lastExactPos = this.position();
+            }
+
+            // If colliding horizontally with a door/gate, try to open/use it
+            if (this.horizontalCollision) {
+                BlockPos front = blockPosition().relative(getDirection());
+                BlockState frontState = level().getBlockState(front);
+                if (frontState.getBlock() instanceof DoorBlock || frontState.getBlock() instanceof FenceGateBlock) {
+                    RealisticActions.interactWithBlock(this, front);
+                    broadcastGroupChat("Opening the way...");
+                }
             }
 
             // Reached goal
@@ -653,6 +679,7 @@ public class AmbNpcEntity extends FakePlayer {
 
     @Override
     public void tick() {
+        this.setNoGravity(false); // enforce gravity every tick
         super.tick();
         runAllPlayerActions();
         if (spawnIdleTimer == 99 && !roleAnnouncementDone) {
