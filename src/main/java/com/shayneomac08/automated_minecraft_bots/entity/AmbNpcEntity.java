@@ -409,16 +409,29 @@ public class AmbNpcEntity extends FakePlayer {
         if (tickCount % 5 == 0) {
             for (ItemEntity item : level().getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(2.5))) {
                 if (!item.isRemoved() && !item.getItem().isEmpty()) {
-                    Item dropped = item.getItem().getItem();
+                    ItemStack stack = item.getItem();
+                    Item dropped = stack.getItem();
                     int before = countItemInInventory(dropped);
                     int itemId = item.getId();
-                    // Proper pickup path: let the item handle transfer into inventory
-                    item.playerTouch(this);
+
+                    // Manually transfer items into bot inventory (avoid default playerTouch animation)
+                    ItemStack toAdd = stack.copy();
+                    addToInventory(toAdd);
                     int after = countItemInInventory(dropped);
                     int grabbed = Math.max(0, after - before);
                     if (grabbed > 0) {
+                        // Reduce or discard ground stack accordingly
+                        int remaining = stack.getCount() - grabbed;
+                        if (remaining <= 0) {
+                            item.discard();
+                        } else {
+                            stack.shrink(grabbed);
+                            item.setItem(stack);
+                        }
+
                         broadcastGroupChat("Picked up " + grabbed + " " + dropped.getDescriptionId());
-                        // Send pickup animation towards the visible mirror entity (so items fly to the bot, not the player)
+
+                        // Send pickup animation towards the visual entity
                         int collectorId = (visualEntity != null) ? visualEntity.getId() : this.getId();
                         if (!level().isClientSide()) {
                             ClientboundTakeItemEntityPacket pkt = new ClientboundTakeItemEntityPacket(itemId, collectorId, grabbed);
