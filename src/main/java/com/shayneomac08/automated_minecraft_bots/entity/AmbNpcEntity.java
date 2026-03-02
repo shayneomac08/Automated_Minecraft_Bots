@@ -11,6 +11,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
@@ -250,11 +251,6 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== MASTER ACTION RUNNER ====================
 
     private void runAllPlayerActions() {
-        // One-time role announcement on first tick
-        if (spawnIdleTimer > 0 && spawnIdleTimer == 100 && !roleAnnouncementDone) {
-            assignInitialRole();
-            roleAnnouncementDone = true;
-        }
 
         if (spawnIdleTimer > 0) {
             spawnIdleTimer--;
@@ -379,6 +375,15 @@ public class AmbNpcEntity extends FakePlayer {
             messageCooldown = 300;
         }
         if (messageCooldown > 0) messageCooldown--;
+
+        // REAL PICKUP (auto-collect nearby item drops like a player)
+        if (tickCount % 5 == 0) {
+            for (ItemEntity item : level().getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(2.5))) {
+                if (!item.isRemoved() && !item.getItem().isEmpty()) {
+                    this.take(item, item.getItem().getCount());
+                }
+            }
+        }
     }
 
     /**
@@ -650,6 +655,10 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         super.tick();
         runAllPlayerActions();
+        if (spawnIdleTimer == 99 && !roleAnnouncementDone) {
+            assignInitialRole();
+            roleAnnouncementDone = true;
+        }
     }
 
     @Override
