@@ -25,6 +25,7 @@ public class AmbNpcVisualEntity extends PathfinderMob {
         super(type, level);
         this.logicEntity = logic;
         this.setNoAi(true); // No AI - just mirrors the FakePlayer
+        this.setSilent(true);
     }
 
     @Override
@@ -70,6 +71,8 @@ public class AmbNpcVisualEntity extends PathfinderMob {
     public boolean isPickable() {
         return false; // Can't be targeted - interact with the FakePlayer instead
     }
+
+    // Keep defaults for riding/passengers/collision to avoid signature mismatches in 1.21
 
     // Suppress visual-only entity particles/sounds
     @Override

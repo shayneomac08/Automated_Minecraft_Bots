@@ -12,6 +12,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
@@ -406,9 +407,15 @@ public class AmbNpcEntity extends FakePlayer {
         if (tickCount % 5 == 0) {
             for (ItemEntity item : level().getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(2.5))) {
                 if (!item.isRemoved() && !item.getItem().isEmpty()) {
-                    int grabbed = item.getItem().getCount();
-                    this.take(item, grabbed); // void method in 1.21
-                    broadcastGroupChat("Picked up " + grabbed + " " + item.getItem().getItem().getDescriptionId());
+                    Item dropped = item.getItem().getItem();
+                    int before = countItemInInventory(dropped);
+                    // Proper pickup path: let the item handle transfer into inventory
+                    item.playerTouch(this);
+                    int after = countItemInInventory(dropped);
+                    int grabbed = Math.max(0, after - before);
+                    if (grabbed > 0) {
+                        broadcastGroupChat("Picked up " + grabbed + " " + dropped.getDescriptionId());
+                    }
                 }
             }
         }
@@ -481,6 +488,15 @@ public class AmbNpcEntity extends FakePlayer {
                 }
                 break;
         }
+    }
+
+    private int countItemInInventory(Item item) {
+        int total = 0;
+        for (int i = 0; i < getInventory().getContainerSize(); i++) {
+            ItemStack st = getInventory().getItem(i);
+            if (!st.isEmpty() && st.is(item)) total += st.getCount();
+        }
+        return total;
     }
 
     // ============ Door handling and local avoidance ============
