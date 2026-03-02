@@ -388,7 +388,7 @@ public class AmbNpcEntity extends FakePlayer {
 
         // REALISTIC TOOL SWITCHING - Equip appropriate tool for current task
         toolEquipTimer++;
-        if (toolEquipTimer > 40) { // Every 2 seconds
+        if (toolEquipTimer > 20) { // Every ~1 second
             equipAppropriateToolForTask();
             toolEquipTimer = 0;
         }
@@ -406,7 +406,9 @@ public class AmbNpcEntity extends FakePlayer {
         if (tickCount % 5 == 0) {
             for (ItemEntity item : level().getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(2.5))) {
                 if (!item.isRemoved() && !item.getItem().isEmpty()) {
-                    this.take(item, item.getItem().getCount());
+                    if (this.take(item, item.getItem().getCount())) {
+                        broadcastGroupChat("Picked up " + item.getItem().getCount() + " " + item.getItem().getItem().getDescriptionId());
+                    }
                 }
             }
         }
