@@ -406,9 +406,9 @@ public class AmbNpcEntity extends FakePlayer {
         if (tickCount % 5 == 0) {
             for (ItemEntity item : level().getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(2.5))) {
                 if (!item.isRemoved() && !item.getItem().isEmpty()) {
-                    if (this.take(item, item.getItem().getCount())) {
-                        broadcastGroupChat("Picked up " + item.getItem().getCount() + " " + item.getItem().getItem().getDescriptionId());
-                    }
+                    int grabbed = item.getItem().getCount();
+                    this.take(item, grabbed); // void method in 1.21
+                    broadcastGroupChat("Picked up " + grabbed + " " + item.getItem().getItem().getDescriptionId());
                 }
             }
         }
