@@ -5,6 +5,7 @@ import com.shayneomac08.automated_minecraft_bots.movement.RealisticActions;
 import com.shayneomac08.automated_minecraft_bots.movement.RealisticMovement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 import java.util.Random;
@@ -409,15 +411,29 @@ public class AmbNpcEntity extends FakePlayer {
                 if (!item.isRemoved() && !item.getItem().isEmpty()) {
                     Item dropped = item.getItem().getItem();
                     int before = countItemInInventory(dropped);
+                    int itemId = item.getId();
                     // Proper pickup path: let the item handle transfer into inventory
                     item.playerTouch(this);
                     int after = countItemInInventory(dropped);
                     int grabbed = Math.max(0, after - before);
                     if (grabbed > 0) {
                         broadcastGroupChat("Picked up " + grabbed + " " + dropped.getDescriptionId());
+                        // Send pickup animation towards the visible mirror entity (so items fly to the bot, not the player)
+                        int collectorId = (visualEntity != null) ? visualEntity.getId() : this.getId();
+                        if (!level().isClientSide()) {
+                            ClientboundTakeItemEntityPacket pkt = new ClientboundTakeItemEntityPacket(itemId, collectorId, grabbed);
+                            for (ServerPlayer sp : ((ServerLevel) level()).players()) {
+                                sp.connection.send(pkt);
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        // Lightweight auto-crafting for basics: planks and sticks
+        if (tickCount % 100 == 0) {
+            tryAutoCraftBasics();
         }
     }
 
@@ -497,6 +513,81 @@ public class AmbNpcEntity extends FakePlayer {
             if (!st.isEmpty() && st.is(item)) total += st.getCount();
         }
         return total;
+    }
+
+    private int removeItems(Item item, int count) {
+        int toRemove = count;
+        for (int i = 0; i < getInventory().getContainerSize() && toRemove > 0; i++) {
+            ItemStack st = getInventory().getItem(i);
+            if (!st.isEmpty() && st.is(item)) {
+                int take = Math.min(st.getCount(), toRemove);
+                st.shrink(take);
+                toRemove -= take;
+                if (st.isEmpty()) getInventory().setItem(i, ItemStack.EMPTY);
+            }
+        }
+        return count - toRemove;
+    }
+
+    private void addToInventory(ItemStack stack) {
+        getInventory().add(stack);
+    }
+
+    private void tryAutoCraftBasics() {
+        // Convert common logs into matching planks
+        craftPlanksFromLog(Items.OAK_LOG, Items.OAK_PLANKS);
+        craftPlanksFromLog(Items.SPRUCE_LOG, Items.SPRUCE_PLANKS);
+        craftPlanksFromLog(Items.BIRCH_LOG, Items.BIRCH_PLANKS);
+        craftPlanksFromLog(Items.JUNGLE_LOG, Items.JUNGLE_PLANKS);
+        craftPlanksFromLog(Items.ACACIA_LOG, Items.ACACIA_PLANKS);
+        craftPlanksFromLog(Items.DARK_OAK_LOG, Items.DARK_OAK_PLANKS);
+        craftPlanksFromLog(Items.MANGROVE_LOG, Items.MANGROVE_PLANKS);
+        craftPlanksFromLog(Items.CHERRY_LOG, Items.CHERRY_PLANKS);
+        craftPlanksFromLog(Items.BAMBOO_BLOCK, Items.BAMBOO_PLANKS);
+
+        // Craft sticks if low and have planks
+        int planks = countItemInInventory(Items.OAK_PLANKS) + countItemInInventory(Items.SPRUCE_PLANKS)
+                + countItemInInventory(Items.BIRCH_PLANKS) + countItemInInventory(Items.JUNGLE_PLANKS)
+                + countItemInInventory(Items.ACACIA_PLANKS) + countItemInInventory(Items.DARK_OAK_PLANKS)
+                + countItemInInventory(Items.MANGROVE_PLANKS) + countItemInInventory(Items.CHERRY_PLANKS)
+                + countItemInInventory(Items.BAMBOO_PLANKS);
+        int sticks = countItemInInventory(Items.STICK);
+        if (sticks < 16 && planks >= 2) {
+            // Consume any two planks and add 4 sticks
+            if (removeAnyPlanks(2) == 2) {
+                addToInventory(new ItemStack(Items.STICK, 4));
+                broadcastGroupChat("Crafted 4 sticks.");
+            }
+        }
+    }
+
+    private void craftPlanksFromLog(Item log, Item planks) {
+        int logs = countItemInInventory(log);
+        if (logs > 0) {
+            int removed = removeItems(log, 1);
+            if (removed == 1) {
+                addToInventory(new ItemStack(planks, 4));
+                broadcastGroupChat("Crafted 4 planks from a log.");
+            }
+        }
+    }
+
+    private int removeAnyPlanks(int needed) {
+        int removed = 0;
+        Item[] types = new Item[]{
+                Items.OAK_PLANKS, Items.SPRUCE_PLANKS, Items.BIRCH_PLANKS, Items.JUNGLE_PLANKS,
+                Items.ACACIA_PLANKS, Items.DARK_OAK_PLANKS, Items.MANGROVE_PLANKS, Items.CHERRY_PLANKS,
+                Items.BAMBOO_PLANKS
+        };
+        for (Item t : types) {
+            while (removed < needed) {
+                int r = removeItems(t, 1);
+                if (r == 0) break;
+                removed += r;
+            }
+            if (removed >= needed) break;
+        }
+        return removed;
     }
 
     // ============ Door handling and local avoidance ============
