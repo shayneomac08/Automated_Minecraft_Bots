@@ -43,6 +43,20 @@ public class RealisticMovement {
         double dirX = dx / horizontalDist;
         double dirZ = dz / horizontalDist;
 
+        // If in water, use swimming movement rather than walking logic
+        if (entity.isInWater()) {
+            // Swim toward target with upward bias if underwater
+            Vec3 swimDir = new Vec3(dirX, 0, dirZ);
+            swim(entity, swimDir);
+            // Face direction
+            float wyaw = (float) (Math.atan2(dirZ, dirX) * 180 / Math.PI) - 90;
+            entity.setYRot(wyaw);
+            entity.setYHeadRot(wyaw);
+            entity.yBodyRot = wyaw;
+            entity.setSprinting(false);
+            return true;
+        }
+
         // Smooth acceleration/deceleration
         Vec3 cur = entity.getDeltaMovement();
         double targetVX = dirX * speed;
@@ -173,12 +187,6 @@ public class RealisticMovement {
         BlockPos nextPos = BlockPos.containing(entity.position().add(movement));
         BlockPos below = nextPos.below();
 
-        // Check for lava
-        if (entity.level().getBlockState(nextPos).is(Blocks.LAVA) ||
-            entity.level().getBlockState(below).is(Blocks.LAVA)) {
-            return true;
-        }
-
         // Check for void (y < 0)
         if (nextPos.getY() < 0) {
             return true;
@@ -275,8 +283,7 @@ public class RealisticMovement {
         // Must have space for body
         if (feetState.canOcclude() || headState.canOcclude()) return false;
 
-        // Avoid lava
-        if (feetState.is(Blocks.LAVA) || belowState.is(Blocks.LAVA)) return false;
+        // Do not hard-block lava here; caller will choose path costs. Treat as potentially passable.
 
         return true;
     }

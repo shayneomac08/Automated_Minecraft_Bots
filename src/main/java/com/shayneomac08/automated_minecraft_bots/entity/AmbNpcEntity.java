@@ -25,10 +25,34 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.CraftingTableBlock;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.SmokerBlockEntity;
+import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 import java.util.Random;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * NEW STABLE FAKEPLAYER AMBNPCENTITY
@@ -76,6 +100,24 @@ public class AmbNpcEntity extends FakePlayer {
     // Local avoidance (simple wall-following)
     private int avoidTicks = 0;
     private int avoidDir = 1; // +1=right, -1=left
+
+    // A* pathfinding state
+    private List<BlockPos> currentPath = new ArrayList<>();
+    private int pathIndex = 0;
+
+    // Known stations and storage
+    private BlockPos knownFurnace = BlockPos.ZERO;
+    private BlockPos knownSmoker = BlockPos.ZERO;
+    private BlockPos knownBlastFurnace = BlockPos.ZERO;
+    private final List<BlockPos> knownChests = new ArrayList<>();
+    private BlockPos lastInteractedStation = BlockPos.ZERO;
+
+    // Interior exit plan (door-focused)
+    private boolean exitingInterior = false;
+    private BlockPos exitDoorCenter = BlockPos.ZERO;
+    private BlockPos exitBeyond = BlockPos.ZERO;
+    private int exitTimer = 0;
+    private int doorInteractCooldown = 0;
 
     // Constructor for programmatic spawning
     public AmbNpcEntity(ServerLevel level, String name) {
@@ -258,12 +300,11 @@ public class AmbNpcEntity extends FakePlayer {
 
         if (spawnIdleTimer > 0) {
             spawnIdleTimer--;
-            // On last idle tick, execute task to get initial goal
-            if (spawnIdleTimer == 0) {
-                executeCurrentTask();
-            }
             return; // stand still for 5 seconds to get bearings
         }
+
+        // Prioritize exiting interiors each tick (may update currentGoal toward doors)
+        boolean exitingNow = handleInteriorExitPlan();
 
         // CRITICAL SURVIVAL - Eat if hungry
         if (RealisticActions.shouldEat(this)) {
@@ -277,9 +318,19 @@ public class AmbNpcEntity extends FakePlayer {
             return; // Don't do anything else, just recover
         }
 
-        // REALISTIC MOVEMENT SYSTEM
+        // REALISTIC MOVEMENT SYSTEM + A* WAYPOINTS
         if (!currentGoal.equals(BlockPos.ZERO)) {
-            // Use realistic movement to navigate to goal
+            // Recompute path if needed
+            if (currentPath.isEmpty() || goalLockTimer == 0 || pathIndex >= currentPath.size() || stuckTimer > 20) {
+                currentPath = computeAStarPath(blockPosition(), currentGoal);
+                pathIndex = 0;
+                goalLockTimer = 400; // 20s commitment
+            }
+
+            // Choose waypoint (center of target if no path)
+            BlockPos waypoint = (!currentPath.isEmpty() && pathIndex < currentPath.size()) ? currentPath.get(pathIndex) : currentGoal;
+
+            // Use realistic movement to navigate to waypoint
             float speed = (this.desiredSpeed > 0f) ? this.desiredSpeed : RealisticMovement.calculateSpeed(this, true);
             boolean stillMoving;
 
@@ -293,7 +344,7 @@ public class AmbNpcEntity extends FakePlayer {
                 RealisticMovement.strafeAround(this, moveTarget, avoidDir, speed * 0.85f);
                 stillMoving = true;
             } else {
-                stillMoving = RealisticMovement.moveTowards(this, currentGoal, speed);
+                stillMoving = RealisticMovement.moveTowards(this, waypoint, speed);
             }
 
             // Smooth human-like yaw sway while traveling
@@ -333,8 +384,8 @@ public class AmbNpcEntity extends FakePlayer {
                         avoidTicks = 20;
                         System.out.println("[AMB] " + getName().getString() + " stuck; strafing " + (avoidDir>0?"right":"left"));
                         stuckTimer = 0;
-                        // If still no progress after avoidance, pick a new goal
-                        if (random.nextBoolean()) {
+                        // If still no progress after avoidance, pick a new goal (unless exiting)
+                        if (random.nextBoolean() && !exitingNow) {
                             currentGoal = BlockPos.ZERO;
                             executeCurrentTask();
                         }
@@ -346,14 +397,31 @@ public class AmbNpcEntity extends FakePlayer {
                 lastExactPos = this.position();
             }
 
-            // If colliding horizontally with a door/gate, try to open/use it
-            if (this.horizontalCollision) {
+            // If colliding horizontally with a door/gate, try to open it (with cooldown)
+            if (this.horizontalCollision && doorInteractCooldown == 0) {
                 BlockPos front = blockPosition().relative(getDirection());
                 BlockState frontState = level().getBlockState(front);
                 if (frontState.getBlock() instanceof DoorBlock || frontState.getBlock() instanceof FenceGateBlock) {
-                    RealisticActions.interactWithBlock(this, front);
-                    broadcastGroupChat("Opening the way...");
+                    // Only interact if door is closed
+                    Boolean isOpen = frontState.getOptionalValue(BlockStateProperties.OPEN).orElse(false);
+                    if (!isOpen) {
+                        RealisticActions.interactWithBlock(this, front);
+                        doorInteractCooldown = 20; // 1s cooldown
+                        broadcastGroupChat("Opening the way...");
+                        // Try adjacent leaf (double doors)
+                        BlockPos side = front.relative(getDirection().getClockWise());
+                        BlockState sideState = level().getBlockState(side);
+                        if (sideState.getBlock() instanceof DoorBlock || sideState.getBlock() instanceof FenceGateBlock) {
+                            Boolean sideOpen = sideState.getOptionalValue(BlockStateProperties.OPEN).orElse(false);
+                            if (!sideOpen) RealisticActions.interactWithBlock(this, side);
+                        }
+                    }
                 }
+            }
+
+            // Advance waypoint if close
+            if (this.position().distanceToSqr(Vec3.atCenterOf(waypoint)) < 1.5 * 1.5) {
+                if (!currentPath.isEmpty() && pathIndex < currentPath.size()) pathIndex++;
             }
 
             // Reached goal
@@ -367,20 +435,22 @@ public class AmbNpcEntity extends FakePlayer {
                         RealisticActions.startMining(this, currentGoal, miningState);
                     }
                 } else {
-                    // Goal reached, pick new one
-                    currentGoal = BlockPos.ZERO;
-                    executeCurrentTask();
+                    // Goal reached, pick new one (unless exiting interior)
+                    if (!exitingNow) {
+                        currentGoal = BlockPos.ZERO;
+                        executeCurrentTask();
+                    }
                 }
             }
         } else {
-            // No goal - execute current task to find one
-            if (tickCount % 100 == 0) {
+            // No goal - execute current task to find one (but NOT if exiting interior)
+            if (!exitingNow && tickCount % 40 == 0) {
                 executeCurrentTask();
             }
         }
 
-        // REALISTIC MINING - Continue mining if in progress
-        if (miningState.isMining) {
+        // REALISTIC MINING - Continue mining if in progress (skip if exiting interior)
+        if (miningState.isMining && !exitingNow) {
             boolean blockBroken = RealisticActions.continueMining(this, miningState);
             if (blockBroken) {
                 // Block broken - find next goal
@@ -431,6 +501,9 @@ public class AmbNpcEntity extends FakePlayer {
 
                         broadcastGroupChat("Picked up " + grabbed + " " + dropped.getDescriptionId());
 
+                        // Unlock recipes associated with newly obtained item, like a real player
+                        unlockRecipesForItem(dropped);
+
                         // Send pickup animation towards the visual entity
                         int collectorId = (visualEntity != null) ? visualEntity.getId() : this.getId();
                         if (!level().isClientSide()) {
@@ -447,7 +520,225 @@ public class AmbNpcEntity extends FakePlayer {
         // Lightweight auto-crafting for basics: planks and sticks
         if (tickCount % 100 == 0) {
             tryAutoCraftBasics();
+            // Prioritize getting outside first before station work
+            if (!handleInteriorExitPlan()) {
+                manageStationsAndCrafting();
+            }
         }
+
+        // Cooldowns
+        if (doorInteractCooldown > 0) doorInteractCooldown--;
+    }
+
+    // ==================== INTERIOR EXIT (DOOR) PLAN ====================
+    private boolean handleInteriorExitPlan() {
+        // Detect if indoors (no sky above within a few blocks)
+        boolean indoors = true;
+        for (int i = 0; i < 4; i++) {
+            if (level().canSeeSky(blockPosition().above(i))) { indoors = false; break; }
+        }
+
+        if (!indoors) {
+            exitingInterior = false;
+            exitDoorCenter = BlockPos.ZERO;
+            exitBeyond = BlockPos.ZERO;
+            return false;
+        }
+
+        // If no active plan, find nearest door and compute center/beyond
+        if (!exitingInterior) {
+            BlockPos door = findNearestDoor(10);
+            if (door != null) {
+                Direction facing = level().getBlockState(door).getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).orElse(Direction.NORTH);
+                // Doorway center (use door block center)
+                exitDoorCenter = door;
+                // Beyond is one block forward from door facing (outside)
+                exitBeyond = door.relative(facing);
+                exitingInterior = true;
+                exitTimer = 200; // 10 seconds budget
+                System.out.println("[AMB] " + getName().getString() + " INTERIOR DETECTED! Found door at " + door + ", planning exit to " + exitBeyond);
+            } else {
+                // Debug: no door found
+                if (tickCount % 100 == 0) {
+                    System.out.println("[AMB] " + getName().getString() + " indoors but no door found within 10 blocks!");
+                }
+            }
+        }
+
+        if (exitingInterior) {
+            // Move toward door center first, then beyond
+            BlockPos target = (this.blockPosition().closerThan(exitDoorCenter, 1.8)) ? exitBeyond : exitDoorCenter;
+            if (!target.equals(this.currentGoal)) {
+                this.currentGoal = target;
+                this.currentPath.clear();
+                System.out.println("[AMB] " + getName().getString() + " exit plan: moving to " + target + " (door: " + exitDoorCenter + ", beyond: " + exitBeyond + ")");
+            }
+
+            // Debug logging every 2 seconds
+            if (tickCount % 40 == 0) {
+                System.out.println("[AMB] " + getName().getString() + " exiting interior: pos=" + blockPosition() +
+                    ", goal=" + currentGoal + ", dist to door=" + Math.sqrt(blockPosition().distSqr(exitDoorCenter)) +
+                    ", dist to beyond=" + Math.sqrt(blockPosition().distSqr(exitBeyond)));
+            }
+
+            // If near door, attempt to open both leaves (with cooldown and open-state check)
+            if (this.blockPosition().closerThan(exitDoorCenter, 2.2) && doorInteractCooldown == 0) {
+                BlockState doorState = level().getBlockState(exitDoorCenter);
+                Boolean isOpen = doorState.getOptionalValue(BlockStateProperties.OPEN).orElse(false);
+                if (!isOpen) {
+                    RealisticActions.interactWithBlock(this, exitDoorCenter);
+                    doorInteractCooldown = 20; // 1s cooldown
+                    broadcastGroupChat("Opening exit door...");
+                    System.out.println("[AMB] " + getName().getString() + " opening door at " + exitDoorCenter);
+                    // Try adjacent leaf (double doors)
+                    BlockPos alt = exitDoorCenter.relative(getDirection().getClockWise());
+                    BlockState altState = level().getBlockState(alt);
+                    if (altState.getBlock() instanceof DoorBlock || altState.getBlock() instanceof FenceGateBlock) {
+                        Boolean altOpen = altState.getOptionalValue(BlockStateProperties.OPEN).orElse(false);
+                        if (!altOpen) {
+                            RealisticActions.interactWithBlock(this, alt);
+                            System.out.println("[AMB] " + getName().getString() + " opening adjacent door at " + alt);
+                        }
+                    }
+                }
+            }
+
+            if (this.blockPosition().closerThan(exitBeyond, 1.6)) {
+                // exited
+                System.out.println("[AMB] " + getName().getString() + " successfully exited interior!");
+                exitingInterior = false;
+                exitDoorCenter = BlockPos.ZERO;
+                exitBeyond = BlockPos.ZERO;
+                return false;
+            }
+
+            if (exitTimer-- <= 0) {
+                System.out.println("[AMB] " + getName().getString() + " exit plan timeout, aborting");
+                exitingInterior = false; // fail-safe
+            }
+            return true; // suppress station work while exiting
+        }
+        return false;
+    }
+
+    private BlockPos findNearestDoor(int radius) {
+        BlockPos best = null; double bestD2 = Double.MAX_VALUE;
+        BlockPos c = blockPosition();
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    BlockPos p = c.offset(dx, dy, dz);
+                    BlockState st = level().getBlockState(p);
+                    if (st.getBlock() instanceof DoorBlock || st.getBlock() instanceof FenceGateBlock) {
+                        double d2 = p.distSqr(c);
+                        if (d2 < bestD2) { bestD2 = d2; best = p; }
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
+    // ==================== A* PATHFINDING ====================
+    private static class Node implements Comparable<Node> {
+        BlockPos pos; int g; int f;
+        Node(BlockPos p, int g, int f){ this.pos=p; this.g=g; this.f=f; }
+        @Override public int compareTo(Node o){ return Integer.compare(this.f, o.f); }
+    }
+
+    private List<BlockPos> computeAStarPath(BlockPos start, BlockPos goal) {
+        if (start.equals(goal)) return new ArrayList<>();
+        PriorityQueue<Node> open = new PriorityQueue<>();
+        Set<BlockPos> closed = new HashSet<>();
+        Map<BlockPos, BlockPos> cameFrom = new HashMap<>();
+        Map<BlockPos, Integer> gScore = new HashMap<>();
+
+        open.add(new Node(start, 0, heuristic(start, goal)));
+        gScore.put(start, 0);
+
+        int maxNodes = 400; // cap for performance
+        int expanded = 0;
+
+        while (!open.isEmpty() && expanded < maxNodes) {
+            Node current = open.poll();
+            expanded++;
+            if (current.pos.equals(goal)) return reconstructPath(cameFrom, current.pos);
+            closed.add(current.pos);
+
+            for (BlockPos neighbor : getNeighbors(current.pos)) {
+                if (closed.contains(neighbor)) continue;
+                int tentativeG = gScore.getOrDefault(current.pos, Integer.MAX_VALUE) + cost(current.pos, neighbor);
+                if (tentativeG < gScore.getOrDefault(neighbor, Integer.MAX_VALUE)) {
+                    cameFrom.put(neighbor, current.pos);
+                    gScore.put(neighbor, tentativeG);
+                    int f = tentativeG + heuristic(neighbor, goal);
+                    open.add(new Node(neighbor, tentativeG, f));
+                }
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private int heuristic(BlockPos a, BlockPos b) {
+        return Math.abs(a.getX() - b.getX()) + Math.abs(a.getZ() - b.getZ()) + Math.abs(a.getY() - b.getY()) * 2;
+    }
+
+    private int cost(BlockPos from, BlockPos to) {
+        BlockState state = level().getBlockState(to);
+        // Liquids are allowed but slower: apply mild penalty
+        if (state.is(Blocks.WATER)) return 6;  // okay to cross
+        if (state.is(Blocks.LAVA)) return 50;  // risky but not forbidden
+        // penalize cliffs
+        if (level().getBlockState(to).isAir() && level().getBlockState(to.below()).isAir()) return 15;
+        // prefer stairs and slabs slightly
+        BlockState below = level().getBlockState(to.below());
+        if (below.getBlock() instanceof StairBlock) return 1;
+        if (below.getBlock() instanceof SlabBlock) return 2;
+        // path blocks slightly cheaper
+        if (below.is(Blocks.DIRT_PATH)) return 1;
+        return 3;
+    }
+
+    private List<BlockPos> getNeighbors(BlockPos pos) {
+        List<BlockPos> out = new ArrayList<>();
+        // 4-way neighbors on same Y
+        BlockPos[] candidates = new BlockPos[]{ pos.north(), pos.south(), pos.east(), pos.west() };
+        for (BlockPos n : candidates) {
+            if (isPassable(n)) out.add(n);
+        }
+        // allow stepping up one block
+        for (BlockPos n : candidates) {
+            BlockPos up = n.above();
+            if (isPassable(up) && (level() instanceof ServerLevel sl) && RealisticMovement.isWalkable(sl, up)) out.add(up);
+        }
+        // and stepping down one block
+        for (BlockPos n : candidates) {
+            BlockPos down = n.below();
+            if (isPassable(down) && (level() instanceof ServerLevel sl) && RealisticMovement.isWalkable(sl, down)) out.add(down);
+        }
+        return out;
+    }
+
+    private boolean isPassable(BlockPos p) {
+        BlockState feet = level().getBlockState(p);
+        BlockState head = level().getBlockState(p.above());
+        // allow air, open doors, fence gates
+        boolean pass = (!feet.canOcclude()) && (!head.canOcclude());
+        if (!pass) {
+            if (feet.getBlock() instanceof DoorBlock || feet.getBlock() instanceof FenceGateBlock) return true;
+        }
+        // must have solid ground below to stand
+        return pass && level().getBlockState(p.below()).canOcclude();
+    }
+
+    private List<BlockPos> reconstructPath(Map<BlockPos, BlockPos> cameFrom, BlockPos current) {
+        List<BlockPos> path = new ArrayList<>();
+        BlockPos cur = current;
+        while (cameFrom.containsKey(cur)) {
+            path.add(0, cur);
+            cur = cameFrom.get(cur);
+        }
+        return path;
     }
 
     /**
@@ -601,6 +892,297 @@ public class AmbNpcEntity extends FakePlayer {
             if (removed >= needed) break;
         }
         return removed;
+    }
+
+    // ==================== RECIPE UNLOCKING (like a real player) ====================
+    private void unlockRecipesForItem(Item item) {
+        try {
+            if (!(level() instanceof ServerLevel sl)) return;
+            RecipeManager rm = sl.getServer().getRecipeManager();
+            java.util.ArrayList<RecipeHolder<?>> toAward = new java.util.ArrayList<>();
+
+            // Helper to add by id if present
+            java.util.function.Consumer<String> add = (id) -> {
+                ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, Identifier.withDefaultNamespace(id));
+                rm.byKey(key).ifPresent(toAward::add);
+            };
+
+            if (item == Items.OAK_LOG || item == Items.SPRUCE_LOG || item == Items.BIRCH_LOG || item == Items.JUNGLE_LOG
+                    || item == Items.ACACIA_LOG || item == Items.DARK_OAK_LOG || item == Items.MANGROVE_LOG || item == Items.CHERRY_LOG
+                    || item == Items.BAMBOO_BLOCK) {
+                // Planks for each wood type
+                add.accept("oak_planks");
+                add.accept("spruce_planks");
+                add.accept("birch_planks");
+                add.accept("jungle_planks");
+                add.accept("acacia_planks");
+                add.accept("dark_oak_planks");
+                add.accept("mangrove_planks");
+                add.accept("cherry_planks");
+                add.accept("bamboo_planks");
+                // crafting table and sticks
+                add.accept("crafting_table");
+                add.accept("sticks");
+                // wooden tools
+                add.accept("wooden_pickaxe");
+                add.accept("wooden_axe");
+                add.accept("wooden_sword");
+            }
+
+            if (item == Items.OAK_PLANKS || item == Items.SPRUCE_PLANKS || item == Items.BIRCH_PLANKS || item == Items.JUNGLE_PLANKS
+                    || item == Items.ACACIA_PLANKS || item == Items.DARK_OAK_PLANKS || item == Items.MANGROVE_PLANKS
+                    || item == Items.CHERRY_PLANKS || item == Items.BAMBOO_PLANKS) {
+                add.accept("sticks");
+                add.accept("crafting_table");
+                add.accept("wooden_pickaxe");
+                add.accept("wooden_axe");
+                add.accept("wooden_sword");
+            }
+
+            if (item == Items.COBBLESTONE) {
+                add.accept("furnace");
+            }
+
+            if (item == Items.RAW_IRON || item == Items.IRON_ORE || item == Items.RAW_GOLD || item == Items.GOLD_ORE
+                    || item == Items.RAW_COPPER || item == Items.COPPER_ORE) {
+                add.accept("furnace");
+            }
+
+            if (!toAward.isEmpty()) this.awardRecipes(toAward);
+        } catch (Exception ignored) {}
+    }
+
+    // ==================== STATION MANAGEMENT ====================
+    private void manageStationsAndCrafting() {
+        ensureCraftingTableAvailable();
+        // Simple starter tool progression at table (wood tier)
+        if (!knownCraftingTable.equals(BlockPos.ZERO) && this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
+            craftStarterToolsAtTable();
+        }
+
+        // Furnace pipeline (basic): ensure, move to, smelt inputs, collect outputs
+        ensureFurnaceAvailable();
+        BlockPos furnacePos = chooseFurnaceForPendingSmelts();
+        if (furnacePos != null) {
+            if (!this.blockPosition().closerThan(furnacePos, 4.0)) {
+                this.currentGoal = furnacePos;
+            } else {
+                serviceFurnaceAt(furnacePos);
+            }
+        }
+    }
+
+    private void ensureCraftingTableAvailable() {
+        // If we know one and it's loaded, done
+        if (!knownCraftingTable.equals(BlockPos.ZERO)) {
+            if (!level().getBlockState(knownCraftingTable).is(Blocks.CRAFTING_TABLE)) {
+                knownCraftingTable = BlockPos.ZERO;
+            }
+        }
+
+        if (knownCraftingTable.equals(BlockPos.ZERO)) {
+            // search nearby
+            BlockPos found = findNearestBlockExact(Blocks.CRAFTING_TABLE, 12);
+            if (found != null) {
+                knownCraftingTable = found;
+                return;
+            }
+
+            // No table placed: craft one then place it nearby
+            if (countTotalPlanks() >= 4) {
+                if (removeAnyPlanks(4) == 4) {
+                    addToInventory(new ItemStack(Blocks.CRAFTING_TABLE.asItem(), 1));
+                    broadcastGroupChat("Crafted a crafting table.");
+                }
+            }
+
+            if (getInventory().countItem(Blocks.CRAFTING_TABLE.asItem()) > 0) {
+                BlockPos place = findPlacementNear(blockPosition(), 3);
+                if (place != null) {
+                    if (removeItems(Blocks.CRAFTING_TABLE.asItem(), 1) == 1) {
+                        level().setBlock(place, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
+                        knownCraftingTable = place;
+                        broadcastGroupChat("Placed a crafting table at " + place + ".");
+                    }
+                }
+            } else {
+                // Move toward a good placement area if carrying planks to craft
+                if (countTotalPlanks() >= 4) {
+                    BlockPos target = blockPosition().offset(2, 0, 2);
+                    this.currentGoal = target;
+                }
+            }
+        } else {
+            // move toward table if far and intend to craft
+            if (!this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
+                this.currentGoal = knownCraftingTable;
+            }
+        }
+    }
+
+    private int countTotalPlanks() {
+        return countItemInInventory(Items.OAK_PLANKS) + countItemInInventory(Items.SPRUCE_PLANKS)
+                + countItemInInventory(Items.BIRCH_PLANKS) + countItemInInventory(Items.JUNGLE_PLANKS)
+                + countItemInInventory(Items.ACACIA_PLANKS) + countItemInInventory(Items.DARK_OAK_PLANKS)
+                + countItemInInventory(Items.MANGROVE_PLANKS) + countItemInInventory(Items.CHERRY_PLANKS)
+                + countItemInInventory(Items.BAMBOO_PLANKS);
+    }
+
+    private BlockPos findPlacementNear(BlockPos center, int radius) {
+        for (int r = 1; r <= radius; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    BlockPos p = center.offset(dx, 0, dz);
+                    if (level().getBlockState(p).isAir() && level().getBlockState(p.below()).canOcclude()) {
+                        return p;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private BlockPos findNearestBlockExact(Block block, int radius) {
+        BlockPos best = null; double bestD2 = Double.MAX_VALUE;
+        BlockPos c = blockPosition();
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    BlockPos p = c.offset(dx, dy, dz);
+                    if (level().getBlockState(p).is(block)) {
+                        double d2 = p.distSqr(c);
+                        if (d2 < bestD2) { bestD2 = d2; best = p; }
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
+    private void craftStarterToolsAtTable() {
+        int sticks = countItemInInventory(Items.STICK);
+        if (sticks < 2 && countTotalPlanks() >= 2) {
+            if (removeAnyPlanks(2) == 2) {
+                addToInventory(new ItemStack(Items.STICK, 4));
+                broadcastGroupChat("Crafted 4 sticks at the table.");
+            }
+        }
+
+        // Wooden pickaxe: 3 planks + 2 sticks
+        if (getInventory().countItem(Items.WOODEN_PICKAXE) == 0 && countTotalPlanks() >= 3 && countItemInInventory(Items.STICK) >= 2) {
+            if (removeAnyPlanks(3) == 3 && removeItems(Items.STICK, 2) == 2) {
+                addToInventory(new ItemStack(Items.WOODEN_PICKAXE, 1));
+                broadcastGroupChat("Crafted a wooden pickaxe.");
+            }
+        }
+
+        // Wooden axe
+        if (getInventory().countItem(Items.WOODEN_AXE) == 0 && countTotalPlanks() >= 3 && countItemInInventory(Items.STICK) >= 2) {
+            if (removeAnyPlanks(3) == 3 && removeItems(Items.STICK, 2) == 2) {
+                addToInventory(new ItemStack(Items.WOODEN_AXE, 1));
+                broadcastGroupChat("Crafted a wooden axe.");
+            }
+        }
+
+        // Wooden sword
+        if (getInventory().countItem(Items.WOODEN_SWORD) == 0 && countTotalPlanks() >= 2 && countItemInInventory(Items.STICK) >= 1) {
+            if (removeAnyPlanks(2) == 2 && removeItems(Items.STICK, 1) == 1) {
+                addToInventory(new ItemStack(Items.WOODEN_SWORD, 1));
+                broadcastGroupChat("Crafted a wooden sword.");
+            }
+        }
+    }
+
+    // ==================== Furnace/Smoker/Blast management ====================
+    private void ensureFurnaceAvailable() {
+        if (!knownFurnace.equals(BlockPos.ZERO)) {
+            if (!level().getBlockState(knownFurnace).is(Blocks.FURNACE)) knownFurnace = BlockPos.ZERO;
+        }
+        if (knownFurnace.equals(BlockPos.ZERO)) {
+            BlockPos found = findNearestBlockExact(Blocks.FURNACE, 12);
+            if (found != null) { knownFurnace = found; return; }
+
+            // Craft a furnace if we have cobblestone
+            if (countItemInInventory(Items.COBBLESTONE) >= 8) {
+                if (removeItems(Items.COBBLESTONE, 8) == 8) {
+                    addToInventory(new ItemStack(Blocks.FURNACE.asItem(), 1));
+                    broadcastGroupChat("Crafted a furnace.");
+                }
+            }
+            if (getInventory().countItem(Blocks.FURNACE.asItem()) > 0) {
+                BlockPos place = findPlacementNear(blockPosition(), 3);
+                if (place != null) {
+                    if (removeItems(Blocks.FURNACE.asItem(), 1) == 1) {
+                        level().setBlock(place, Blocks.FURNACE.defaultBlockState(), 3);
+                        knownFurnace = place;
+                        broadcastGroupChat("Placed a furnace at " + place + ".");
+                    }
+                }
+            }
+        }
+    }
+
+    private BlockPos chooseFurnaceForPendingSmelts() {
+        // For now, only regular furnace; later: prefer smoker for food, blast for ores
+        if (!knownFurnace.equals(BlockPos.ZERO)) {
+            // If we have raw food or ores to smelt, return furnace position
+            if (hasAnyRawFood() || hasAnyOre()) return knownFurnace;
+        }
+        return null;
+    }
+
+    private boolean hasAnyRawFood() {
+        return countItemInInventory(Items.BEEF) > 0 || countItemInInventory(Items.PORKCHOP) > 0
+                || countItemInInventory(Items.CHICKEN) > 0 || countItemInInventory(Items.MUTTON) > 0
+                || countItemInInventory(Items.COD) > 0 || countItemInInventory(Items.SALMON) > 0
+                || countItemInInventory(Items.POTATO) > 0;
+    }
+
+    private boolean hasAnyOre() {
+        return countItemInInventory(Items.IRON_ORE) > 0 || countItemInInventory(Items.RAW_IRON) > 0
+                || countItemInInventory(Items.GOLD_ORE) > 0 || countItemInInventory(Items.RAW_GOLD) > 0
+                || countItemInInventory(Items.COPPER_ORE) > 0 || countItemInInventory(Items.RAW_COPPER) > 0;
+    }
+
+    private void serviceFurnaceAt(BlockPos pos) {
+        BlockEntity be = level().getBlockEntity(pos);
+        if (!(be instanceof AbstractFurnaceBlockEntity furnace)) return;
+
+        // Collect outputs first (slot 2)
+        ItemStack out = furnace.getItem(2);
+        if (!out.isEmpty()) {
+            addToInventory(out.copy());
+            furnace.setItem(2, ItemStack.EMPTY);
+            broadcastGroupChat("Collected " + out.getCount() + " " + out.getItem().getDescriptionId() + " from furnace.");
+        }
+
+        // Determine input and fuel
+        ItemStack input = ItemStack.EMPTY;
+        if (hasAnyOre()) {
+            input = takeFirstAvailable(Items.RAW_IRON, Items.IRON_ORE, Items.RAW_GOLD, Items.GOLD_ORE, Items.RAW_COPPER, Items.COPPER_ORE);
+        } else if (hasAnyRawFood()) {
+            input = takeFirstAvailable(Items.BEEF, Items.PORKCHOP, Items.CHICKEN, Items.MUTTON, Items.COD, Items.SALMON, Items.POTATO);
+        }
+
+        ItemStack fuel = takeFirstAvailable(Items.COAL, Items.CHARCOAL, Items.OAK_LOG, Items.SPRUCE_LOG, Items.BIRCH_LOG,
+                Items.JUNGLE_LOG, Items.ACACIA_LOG, Items.DARK_OAK_LOG, Items.MANGROVE_LOG, Items.CHERRY_LOG, Items.BAMBOO_BLOCK,
+                Items.OAK_PLANKS, Items.SPRUCE_PLANKS, Items.BIRCH_PLANKS, Items.JUNGLE_PLANKS, Items.ACACIA_PLANKS,
+                Items.DARK_OAK_PLANKS, Items.MANGROVE_PLANKS, Items.CHERRY_PLANKS, Items.BAMBOO_PLANKS);
+
+        // Insert if slots empty
+        if (!input.isEmpty() && furnace.getItem(0).isEmpty()) furnace.setItem(0, input);
+        if (!fuel.isEmpty() && furnace.getItem(1).isEmpty()) furnace.setItem(1, fuel);
+    }
+
+    private ItemStack takeFirstAvailable(Item... candidates) {
+        for (Item it : candidates) {
+            if (countItemInInventory(it) > 0) {
+                // remove as much as possible up to a stack
+                int removed = removeItems(it, 64);
+                if (removed > 0) return new ItemStack(it, Math.min(removed, 64));
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     // ============ Door handling and local avoidance ============
