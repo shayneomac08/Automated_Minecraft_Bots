@@ -310,7 +310,7 @@ public class AmbNpcEntity extends FakePlayer {
 
         // DEBUG: Log exitingNow state every 2 seconds
         if (tickCount % 40 == 0) {
-            System.out.println("[AMB-DEBUG] " + getName().getString() + " exitingNow=" + exitingNow + ", currentGoal=" + currentGoal + ", currentTask=" + currentTask);
+            System.out.println("[AMB-DEBUG] " + getName().getString() + " AT START OF TICK: exitingNow=" + exitingNow + ", currentGoal=" + currentGoal + ", currentTask=" + currentTask);
         }
 
         // CRITICAL SURVIVAL - Eat if hungry
@@ -498,7 +498,9 @@ public class AmbNpcEntity extends FakePlayer {
         } else {
             // No goal - execute current task to find one (but NOT if exiting interior)
             if (!exitingNow && tickCount % 40 == 0) {
+                System.out.println("[AMB-DEBUG] " + getName().getString() + " executeCurrentTask() called from line 501");
                 executeCurrentTask();
+                System.out.println("[AMB-DEBUG] " + getName().getString() + " AFTER executeCurrentTask(): currentGoal=" + currentGoal);
             }
         }
 
@@ -1405,9 +1407,11 @@ public class AmbNpcEntity extends FakePlayer {
                         // We're already close enough, set goal to the tree itself for mining
                         currentGoal = tree;
                         System.out.println("[AMB] " + getName().getString() + " already near tree at " + tree + ", setting goal to tree for mining");
+                        System.out.println("[AMB-DEBUG] IMMEDIATELY AFTER SETTING: currentGoal=" + currentGoal);
                     } else {
                         currentGoal = approach;
                         System.out.println("[AMB] " + getName().getString() + " found tree at " + tree + ", setting goal to " + approach + " (distance: " + distToGoal + ")");
+                        System.out.println("[AMB-DEBUG] IMMEDIATELY AFTER SETTING: currentGoal=" + currentGoal);
                     }
 
                     // Clear any door plan when pursuing resource
@@ -1531,6 +1535,11 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         this.setNoGravity(false); // enforce gravity every tick
         super.tick();
+
+        // CRITICAL FIX: Reset head pitch to prevent looking at ground
+        // This makes the bot look forward like a real player instead of staring down
+        this.setXRot(0.0F);
+
         runAllPlayerActions();
         if (spawnIdleTimer == 99 && !roleAnnouncementDone) {
             assignInitialRole();

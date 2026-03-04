@@ -4,6 +4,16 @@
 
 ### Recent Changes (2026-03-03)
 
+#### CRITICAL FIX: Bot Looking at Ground - Head Pitch Not Reset!
+- **FIXED:** Bot constantly staring at the ground instead of looking forward like a real player
+  - **Root Cause:** Head pitch (X rotation) was not being managed, defaulting to looking down
+  - Made the bot look unnatural and hard to see what it was doing
+- **SOLUTION:** Reset head pitch to 0.0F every tick
+  - Added `this.setXRot(0.0F)` in the tick method
+  - Forces bot to look straight ahead horizontally like a real player
+  - Applied every tick to prevent any code from changing it
+- **RESULT:** Bot now looks forward naturally instead of staring at the ground!
+
 #### CRITICAL FIX: Bot Looping Back Inside After Exiting - Exit Distance Too Short!
 - **FIXED:** Bot exiting building then immediately walking back inside, creating infinite loop
   - **Root Cause:** Exit target was only 3 blocks beyond door, bot would reach it then path back through building to reach tree
