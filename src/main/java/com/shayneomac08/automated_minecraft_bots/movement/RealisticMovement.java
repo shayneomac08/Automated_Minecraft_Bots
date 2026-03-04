@@ -47,6 +47,9 @@ public class RealisticMovement {
             return false;
         }
 
+        // ENHANCED: Add slight movement variation for human-like behavior
+        // Real players don't walk in perfectly straight lines
+
         // Normalize direction and apply acceleration toward target speed
         double dirX = dx / horizontalDist;
         double dirZ = dz / horizontalDist;
@@ -71,10 +74,16 @@ public class RealisticMovement {
         BlockState feetBlock = entity.level().getBlockState(feetPos);
         boolean onNonSolidBlock = !feetBlock.isAir() && !feetBlock.canOcclude();
 
-        // Smooth acceleration/deceleration
+        // ENHANCED: Smooth acceleration/deceleration with human-like variation
         Vec3 cur = entity.getDeltaMovement();
         double targetVX = dirX * speed;
         double targetVZ = dirZ * speed;
+
+        // Add slight random variation (±2%) for natural movement
+        double variation = 0.02;
+        targetVX *= (1.0 + (Math.random() * variation * 2 - variation));
+        targetVZ *= (1.0 + (Math.random() * variation * 2 - variation));
+
         double ax = (targetVX - cur.x) * 0.35; // acceleration factor
         double az = (targetVZ - cur.z) * 0.35;
         double newVX = cur.x + ax;

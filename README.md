@@ -1,6 +1,6 @@
 # Automated Minecraft Bots
 
-AI-powered autonomous bots for Minecraft using LLM decision-making.
+AI-powered autonomous bots for Minecraft with human-like movement and intelligent navigation.
 
 **Version:** 1.0.0
 **Minecraft:** 1.21.1
@@ -8,49 +8,70 @@ AI-powered autonomous bots for Minecraft using LLM decision-making.
 
 ## Overview
 
-Automated Minecraft Bots are LLM-driven FakePlayer entities that behave like real players: they move with player physics, mine with progressive block-breaking, craft using crafting tables, fight, hunt, and coordinate as a group.
+Automated Minecraft Bots are LLM-driven FakePlayer entities that behave like real players. They feature natural movement with head sway, intelligent pathfinding with vertical navigation, multi-level stuck recovery, and realistic actions like progressive mining and automatic tool switching.
 
-## Recent fixes (2026-02-28)
-- **REALISTIC MOVEMENT**: Bots now move like real players with physics, pathfinding, jumping, and obstacle avoidance
-- **REALISTIC ACTIONS**: Progressive mining, automatic tool switching, eating, combat, and environmental interaction
-- **SURVIVAL AI**: Automatic hunger management, health monitoring, and intelligent task execution
-- **Bot visibility**: Hybrid FakePlayer + AmbNpcVisualEntity architecture for client rendering
-- **Inventory GUI**: `/amb gui` and `/amb inventory` commands to view bot inventories
-- **LLM Control**: Full integration with OpenAI/Gemini/Grok for autonomous decision-making
+## Key Features
+
+- **Human-like Movement**: Natural physics with smooth acceleration, head sway, and movement variation
+- **Intelligent Navigation**: Multi-level stuck detection, vertical pathfinding, 4-phase door navigation
+- **Task Validation**: Pre-validates goals for reachability before setting them
+- **Realistic Actions**: Progressive mining, automatic tool switching, hunger management
+- **Survival AI**: Auto-eating, health monitoring, intelligent task execution
 
 ## Quick Start
 
 ### Installation
-1. Place JAR in `mods/` folder
-2. Start Minecraft with NeoForge 1.21.1
+1. Download the latest JAR from releases
+2. Place in your `mods/` folder
+3. Start Minecraft with NeoForge 1.21.1
 
-### Setup API Key
-Set your Grok API key in `config/automated_minecraft_bots.toml`:
+### Basic Commands
+```
+/amb spawn bot              - Spawn a bot named "bot"
+/amb task bot gather_wood   - Assign wood gathering task
+/amb list                   - List all active bots
+/amb remove bot             - Remove the bot
+```
+
+### Optional: LLM Integration
+Set your API key in `config/automated_minecraft_bots.toml`:
 ```toml
 llm_provider = "grok"
 grok_api_key = "your-api-key-here"
 ```
 
-### Commands
-```
-/amb spawn <name>           - Spawn a bot
-/amb remove <name>          - Remove a bot
-/amb list                   - List all bots
-/amb give <name> <item>     - Give item to bot
-```
+Supported providers: `grok`, `openai`, `gemini`, `claude`
 
-## Documentation (consolidated)
-Keep the number of markdown files to a minimum. Primary docs are:
-- `CHANGELOG.md` — Version history and recent fixes
-- `FEATURES.md` — Feature list and commands (concise)
-- `README.md` — Quick start and overview
+## Available Tasks
 
-Temporary or developer notes should be archived or consolidated into the above files to avoid clutter.
+- `gather_wood` - Find and mine trees
+- `mine_stone` - Mine stone blocks
+- `mine_ore` - Mine ore blocks (coal, iron, copper, gold, diamond, etc.)
+- `mine_dirt` - Mine dirt blocks
+- `explore` - Wander and explore the world
+- `hunt_animals` - Hunt nearby animals
 
-## Build
+## Documentation
+
+- **FEATURES.md** - Complete feature list and all commands
+- **CHANGELOG.md** - Version history and recent changes
+- **README.md** - This file (quick start guide)
+
+## Building from Source
 
 ```powershell
 ./gradlew clean build
 ```
 
 JAR output: `build/libs/automated_minecraft_bots-1.0.0.jar`
+
+## Recent Updates (2026-03-04)
+
+**Major Movement System Overhaul:**
+- Added 4 new movement systems (StuckDetection, VerticalNavigation, HumanlikeMovement, TaskValidation)
+- Enhanced 4-phase door navigation with post-exit check
+- Integrated vertical pathfinding costs into A* algorithm
+- Added natural movement variation (±2-5% random deviation)
+- Multi-level stuck recovery (jump/strafe → block placement → LLM override)
+
+See CHANGELOG.md for detailed version history.

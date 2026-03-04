@@ -3,6 +3,10 @@ package com.shayneomac08.automated_minecraft_bots.entity;
 import com.mojang.authlib.GameProfile;
 import com.shayneomac08.automated_minecraft_bots.movement.RealisticActions;
 import com.shayneomac08.automated_minecraft_bots.movement.RealisticMovement;
+import com.shayneomac08.automated_minecraft_bots.movement.StuckDetection;
+import com.shayneomac08.automated_minecraft_bots.movement.VerticalNavigation;
+import com.shayneomac08.automated_minecraft_bots.movement.HumanlikeMovement;
+import com.shayneomac08.automated_minecraft_bots.movement.TaskValidation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -93,15 +97,22 @@ public class AmbNpcEntity extends FakePlayer {
     private BlockPos lastPosition = BlockPos.ZERO;
     private float desiredSpeed = 0.13f; // default sprint-like speed
     private Vec3 lastExactPos = Vec3.ZERO;
-    // Door navigation
+    // Door navigation - ENHANCED 4-PHASE SYSTEM
     private BlockPos doorPos = BlockPos.ZERO;
-    private int doorPhase = 0; // 0=none,1=approach,2=pass through,3=verify passage
+    private int doorPhase = 0; // 0=none,1=approach,2=pass through,3=verify passage,4=post-exit check
     private BlockPos originalDoorPos = BlockPos.ZERO; // Store original door position
     private int doorTimer = 0;
     private int exitCooldown = 0; // Cooldown after exiting to prevent re-triggering
+    private int doorIgnoreTicks = 0; // Ticks to ignore door for pathfinding after exit
+    private BlockPos preExitGoal = BlockPos.ZERO; // Goal before door navigation started
     // Local avoidance (simple wall-following)
     private int avoidTicks = 0;
     private int avoidDir = 1; // +1=right, -1=left
+    // Enhanced stuck detection system
+    private final StuckDetection.StuckState stuckState = new StuckDetection.StuckState();
+    // Human-like movement system
+    private final HumanlikeMovement.MovementState movementState = new HumanlikeMovement.MovementState();
+    private int ticksMoving = 0;
 
     // A* pathfinding state
     private List<BlockPos> currentPath = new ArrayList<>();
@@ -403,51 +414,41 @@ public class AmbNpcEntity extends FakePlayer {
                     Math.sqrt(blockPosition().distSqr(currentGoal)) + ")");
             }
 
-            // IMPROVED: Better stuck detection with multiple recovery strategies
-            double moved2 = this.position().distanceToSqr(lastExactPos);
-            if (moved2 < 0.0025) { // ~0.05 blocks
-                stuckTimer++;
-                if (stuckTimer > 60) { // 3 seconds
-                    System.out.println("[AMB] " + getName().getString() + " stuck at " + blockPosition() + ", attempting recovery");
+            // ENHANCED: Multi-level stuck detection with progressive recovery
+            if (StuckDetection.isStuck(this, stuckState, currentGoal)) {
+                System.out.println("[AMB-STUCK] " + getName().getString() + " stuck at " + blockPosition() +
+                    " (level " + stuckState.recoveryLevel + ", ticks: " + stuckState.stuckTicks + ")");
 
-                    // Strategy 1: Check if we're stuck on a door
-                    if (attemptDoorRescue()) {
-                        System.out.println("[AMB] " + getName().getString() + " stuck; attempting door rescue toward " + doorPos);
-                        stuckTimer = 0;
-                    }
-                    // Strategy 2: Check if we're stuck in a non-solid block (like a door)
-                    else if (isStuckInNonSolidBlock()) {
-                        System.out.println("[AMB] " + getName().getString() + " stuck in non-solid block, forcing downward");
-                        this.setDeltaMovement(0, -0.5, 0); // Force fall through
-                        stuckTimer = 0;
-                    }
-                    // Strategy 3: Try strafing around obstacle
-                    else if (avoidTicks == 0) {
-                        avoidDir = (random.nextBoolean() ? 1 : -1);
-                        avoidTicks = 30; // Strafe for 1.5 seconds
-                        System.out.println("[AMB] " + getName().getString() + " stuck; strafing " + (avoidDir>0?"right":"left"));
-                        stuckTimer = 0;
-                    }
-                    // Strategy 4: Recompute path
-                    else if (stuckTimer > 100) { // 5 seconds total
-                        System.out.println("[AMB] " + getName().getString() + " severely stuck, recomputing path");
-                        currentPath.clear();
-                        pathIndex = 0;
-                        stuckTimer = 0;
-
-                        // If still stuck after path recompute, abandon goal
-                        if (stuckTimer > 140 && !exitingNow) {
-                            System.out.println("[AMB] " + getName().getString() + " abandoning unreachable goal");
-                            currentGoal = BlockPos.ZERO;
-                            executeCurrentTask();
-                            stuckTimer = 0;
-                        }
-                    }
+                // Try door rescue first (legacy compatibility)
+                if (stuckState.recoveryLevel == 0 && attemptDoorRescue()) {
+                    System.out.println("[AMB-STUCK] Door rescue initiated");
+                    stuckState.reset();
+                }
+                // Check if stuck in non-solid block
+                else if (stuckState.recoveryLevel == 0 && isStuckInNonSolidBlock()) {
+                    System.out.println("[AMB-STUCK] Stuck in non-solid block, forcing downward");
+                    this.setDeltaMovement(0, -0.5, 0);
+                    stuckState.reset();
+                }
+                // Execute progressive recovery strategies
+                else if (StuckDetection.executeRecovery(this, stuckState, currentGoal)) {
+                    System.out.println("[AMB-STUCK] Recovery action executed");
+                }
+                // If severely stuck (level 3), abandon goal
+                else if (stuckState.recoveryLevel >= 3 && !exitingNow) {
+                    System.out.println("[AMB-STUCK] Abandoning unreachable goal after level 3 recovery failure");
+                    currentGoal = BlockPos.ZERO;
+                    stuckState.reset();
+                    executeCurrentTask();
                 }
             } else {
-                stuckTimer = 0;
+                // Not stuck - reset state and track movement
+                if (stuckState.stuckTicks > 0) {
+                    stuckState.reset();
+                }
                 lastPosition = blockPosition();
                 lastExactPos = this.position();
+                ticksMoving++;
             }
 
             // IMPROVED: Check for doors in multiple directions when colliding
@@ -624,7 +625,7 @@ public class AmbNpcEntity extends FakePlayer {
             return false;
         }
 
-        // IMPROVED: Only start exit plan if we have a goal that's outside
+        // IMPROVED: Only start exit plan if we have a goal that's outside AND reachable
         if (!exitingInterior && !currentGoal.equals(BlockPos.ZERO)) {
             // Check if our goal is outside
             boolean goalIsOutside = false;
@@ -638,6 +639,15 @@ public class AmbNpcEntity extends FakePlayer {
             // Only exit if our goal is actually outside
             if (!goalIsOutside) {
                 return false; // Goal is inside, no need to exit
+            }
+
+            // CRITICAL FIX: If goal is too high (>5 blocks vertical difference), it's unreachable
+            // Clear the goal and find a new one instead of looping forever
+            int verticalDiff = Math.abs(currentGoal.getY() - blockPosition().getY());
+            if (verticalDiff > 5) {
+                System.out.println("[AMB] " + getName().getString() + " goal at " + currentGoal + " is " + verticalDiff + " blocks higher - unreachable, clearing goal");
+                currentGoal = BlockPos.ZERO; // Clear unreachable goal
+                return false;
             }
 
             BlockPos door = findNearestDoor(12);
@@ -771,18 +781,25 @@ public class AmbNpcEntity extends FakePlayer {
 
     private int cost(BlockPos from, BlockPos to) {
         BlockState state = level().getBlockState(to);
+        int baseCost = 3;
+
+        // ENHANCED: Add vertical movement cost
+        double verticalCost = VerticalNavigation.getVerticalMovementCost(from, to, (ServerLevel) level());
+        baseCost += (int) verticalCost;
+
         // Liquids are allowed but slower: apply mild penalty
-        if (state.is(Blocks.WATER)) return 6;  // okay to cross
-        if (state.is(Blocks.LAVA)) return 50;  // risky but not forbidden
+        if (state.is(Blocks.WATER)) baseCost += 3;  // okay to cross
+        if (state.is(Blocks.LAVA)) baseCost += 47;  // risky but not forbidden
         // penalize cliffs
-        if (level().getBlockState(to).isAir() && level().getBlockState(to.below()).isAir()) return 15;
+        if (level().getBlockState(to).isAir() && level().getBlockState(to.below()).isAir()) baseCost += 12;
         // prefer stairs and slabs slightly
         BlockState below = level().getBlockState(to.below());
-        if (below.getBlock() instanceof StairBlock) return 1;
-        if (below.getBlock() instanceof SlabBlock) return 2;
+        if (below.getBlock() instanceof StairBlock) baseCost -= 2;
+        if (below.getBlock() instanceof SlabBlock) baseCost -= 1;
         // path blocks slightly cheaper
-        if (below.is(Blocks.DIRT_PATH)) return 1;
-        return 3;
+        if (below.is(Blocks.DIRT_PATH)) baseCost -= 2;
+
+        return Math.max(1, baseCost);
     }
 
     private List<BlockPos> getNeighbors(BlockPos pos) {
@@ -802,6 +819,12 @@ public class AmbNpcEntity extends FakePlayer {
             BlockPos down = n.below();
             if (isPassable(down) && (level() instanceof ServerLevel sl) && RealisticMovement.isWalkable(sl, down)) out.add(down);
         }
+
+        // ENHANCED: Add vertical neighbors for climbing/jumping
+        if (level() instanceof ServerLevel sl) {
+            VerticalNavigation.addVerticalNeighbors(pos, sl, out);
+        }
+
         return out;
     }
 
@@ -1292,6 +1315,9 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     private boolean attemptDoorRescue() {
+        // Skip if we're ignoring doors
+        if (doorIgnoreTicks > 0) return false;
+
         // scan for nearest wooden door within 6 blocks
         BlockPos best = null;
         double bestD2 = Double.MAX_VALUE;
@@ -1308,6 +1334,12 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
         if (best != null) {
+            // ENHANCED: Save current goal before door navigation
+            if (!currentGoal.equals(BlockPos.ZERO)) {
+                preExitGoal = currentGoal;
+                System.out.println("[AMB-DOOR] Saving pre-exit goal: " + preExitGoal);
+            }
+
             doorPos = best;
             originalDoorPos = best; // Store the actual door position
             doorPhase = 1;
@@ -1323,8 +1355,13 @@ public class AmbNpcEntity extends FakePlayer {
             doorPhase = 0;
             doorPos = BlockPos.ZERO;
             originalDoorPos = BlockPos.ZERO;
+            preExitGoal = BlockPos.ZERO;
+            doorIgnoreTicks = 0;
             return;
         }
+
+        // Decrement door ignore ticks
+        if (doorIgnoreTicks > 0) doorIgnoreTicks--;
 
         // Phase 1: Approach the door
         if (doorPhase == 1) {
@@ -1333,6 +1370,7 @@ public class AmbNpcEntity extends FakePlayer {
                 doorPhase = 0;
                 doorPos = BlockPos.ZERO;
                 originalDoorPos = BlockPos.ZERO;
+                preExitGoal = BlockPos.ZERO;
                 return;
             }
 
@@ -1341,7 +1379,7 @@ public class AmbNpcEntity extends FakePlayer {
                 Boolean open = st.getOptionalValue(BlockStateProperties.OPEN).orElse(false);
                 if (!open) {
                     RealisticActions.interactWithBlock(this, originalDoorPos);
-                    System.out.println("[AMB] " + getName().getString() + " opening door at " + originalDoorPos);
+                    System.out.println("[AMB-DOOR] " + getName().getString() + " opening door at " + originalDoorPos);
                 }
 
                 // Set goal to 3 blocks beyond the door in the direction it faces
@@ -1352,22 +1390,50 @@ public class AmbNpcEntity extends FakePlayer {
                 // Update the doorPos to be the target beyond the door
                 doorPos = walkable;
                 doorPhase = 2; // Move to phase 2: pass through
-                System.out.println("[AMB] " + getName().getString() + " attempting to pass through door to " + walkable);
+                System.out.println("[AMB-DOOR] " + getName().getString() + " attempting to pass through door to " + walkable);
             }
         }
 
-        // Phase 2: Verify we've passed through
+        // Phase 2: Pass through the door
         if (doorPhase == 2) {
             // Check if we've reached the position beyond the door
             if (this.position().distanceToSqr(Vec3.atBottomCenterOf(doorPos)) < 2.5 * 2.5) {
-                // Successfully passed through!
-                doorPhase = 0;
-                doorPos = BlockPos.ZERO;
-                originalDoorPos = BlockPos.ZERO;
-                doorTimer = 0;
-                exitCooldown = 200; // 10 second cooldown to prevent interior detection from retriggering
-                System.out.println("[AMB] " + getName().getString() + " successfully passed through door!");
+                // Move to phase 3: verify passage
+                doorPhase = 3;
+                System.out.println("[AMB-DOOR] " + getName().getString() + " reached beyond door, verifying passage");
             }
+        }
+
+        // Phase 3: Verify passage
+        if (doorPhase == 3) {
+            // Check if we're actually on the other side
+            double distFromDoor = this.position().distanceTo(Vec3.atCenterOf(originalDoorPos));
+            if (distFromDoor > 2.0) {
+                // Successfully passed through, move to phase 4
+                doorPhase = 4;
+                doorIgnoreTicks = 200; // Ignore this door for 10 seconds
+                System.out.println("[AMB-DOOR] " + getName().getString() + " verified passage, entering post-exit check");
+            }
+        }
+
+        // Phase 4: Post-Exit Check - scan for new path to original goal
+        if (doorPhase == 4) {
+            // If we had a goal before the door, try to path to it again
+            if (!preExitGoal.equals(BlockPos.ZERO)) {
+                System.out.println("[AMB-DOOR] " + getName().getString() + " post-exit: resuming path to original goal " + preExitGoal);
+                currentGoal = preExitGoal;
+                currentPath.clear(); // Force recompute path
+                pathIndex = 0;
+            }
+
+            // Clear door state
+            doorPhase = 0;
+            doorPos = BlockPos.ZERO;
+            originalDoorPos = BlockPos.ZERO;
+            preExitGoal = BlockPos.ZERO;
+            doorTimer = 0;
+            exitCooldown = 200; // 10 second cooldown to prevent interior detection from retriggering
+            System.out.println("[AMB-DOOR] " + getName().getString() + " door navigation complete!");
         }
     }
 
@@ -1398,6 +1464,30 @@ public class AmbNpcEntity extends FakePlayer {
                 // Find nearest tree (oak logs)
                 BlockPos tree = findNearestBlock(BlockTags.LOGS, 32);
                 if (tree != null) {
+                    // ENHANCED: Validate goal before setting
+                    TaskValidation.ValidationResult validation = TaskValidation.validateGoal(this, tree, currentTask);
+
+                    if (!validation.isValid) {
+                        System.out.println("[AMB-TASK] " + getName().getString() + " goal validation failed: " + validation.reason);
+                        // Try to find an alternative
+                        tree = findNearestBlock(BlockTags.LOGS, 32);
+                        if (tree == null) {
+                            System.out.println("[AMB-TASK] " + getName().getString() + " no valid trees found");
+                            return;
+                        }
+                        validation = TaskValidation.validateGoal(this, tree, currentTask);
+                        if (!validation.isValid) {
+                            System.out.println("[AMB-TASK] " + getName().getString() + " no reachable trees found");
+                            return;
+                        }
+                    }
+
+                    // Use adjusted goal if validation suggested one
+                    if (!validation.adjustedGoal.equals(BlockPos.ZERO)) {
+                        tree = validation.adjustedGoal;
+                        System.out.println("[AMB-TASK] " + getName().getString() + " using adjusted goal: " + tree);
+                    }
+
                     // Move to a walkable spot near the tree, not to the log's top block
                     BlockPos approach = RealisticMovement.findNearestWalkable((ServerLevel) level(), tree, blockPosition());
 
@@ -1406,12 +1496,10 @@ public class AmbNpcEntity extends FakePlayer {
                     if (distToGoal < 2.0) {
                         // We're already close enough, set goal to the tree itself for mining
                         currentGoal = tree;
-                        System.out.println("[AMB] " + getName().getString() + " already near tree at " + tree + ", setting goal to tree for mining");
-                        System.out.println("[AMB-DEBUG] IMMEDIATELY AFTER SETTING: currentGoal=" + currentGoal);
+                        System.out.println("[AMB-TASK] " + getName().getString() + " already near tree at " + tree + ", setting goal to tree for mining");
                     } else {
                         currentGoal = approach;
-                        System.out.println("[AMB] " + getName().getString() + " found tree at " + tree + ", setting goal to " + approach + " (distance: " + distToGoal + ")");
-                        System.out.println("[AMB-DEBUG] IMMEDIATELY AFTER SETTING: currentGoal=" + currentGoal);
+                        System.out.println("[AMB-TASK] " + getName().getString() + " found tree at " + tree + ", setting goal to " + approach + " (distance: " + distToGoal + ")");
                     }
 
                     // Clear any door plan when pursuing resource
@@ -1480,16 +1568,29 @@ public class AmbNpcEntity extends FakePlayer {
     private BlockPos findNearestBlock(net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> tag, int radius) {
         BlockPos myPos = blockPosition();
         BlockPos nearest = null;
-        double nearestDist = Double.MAX_VALUE;
+        double nearestScore = Double.MAX_VALUE;
 
         for (int x = -radius; x <= radius; x++) {
             for (int y = -10; y <= 10; y++) {
                 for (int z = -radius; z <= radius; z++) {
                     BlockPos check = myPos.offset(x, y, z);
                     if (level().getBlockState(check).is(tag)) {
-                        double dist = myPos.distSqr(check);
-                        if (dist < nearestDist) {
-                            nearestDist = dist;
+                        // Calculate score: horizontal distance + (vertical distance * 3)
+                        // This heavily penalizes vertical distance to prefer same-level blocks
+                        int dx = check.getX() - myPos.getX();
+                        int dy = check.getY() - myPos.getY();
+                        int dz = check.getZ() - myPos.getZ();
+                        double horizontalDist = Math.sqrt(dx * dx + dz * dz);
+                        double verticalPenalty = Math.abs(dy) * 3.0; // 3x penalty for vertical
+                        double score = horizontalDist + verticalPenalty;
+
+                        // Skip if too high (>5 blocks) - unreachable without climbing
+                        if (Math.abs(dy) > 5) {
+                            continue;
+                        }
+
+                        if (score < nearestScore) {
+                            nearestScore = score;
                             nearest = check;
                         }
                     }
@@ -1536,9 +1637,8 @@ public class AmbNpcEntity extends FakePlayer {
         this.setNoGravity(false); // enforce gravity every tick
         super.tick();
 
-        // CRITICAL FIX: Reset head pitch to prevent looking at ground
-        // This makes the bot look forward like a real player instead of staring down
-        this.setXRot(0.0F);
+        // ENHANCED: Human-like head movement with natural sway
+        HumanlikeMovement.applyHumanlikeHeadMovement(this, movementState, currentGoal);
 
         runAllPlayerActions();
         if (spawnIdleTimer == 99 && !roleAnnouncementDone) {
