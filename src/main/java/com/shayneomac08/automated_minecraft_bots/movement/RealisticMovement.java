@@ -33,8 +33,16 @@ public class RealisticMovement {
         double dz = targetPos.z - currentPos.z;
         double horizontalDist = Math.sqrt(dx * dx + dz * dz);
 
-        // Reached destination (within 1 block)
-        if (horizontalDist < 1.5) {
+        // Check if target is a door - use slightly smaller threshold since we want to actually pass through
+        BlockState targetBlock = entity.level().getBlockState(target);
+        boolean targetIsDoor = targetBlock.getBlock() instanceof net.minecraft.world.level.block.DoorBlock ||
+                              targetBlock.getBlock() instanceof net.minecraft.world.level.block.FenceGateBlock;
+
+        // Use normal threshold - door handling will set goal beyond the door
+        double reachedThreshold = 1.5;
+
+        // Reached destination
+        if (horizontalDist < reachedThreshold) {
             entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
             return false;
         }
@@ -57,6 +65,12 @@ public class RealisticMovement {
             return true;
         }
 
+        // IMPROVED: Check if we're standing on a non-solid block (like a door, fence gate, etc.)
+        // If so, apply downward force to prevent "climbing" on doors
+        BlockPos feetPos = entity.blockPosition();
+        BlockState feetBlock = entity.level().getBlockState(feetPos);
+        boolean onNonSolidBlock = !feetBlock.isAir() && !feetBlock.canOcclude();
+
         // Smooth acceleration/deceleration
         Vec3 cur = entity.getDeltaMovement();
         double targetVX = dirX * speed;
@@ -66,18 +80,43 @@ public class RealisticMovement {
         double newVX = cur.x + ax;
         double newVZ = cur.z + az;
 
-        Vec3 movement = new Vec3(newVX, cur.y, newVZ);
+        // FIXED: Apply gravity properly - don't let bots float on doors
+        double verticalVelocity = cur.y;
+        if (onNonSolidBlock && !entity.onGround()) {
+            // Force downward movement if standing on non-solid blocks
+            verticalVelocity = Math.min(verticalVelocity, -0.2);
+        } else if (!entity.onGround()) {
+            // Normal gravity
+            verticalVelocity -= 0.08;
+        } else {
+            // On ground, reset vertical velocity
+            verticalVelocity = cur.y;
+        }
 
-        // Apply movement using Entity.move to get proper collisions and onGround updates
-        Vec3 prePos = entity.position();
-        Vec3 moveVec = new Vec3(movement.x, movement.y - 0.08, movement.z);
-        entity.move(MoverType.SELF, moveVec);
-        Vec3 postPos = entity.position();
+        // CRITICAL FIX: Apply movement with proper physics
+        Vec3 movement = new Vec3(newVX, verticalVelocity, newVZ);
 
-        // If we barely moved horizontally and we're on the ground, try a jump next tick
-        double movedXZ = Math.hypot(postPos.x - prePos.x, postPos.z - prePos.z);
-        if (movedXZ < 0.02 && entity.onGround()) {
-            entity.setDeltaMovement(entity.getDeltaMovement().x, 0.42, entity.getDeltaMovement().z);
+        // Apply movement with collision detection
+        entity.move(MoverType.SELF, movement);
+
+        // Clear velocity to prevent super.tick() from applying movement again
+        // We only keep the Y velocity for gravity
+        entity.setDeltaMovement(0, entity.getDeltaMovement().y * 0.98, 0);
+
+        // Check if we should jump (only if on solid ground and not moving much)
+        Vec3 currentVel = entity.getDeltaMovement();
+        double horizontalSpeed = Math.sqrt(currentVel.x * currentVel.x + currentVel.z * currentVel.z);
+
+        if (horizontalSpeed < 0.02 && entity.onGround() && !onNonSolidBlock) {
+            // Check if there's a block in front that we can jump over
+            BlockPos ahead = feetPos.relative(entity.getDirection());
+            BlockState blockAhead = entity.level().getBlockState(ahead);
+            BlockState blockAbove = entity.level().getBlockState(ahead.above());
+
+            // Only jump if there's a solid block ahead and space above
+            if (blockAhead.canOcclude() && !blockAbove.canOcclude()) {
+                entity.setDeltaMovement(entity.getDeltaMovement().x, 0.42, entity.getDeltaMovement().z);
+            }
         }
 
         // Update rotation to face movement direction
@@ -110,8 +149,13 @@ public class RealisticMovement {
         double targetVZ = pz * speed;
         double ax = (targetVX - cur.x) * 0.35;
         double az = (targetVZ - cur.z) * 0.35;
-        Vec3 mv = new Vec3(cur.x + ax, cur.y - 0.08, cur.z + az);
-        entity.move(MoverType.SELF, mv);
+
+        // CRITICAL FIX: Apply movement with proper physics
+        Vec3 movement = new Vec3(cur.x + ax, cur.y - 0.08, cur.z + az);
+        entity.move(MoverType.SELF, movement);
+        // Clear velocity to prevent super.tick() from applying movement again
+        entity.setDeltaMovement(0, entity.getDeltaMovement().y * 0.98, 0);
+
         // face roughly toward target while strafing
         float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90;
         entity.setYRot(yaw);

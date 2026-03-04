@@ -53,9 +53,12 @@ This file lists the active, supported features. For detailed developer notes, te
 - ✅ Intelligent pathfinding around obstacles
 - ✅ Automatic jumping over 1-block obstacles
 - ✅ Danger avoidance (lava, cliffs, void)
-- ✅ Stuck detection and recovery
+- ✅ Advanced stuck detection with multi-strategy recovery
 - ✅ Natural rotation and sprinting
 - ✅ Dynamic speed based on terrain
+- ✅ Proper door navigation and interaction
+- ✅ Interior/exterior detection and smart exit planning
+- ✅ Physics enforcement (no climbing on doors or non-solid blocks)
 
 **Action Features**:
 - ✅ Progressive block mining with breaking animations

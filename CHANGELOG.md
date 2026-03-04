@@ -2,6 +2,123 @@
 
 ## Version 1.0.0 (Current)
 
+### Recent Changes (2026-03-03)
+
+#### CRITICAL FIX: Bot Looping Back Inside After Exiting - Exit Distance Too Short!
+- **FIXED:** Bot exiting building then immediately walking back inside, creating infinite loop
+  - **Root Cause:** Exit target was only 3 blocks beyond door, bot would reach it then path back through building to reach tree
+  - Exit cooldown (5 seconds) wasn't long enough to prevent re-entry
+  - Bot would physically walk back inside after cooldown expired
+- **SOLUTION:** Increased exit distance and cooldown
+  - Increased `exitBeyond` from 3 blocks to 8 blocks beyond door
+  - Increased exit cooldown from 100 ticks (5 seconds) to 200 ticks (10 seconds)
+  - Increased exit completion threshold from 3.0 to 5.0 blocks
+  - This ensures bot gets far enough outside before resuming normal navigation
+- **RESULT:** Bot should now exit once and stay outside instead of looping back and forth!
+
+#### CRITICAL FIX: Bot Not Moving - Goal Cleared Immediately After Being Set!
+- **FIXED:** Bot finding trees but never moving to them, goal constantly being cleared
+  - **Root Cause:** Bot was spawning close to trees (within 1.5 blocks)
+  - `moveTowards()` would return `false` immediately (already at destination)
+  - This triggered code that cleared the goal and called `executeCurrentTask()` again
+  - Created infinite loop: set goal → already there → clear goal → set goal → repeat
+  - Bot never actually moved because goal was cleared before movement could happen
+- **SOLUTION:** Check distance before setting goal
+  - If bot is already within 2 blocks of the tree, set goal directly to the tree for mining
+  - If bot is far from tree, set goal to walkable position near tree
+  - Don't clear goal immediately when reaching position - let mining start or stuck detection handle it
+  - Added debug logging to show distance to goal and why goal is being set
+- **RESULT:** Bot now properly moves to trees and starts mining instead of standing still!
+
+#### CRITICAL FIX: Bot Teleportation/Flying & Not Moving - Movement Physics Completely Broken!
+- **FIXED:** Bot teleporting/flying across the map at 24-25 blocks per tick, then not moving at all
+  - **Root Cause #1 (Teleportation):** `entity.move()` was being used incorrectly - treating velocity as displacement
+  - Movement code was calling `entity.move(MoverType.SELF, velocity)` which directly moved the entity
+  - Then `super.tick()` would also apply movement, causing double/accumulated movement
+  - Bot was moving 24-25 blocks per tick instead of ~0.13 blocks per tick (normal player speed)
+  - **Root Cause #2 (Not Moving):** Switching to only `setDeltaMovement()` didn't work for FakePlayer
+  - FakePlayer's `super.tick()` doesn't apply movement the same way as regular entities
+  - Bot would set velocity but never actually move
+  - **Root Cause #3 (Still Not Moving):** Setting velocity after applying movement caused double application
+  - `super.tick()` would apply the velocity again on the next tick, causing issues
+- **SOLUTION:** Apply movement then clear horizontal velocity
+  - Call `entity.move(MoverType.SELF, movement)` to apply movement with collision detection
+  - Call `entity.setDeltaMovement(0, y * 0.98, 0)` to clear horizontal velocity (keep Y for gravity)
+  - This prevents `super.tick()` from re-applying movement while maintaining gravity
+  - Applied to both `moveTowards()` and `strafeAround()` methods
+- **RESULT:** Bot now moves at REAL PLAYER SPEED with proper physics - no teleportation, no freezing!
+
+#### CRITICAL FIX: Door Exit/Re-entry Loop - Exit Cooldown System!
+- **FIXED:** Bot passing through door, then immediately turning around and going back through repeatedly
+  - **Root Cause:** Two separate door navigation systems conflicting with each other:
+    1. **Interior Exit System** - Detects when bot is inside and tries to exit
+    2. **Door Phase System** - 3-phase door passage system
+  - After successfully passing through door, interior detection immediately retriggered
+  - Bot would exit → detect "inside" → exit again → infinite loop
+  - Bot also climbed on chests and ran on air due to navigation confusion
+- **SOLUTION:** Added exit cooldown system to prevent immediate re-triggering:
+  - Added `exitCooldown` timer (5 seconds / 100 ticks)
+  - Set cooldown after successfully passing through door
+  - Set cooldown after successfully exiting interior
+  - Interior detection skipped while cooldown is active
+- **RESULT:** Bot now exits once and continues to goal instead of looping back and forth!
+
+#### CRITICAL FIX: Door Navigation Infinite Loop - 3-Phase Door Passage System!
+- **FIXED:** Bot stuck in infinite loop at doorways, repeatedly "passing through door" without moving
+  - **Root Cause:** Bot was using 2.0 block threshold for doors, thinking it "reached" the door from 2 blocks away
+  - Bot would clear door phase without actually moving through, then immediately get stuck again
+  - Created infinite loop: stuck → door rescue → "passed through" → stuck → repeat
+- **SOLUTION:** Implemented proper 3-phase door passage system:
+  - **Phase 1 (Approach):** Bot moves to door position, opens it when within 2.2 blocks
+  - **Phase 2 (Pass Through):** Bot sets goal to 3 blocks BEYOND the door in the direction it faces
+  - **Phase 3 (Verify):** Bot only clears door phase after reaching the position beyond the door
+- **IMPROVED:** Door position tracking
+  - Added `originalDoorPos` to store the actual door block position
+  - `doorPos` now updates to the target position beyond the door during passage
+  - Prevents confusion between door location and passage target
+- **IMPROVED:** Movement threshold
+  - Reverted door threshold back to normal 1.5 blocks (same as other blocks)
+  - Door handling now manages the full passage sequence instead of relying on threshold tricks
+- **RESULT:** Bots now ACTUALLY pass through doorways instead of getting stuck in infinite loops!
+
+### Recent Changes (2026-03-01)
+
+#### CRITICAL FIX: Door Hitbox Collision - Bot Can Now Pass Through Doorways! (SUPERSEDED)
+- **NOTE:** This fix was incomplete and caused infinite loops. See 2026-03-03 fix above.
+- **FIXED:** Bot getting stuck at doorways after opening doors
+  - Player hitbox is 0.6 blocks wide, door opening is 1 block wide
+  - Bot was trying to navigate to exact center of door block, causing collision
+  - Increased "reached destination" threshold for doors from 1.5 to 2.0 blocks
+  - Bot now clears door phase after reaching door and continues to actual goal
+  - Added door detection in movement system to use appropriate thresholds
+- **RESULT:** Bots now successfully pass through doorways instead of getting stuck!
+
+#### CRITICAL FIX: Pathfinding & Door Navigation System Overhaul
+- **FIXED:** Bot stuck in interior exit loop - bots no longer constantly try to exit when they should be inside
+  - Only check for interior exit when task requires being outside (gather_wood, mine_stone, explore)
+  - Check if goal is actually outside before attempting to exit
+  - Improved exit detection - bot must be outside AND near exit point to complete
+  - Increased door interaction cooldown to 2 seconds to prevent spam
+- **FIXED:** Bots climbing on top of doors - proper physics enforcement
+  - Added non-solid block detection (doors, fence gates)
+  - Force downward movement when standing on non-solid blocks
+  - Improved gravity application to prevent floating on doors
+  - Only jump when on solid ground, not on doors
+- **FIXED:** Bot not pathfinding after opening doors - improved stuck recovery
+  - Multi-strategy stuck detection: door rescue → force fall → strafe → recompute path → abandon goal
+  - Added `isStuckInNonSolidBlock()` helper to detect when bot is inside a door
+  - Force downward velocity when stuck in non-solid blocks
+  - Better door collision detection in multiple directions
+- **IMPROVED:** A* pathfinding for door navigation
+  - Doors and fence gates now properly marked as passable in pathfinding
+  - Prevent pathfinding through doors as floor (must have solid ground below)
+  - Better neighbor generation for stepping up/down through doorways
+- **IMPROVED:** Door interaction system
+  - Check multiple directions (front, left, right) when colliding with doors
+  - Only open one door at a time to prevent spam
+  - Better logging for door interactions
+- **RESULT:** Bots now navigate through structures naturally, open doors properly, and don't get stuck!
+
 ### Recent Changes (2026-02-28)
 
 #### MAJOR UPDATE: Realistic Movement & Action System
