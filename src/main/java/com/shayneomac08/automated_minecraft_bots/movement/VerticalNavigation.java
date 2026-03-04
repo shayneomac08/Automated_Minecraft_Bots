@@ -3,13 +3,15 @@ package com.shayneomac08.automated_minecraft_bots.movement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 /**
  * VERTICAL NAVIGATION SYSTEM
- * Handles multi-block jumps, climbing, and block placement for vertical movement
+ * Handles multi-block jumps, climbing, block placement for vertical movement, and pillar building
  */
 public class VerticalNavigation {
 
@@ -97,20 +99,144 @@ public class VerticalNavigation {
             player.setDeltaMovement(player.getDeltaMovement().x, 0.42, player.getDeltaMovement().z);
             System.out.println("[AMB-VERTICAL] Jumping up 1 block");
             return true;
-        } else if (height == 2) {
-            // Need to place a block or find stairs
-            BlockPos placePos = player.blockPosition();
-            if (canPlaceBlockAt((ServerLevel) player.level(), placePos)) {
-                // Would place block here - placeholder
-                System.out.println("[AMB-VERTICAL] Would place block at " + placePos + " to climb");
-                return true;
-            }
-        } else if (height > 2) {
-            // Need multiple blocks or ladder
-            System.out.println("[AMB-VERTICAL] Need to place " + height + " blocks to climb");
-            return false; // Too high for now
+        } else if (height >= 2 && height <= 10) {
+            // Need to build a pillar
+            return buildPillar(player, height);
+        } else if (height > 10) {
+            // Too high - would need scaffolding or ladder
+            System.out.println("[AMB-VERTICAL] Height " + height + " too high for pillar building");
+            return false;
         }
 
+        return false;
+    }
+
+    /**
+     * Build a pillar to reach a higher position
+     */
+    public static boolean buildPillar(FakePlayer player, int height) {
+        if (player == null) return false;
+
+        // Check if player has building blocks
+        if (!hasBuildingBlocks(player)) {
+            System.out.println("[AMB-VERTICAL] No building blocks available for pillar");
+            return false;
+        }
+
+        BlockPos currentPos = player.blockPosition();
+        ServerLevel level = (ServerLevel) player.level();
+
+        // Place blocks below player to build up
+        for (int i = 0; i < height && i < 10; i++) {
+            BlockPos placePos = currentPos.below();
+
+            if (canPlaceBlockAt(level, placePos)) {
+                // Get a building block from inventory
+                ItemStack buildBlock = getBuildingBlock(player);
+                if (buildBlock.isEmpty()) {
+                    System.out.println("[AMB-VERTICAL] Ran out of building blocks at height " + i);
+                    return false;
+                }
+
+                // Place the block
+                level.setBlock(placePos, Blocks.DIRT.defaultBlockState(), 3);
+
+                // Remove from inventory
+                buildBlock.shrink(1);
+
+                System.out.println("[AMB-VERTICAL] Placed block at " + placePos + " (pillar height: " + (i + 1) + ")");
+
+                // Jump up after placing
+                if (player.onGround()) {
+                    player.setDeltaMovement(player.getDeltaMovement().x, 0.42, player.getDeltaMovement().z);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Place a ladder for climbing
+     */
+    public static boolean placeLadder(FakePlayer player, BlockPos pos) {
+        if (player == null) return false;
+
+        ServerLevel level = (ServerLevel) player.level();
+
+        // Check if player has ladders
+        if (!hasLadders(player)) {
+            System.out.println("[AMB-VERTICAL] No ladders available");
+            return false;
+        }
+
+        // Check if we can place a ladder here
+        if (!canPlaceBlockAt(level, pos)) {
+            return false;
+        }
+
+        // Place the ladder
+        level.setBlock(pos, Blocks.LADDER.defaultBlockState(), 3);
+
+        // Remove from inventory
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.is(Items.LADDER)) {
+                stack.shrink(1);
+                break;
+            }
+        }
+
+        System.out.println("[AMB-VERTICAL] Placed ladder at " + pos);
+        return true;
+    }
+
+    /**
+     * Check if player has building blocks
+     */
+    private static boolean hasBuildingBlocks(FakePlayer player) {
+        return countBuildingBlocks(player) > 0;
+    }
+
+    /**
+     * Count building blocks in inventory
+     */
+    private static int countBuildingBlocks(FakePlayer player) {
+        int count = 0;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.is(Items.DIRT) || stack.is(Items.COBBLESTONE) ||
+                stack.is(Items.STONE) || stack.is(Items.NETHERRACK)) {
+                count += stack.getCount();
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Get a building block from inventory
+     */
+    private static ItemStack getBuildingBlock(FakePlayer player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.is(Items.DIRT) || stack.is(Items.COBBLESTONE) ||
+                stack.is(Items.STONE) || stack.is(Items.NETHERRACK)) {
+                return stack;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /**
+     * Check if player has ladders
+     */
+    private static boolean hasLadders(FakePlayer player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.is(Items.LADDER)) {
+                return true;
+            }
+        }
         return false;
     }
 

@@ -1,12 +1,23 @@
 package com.shayneomac08.automated_minecraft_bots.movement;
 
+import com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity;
+import com.shayneomac08.automated_minecraft_bots.llm.LLMInterface;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.util.FakePlayer;
+
+import java.util.List;
 
 /**
  * ENHANCED STUCK DETECTION SYSTEM
  * Multi-level stuck detection with progressive recovery strategies
+ * Level 1: Jump + Strafe
+ * Level 2: Recompute path with relaxed constraints
+ * Level 3: Vertical navigation (pillar/dig)
+ * Level 4: LLM override for complex situations
  */
 public class StuckDetection {
 
@@ -16,10 +27,13 @@ public class StuckDetection {
     public static class StuckState {
         public Vec3 lastPosition = Vec3.ZERO;
         public int stuckTicks = 0;
-        public int recoveryLevel = 0; // 0=none, 1=jump+strafe, 2=place block, 3=LLM override
+        public int recoveryLevel = 0; // 0=none, 1=jump+strafe, 2=recompute, 3=vertical, 4=LLM
         public int ticksSinceProgress = 0;
         public double totalDistanceMoved = 0.0;
         public int measurementTicks = 0;
+        public int recoveryCooldown = 0; // Cooldown between recovery attempts
+        public BlockPos lastStuckPos = BlockPos.ZERO;
+        public int pathNullTicks = 0; // Ticks with null/empty path
 
         public void reset() {
             stuckTicks = 0;
@@ -27,6 +41,7 @@ public class StuckDetection {
             ticksSinceProgress = 0;
             totalDistanceMoved = 0.0;
             measurementTicks = 0;
+            pathNullTicks = 0;
         }
 
         public void updatePosition(Vec3 currentPos) {
@@ -54,7 +69,12 @@ public class StuckDetection {
         Vec3 currentPos = entity.position();
         state.updatePosition(currentPos);
 
-        // Criterion 1: Position unchanged for 40 ticks (2 seconds)
+        // Decrement recovery cooldown
+        if (state.recoveryCooldown > 0) {
+            state.recoveryCooldown--;
+        }
+
+        // Criterion 1: Position unchanged for 60 ticks (3 seconds)
         double distanceMoved = currentPos.distanceTo(state.lastPosition);
         if (distanceMoved < 0.05) { // ~0.05 blocks
             state.stuckTicks++;
@@ -63,7 +83,7 @@ public class StuckDetection {
             state.ticksSinceProgress = 0;
         }
 
-        // Criterion 2: No progress toward goal (average speed < 0.1 blocks/tick over 10 ticks)
+        // Criterion 2: No progress toward goal (average speed < 0.01 blocks/tick)
         if (state.measurementTicks >= 10) {
             double avgSpeed = state.getAverageSpeed();
             if (avgSpeed < 0.01) { // Less than 0.01 blocks/tick average
@@ -77,8 +97,27 @@ public class StuckDetection {
             state.measurementTicks = 0;
         }
 
-        // Stuck if either criterion is met
-        return state.stuckTicks >= 40 || state.ticksSinceProgress >= 10;
+        // Criterion 3: Distance to goal stalled for 40 ticks
+        if (goal != null && !goal.equals(BlockPos.ZERO)) {
+            double distToGoal = entity.blockPosition().distSqr(goal);
+            if (state.lastStuckPos.equals(BlockPos.ZERO)) {
+                state.lastStuckPos = entity.blockPosition();
+            } else {
+                double lastDistToGoal = state.lastStuckPos.distSqr(goal);
+                if (Math.abs(distToGoal - lastDistToGoal) < 1.0) {
+                    // Not making progress toward goal
+                    state.ticksSinceProgress++;
+                }
+            }
+        }
+
+        // Criterion 4: Colliding with non-solid block
+        BlockPos pos = entity.blockPosition();
+        BlockState feetState = entity.level().getBlockState(pos);
+        boolean inNonSolid = !feetState.isAir() && !feetState.canOcclude();
+
+        // Stuck if any criterion is met
+        return state.stuckTicks >= 60 || state.ticksSinceProgress >= 40 || inNonSolid;
     }
 
     /**
@@ -88,28 +127,51 @@ public class StuckDetection {
     public static boolean executeRecovery(LivingEntity entity, StuckState state, BlockPos goal) {
         if (entity == null || state == null) return false;
 
-        // Increment recovery level
+        // Don't execute recovery if on cooldown
+        if (state.recoveryCooldown > 0) {
+            return false;
+        }
+
+        // Progressive recovery level escalation
         if (state.recoveryLevel == 0) {
             state.recoveryLevel = 1;
         } else if (state.stuckTicks > 80) { // 4 seconds at level 1
             state.recoveryLevel = 2;
         } else if (state.stuckTicks > 120) { // 6 seconds at level 2
             state.recoveryLevel = 3;
+        } else if (state.stuckTicks > 160) { // 8 seconds at level 3
+            state.recoveryLevel = 4;
         }
+
+        boolean success = false;
 
         switch (state.recoveryLevel) {
             case 1:
-                // Level 1: Jump and strafe randomly
-                return executeLevel1Recovery(entity);
+                // Level 1: Jump and strafe randomly (30% chance per tick)
+                success = executeLevel1Recovery(entity);
+                break;
             case 2:
-                // Level 2: Place block below or ladder
-                return executeLevel2Recovery(entity);
+                // Level 2: Recompute path with relaxed constraints
+                success = executeLevel2Recovery(entity, goal);
+                break;
             case 3:
-                // Level 3: Call LLM for override (placeholder for now)
-                return executeLevel3Recovery(entity, goal);
+                // Level 3: Vertical navigation (pillar/dig)
+                success = executeLevel3Recovery(entity, goal);
+                break;
+            case 4:
+                // Level 4: LLM override for complex situations
+                success = executeLevel4Recovery(entity, goal);
+                break;
             default:
                 return false;
         }
+
+        // Set cooldown after recovery attempt (400 ticks = 20 seconds)
+        if (success) {
+            state.recoveryCooldown = 400;
+        }
+
+        return success;
     }
 
     /**
@@ -139,45 +201,94 @@ public class StuckDetection {
     }
 
     /**
-     * Level 2 Recovery: Place block below or attempt to climb
+     * Level 2 Recovery: Recompute path with relaxed constraints
      */
-    private static boolean executeLevel2Recovery(LivingEntity entity) {
-        System.out.println("[AMB-STUCK] Level 2 Recovery: Attempting block placement");
+    private static boolean executeLevel2Recovery(LivingEntity entity, BlockPos goal) {
+        System.out.println("[AMB-STUCK] Level 2 Recovery: Recomputing path with relaxed constraints");
 
-        // Check if we can place a block below to climb up
-        BlockPos below = entity.blockPosition().below();
-        BlockPos feet = entity.blockPosition();
+        // Signal to recompute path (caller should handle this)
+        // This allows pathfinding through 1-block obstacles
+        return true;
+    }
 
-        // If there's air below and we're not on ground, try to place a block
-        if (!entity.onGround() && entity.level().getBlockState(below).isAir()) {
-            // This would require block placement logic - placeholder for now
-            System.out.println("[AMB-STUCK] Would place block at " + below + " to climb");
+    /**
+     * Level 3 Recovery: Vertical navigation (pillar building or digging)
+     */
+    private static boolean executeLevel3Recovery(LivingEntity entity, BlockPos goal) {
+        System.out.println("[AMB-STUCK] Level 3 Recovery: Attempting vertical navigation");
 
-            // For now, just try to move up
-            entity.setDeltaMovement(entity.getDeltaMovement().x, 0.5, entity.getDeltaMovement().z);
-            return true;
+        if (!(entity instanceof FakePlayer player)) {
+            return false;
         }
 
-        // Try breaking block above if stuck in a hole
-        BlockPos above = entity.blockPosition().above();
-        if (entity.level().getBlockState(above).canOcclude()) {
-            System.out.println("[AMB-STUCK] Would break block at " + above + " to escape");
-            // Placeholder - actual block breaking would go here
+        if (goal == null || goal.equals(BlockPos.ZERO)) {
+            return false;
+        }
+
+        int verticalDiff = goal.getY() - entity.blockPosition().getY();
+
+        if (verticalDiff > 2) {
+            // Need to go up - try pillar building
+            System.out.println("[AMB-STUCK] Attempting to build pillar (height: " + verticalDiff + ")");
+            return VerticalNavigation.buildPillar(player, verticalDiff);
+        } else if (verticalDiff < -2) {
+            // Need to go down - try placing ladder or digging
+            System.out.println("[AMB-STUCK] Attempting to descend (depth: " + (-verticalDiff) + ")");
+            // For now, just allow falling
             return true;
+        } else {
+            // Try breaking block ahead
+            BlockPos ahead = entity.blockPosition().relative(entity.getDirection());
+            BlockState blockAhead = entity.level().getBlockState(ahead);
+            if (blockAhead.canOcclude()) {
+                System.out.println("[AMB-STUCK] Would break block at " + ahead + " to clear path");
+                // Placeholder - actual block breaking would go here
+                return true;
+            }
         }
 
         return false;
     }
 
     /**
-     * Level 3 Recovery: LLM override (placeholder)
+     * Level 4 Recovery: LLM override for complex situations
      */
-    private static boolean executeLevel3Recovery(LivingEntity entity, BlockPos goal) {
-        System.out.println("[AMB-STUCK] Level 3 Recovery: LLM override needed");
+    private static boolean executeLevel4Recovery(LivingEntity entity, BlockPos goal) {
+        System.out.println("[AMB-STUCK] Level 4 Recovery: LLM override needed");
         System.out.println("[AMB-STUCK] Entity at " + entity.blockPosition() + ", goal at " + goal);
 
-        // This would call the LLM to get a custom recovery action
-        // For now, just clear the stuck state and let the bot try a new path
+        // Scan nearby area for context
+        StringBuilder nearbyBlocks = new StringBuilder();
+        BlockPos pos = entity.blockPosition();
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -1; dy <= 2; dy++) {
+                for (int dz = -2; dz <= 2; dz++) {
+                    BlockPos checkPos = pos.offset(dx, dy, dz);
+                    BlockState state = entity.level().getBlockState(checkPos);
+                    if (!state.isAir()) {
+                        nearbyBlocks.append(state.getBlock().getName().getString()).append(" ");
+                    }
+                }
+            }
+        }
+
+        System.out.println("[AMB-STUCK] Nearby blocks: " + nearbyBlocks.toString());
+
+        // ENHANCED: Call LLM for assistance if entity is AmbNpcEntity
+        if (entity instanceof AmbNpcEntity bot) {
+            String reason = String.format("Stuck at %s, goal %s, nearby: %s",
+                pos, goal, nearbyBlocks.toString());
+
+            String llmResponse = LLMInterface.requestLLMAssistance(bot, reason);
+            List<LLMInterface.ParsedAction> actions = LLMInterface.parseResponse(llmResponse);
+
+            if (!actions.isEmpty()) {
+                LLMInterface.executeActions(bot, actions);
+                return true;
+            }
+        }
+
+        System.out.println("[AMB-STUCK] Suggest: dig/build/replan");
         return false;
     }
 }
