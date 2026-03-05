@@ -28,6 +28,10 @@ repo
 # debug and temporary files
 debug_logs.txt
 *.log
+build_output.txt
+
+# Claude Code session data
+.claude/
 
 # API keys and sensitive data
 Automate_Minecraft_Bots_APIs.txt
