@@ -8,6 +8,8 @@ import com.shayneomac08.automated_minecraft_bots.movement.VerticalNavigation;
 import com.shayneomac08.automated_minecraft_bots.movement.HumanlikeMovement;
 import com.shayneomac08.automated_minecraft_bots.movement.TaskValidation;
 import com.shayneomac08.automated_minecraft_bots.movement.BotTicker;
+import com.shayneomac08.automated_minecraft_bots.movement.BotEscapeHelper;
+import com.shayneomac08.automated_minecraft_bots.movement.BotNavigationHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -135,6 +137,13 @@ public class AmbNpcEntity extends FakePlayer {
     private BlockPos exitBeyond = BlockPos.ZERO;
     private int exitTimer = 0;
     private int doorInteractCooldown = 0;
+
+    // Structural escape system
+    private final BotEscapeHelper escapeHelper = new BotEscapeHelper(this);
+    // Stuck detection for escape trigger (sampled at 20-tick intervals)
+    private BlockPos lastKnownPos20  = null;
+    private BlockPos lastKnownPos100 = null;
+    private int escapeStuckTicks = 0;
 
     // Constructor for programmatic spawning
     public AmbNpcEntity(ServerLevel level, String name) {
@@ -323,8 +332,11 @@ public class AmbNpcEntity extends FakePlayer {
         // ENHANCED: BotTicker for physics and human-like movement
         BotTicker.tick(this, currentGoal, movementState);
 
-        // Prioritize exiting interiors each tick (may update currentGoal toward doors)
+        // Prioritize exiting interiors each tick (door-based plan first, then structural escape)
         boolean exitingNow = handleInteriorExitPlan();
+        if (!exitingNow) {
+            exitingNow = escapeHelper.tick(tickCount);
+        }
 
         // DEBUG: Log exitingNow state every 2 seconds
         if (tickCount % 40 == 0) {
@@ -602,7 +614,7 @@ public class AmbNpcEntity extends FakePlayer {
         if (tickCount % 100 == 0) {
             tryAutoCraftBasics();
             // Prioritize getting outside first before station work
-            if (!handleInteriorExitPlan()) {
+            if (!handleInteriorExitPlan() && !escapeHelper.isActive()) {
                 manageStationsAndCrafting();
             }
         }
@@ -1908,6 +1920,36 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         this.setNoGravity(false); // enforce gravity every tick
         super.tick();
+
+        // ── Part 5: Stuck detection (every 20 / 100 ticks) ───────────────────
+        if (tickCount % 20 == 0) {
+            BlockPos now = blockPosition();
+            if (lastKnownPos20 != null && now.equals(lastKnownPos20) && isMovingToGoal) {
+                escapeStuckTicks += 20;
+                if (escapeStuckTicks % 100 == 0) {
+                    System.out.println("[STUCK] " + getName().getString()
+                            + " has not moved for " + escapeStuckTicks + " ticks");
+                }
+                if (escapeStuckTicks >= 300 && !escapeHelper.isActive()) {
+                    System.out.println("[STUCK] " + getName().getString()
+                            + " triggering structural escape after " + escapeStuckTicks + " stuck ticks");
+                    escapeHelper.reset(); // ensure fresh start
+                }
+            } else {
+                escapeStuckTicks = 0;
+            }
+            lastKnownPos20 = now;
+        }
+
+        if (tickCount % 100 == 0) {
+            BlockPos now = blockPosition();
+            if (lastKnownPos100 != null && now.equals(lastKnownPos100) && isMovingToGoal) {
+                System.out.println("[STUCK-100] " + getName().getString()
+                        + " still stuck at " + now + " after 100 ticks");
+            }
+            lastKnownPos100 = now;
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         runAllPlayerActions();
         if (spawnIdleTimer == 99 && !roleAnnouncementDone) {
