@@ -131,7 +131,7 @@ public class BotEscapeHelper {
 
                 // Navigate toward exit by updating bot's move target
                 bot.setMoveTarget(
-                    net.minecraft.world.phys.Vec3.atCenterOf(exitTarget), 0.13f
+                    net.minecraft.world.phys.Vec3.atCenterOf(exitTarget), 0.215f
                 );
                 return true;
             }

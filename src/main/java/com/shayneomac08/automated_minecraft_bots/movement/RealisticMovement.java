@@ -74,20 +74,14 @@ public class RealisticMovement {
         BlockState feetBlock = entity.level().getBlockState(feetPos);
         boolean onNonSolidBlock = !feetBlock.isAir() && !feetBlock.canOcclude();
 
-        // ENHANCED: Smooth acceleration/deceleration with human-like variation
-        Vec3 cur = entity.getDeltaMovement();
-        double targetVX = dirX * speed;
-        double targetVZ = dirZ * speed;
-
-        // Add slight random variation (±2%) for natural movement
+        // Apply speed directly each tick.
+        // deltaMovement is zeroed after every move() call, so using it as an
+        // accumulator would never build up — the 0.35 factor would permanently
+        // cap speed at 21% of the intended value.
+        Vec3 cur = entity.getDeltaMovement(); // still needed for verticalVelocity
         double variation = 0.02;
-        targetVX *= (1.0 + (Math.random() * variation * 2 - variation));
-        targetVZ *= (1.0 + (Math.random() * variation * 2 - variation));
-
-        double ax = (targetVX - cur.x) * 0.35; // acceleration factor
-        double az = (targetVZ - cur.z) * 0.35;
-        double newVX = cur.x + ax;
-        double newVZ = cur.z + az;
+        double newVX = dirX * speed * (1.0 + (Math.random() * variation * 2 - variation));
+        double newVZ = dirZ * speed * (1.0 + (Math.random() * variation * 2 - variation));
 
         // Gravity is applied by super.tick() via the entity physics system.
         // Force downward only when standing on a non-solid block (e.g. door frame).
@@ -126,8 +120,8 @@ public class RealisticMovement {
         entity.setYHeadRot(yaw);
         entity.yBodyRot = yaw;
 
-        // Set sprinting if moving fast
-        entity.setSprinting(speed >= 0.13f);
+        // Set sprinting if moving fast (sprint threshold matches calculateSpeed(sprint=true))
+        entity.setSprinting(speed >= 0.28f);
 
         return true;
     }
@@ -337,10 +331,10 @@ public class RealisticMovement {
      * Calculate realistic movement speed based on terrain
      */
     public static float calculateSpeed(LivingEntity entity, boolean sprinting) {
-        float baseSpeed = 0.1f; // Walking speed
+        float baseSpeed = 0.215f; // Walking speed (~4.3 m/s at 20 TPS)
 
         if (sprinting) {
-            baseSpeed = 0.13f; // Sprinting speed
+            baseSpeed = 0.28f; // Sprinting speed (~5.6 m/s at 20 TPS)
         }
 
         // Slower in water

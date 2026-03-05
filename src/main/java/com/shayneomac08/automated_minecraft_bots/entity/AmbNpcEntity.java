@@ -100,7 +100,7 @@ public class AmbNpcEntity extends FakePlayer {
     private boolean isMovingToGoal = false;
     private int stuckTimer = 0;
     private BlockPos lastPosition = BlockPos.ZERO;
-    private float desiredSpeed = 0.13f; // default sprint-like speed
+    private float desiredSpeed = 0.215f; // default walking speed (~4.3 m/s)
     private Vec3 lastExactPos = Vec3.ZERO;
     // Door navigation - ENHANCED 4-PHASE SYSTEM
     private BlockPos doorPos = BlockPos.ZERO;
@@ -237,7 +237,7 @@ public class AmbNpcEntity extends FakePlayer {
             this.currentGoal = new BlockPos((int)target.x, (int)target.y, (int)target.z);
             this.isMovingToGoal = true;
             this.desiredSpeed = speed;
-            this.setSprinting(speed >= 0.13f);
+            this.setSprinting(speed >= 0.28f);
         }
     }
 
@@ -397,8 +397,11 @@ public class AmbNpcEntity extends FakePlayer {
             // Choose waypoint (center of target if no path)
             BlockPos waypoint = (!currentPath.isEmpty() && pathIndex < currentPath.size()) ? currentPath.get(pathIndex) : currentGoal;
 
-            // Use realistic movement to navigate to waypoint
-            float speed = (this.desiredSpeed > 0f) ? this.desiredSpeed : RealisticMovement.calculateSpeed(this, true);
+            // Determine sprint before movement so the correct speed is passed to moveTowards
+            boolean shouldSprint = BotTicker.shouldSprint(this, currentGoal);
+            float baseSpeed = (this.desiredSpeed > 0f) ? this.desiredSpeed : RealisticMovement.calculateSpeed(this, false);
+            float speed = shouldSprint ? 0.28f : baseSpeed;
+            this.setSprinting(shouldSprint);
             boolean stillMoving;
 
             // If in door handling, bias toward door first
@@ -426,10 +429,6 @@ public class AmbNpcEntity extends FakePlayer {
 
             // ENHANCED: Use BotTicker for smooth look direction
             BotTicker.updateLookDirection(this, currentGoal, stillMoving);
-
-            // ENHANCED: Determine sprint based on conditions
-            boolean shouldSprint = BotTicker.shouldSprint(this, currentGoal);
-            this.setSprinting(shouldSprint);
 
             // Debug logging every 2 seconds
             if (tickCount % 40 == 0) {
