@@ -478,8 +478,8 @@ public class AmbNpcEntity extends FakePlayer {
                 if (!currentPath.isEmpty() && pathIndex < currentPath.size()) pathIndex++;
             }
 
-            // Reached goal
-            if (!stillMoving) {
+            // Reached goal - only trigger when all path waypoints are exhausted
+            if (!stillMoving && (currentPath.isEmpty() || pathIndex >= currentPath.size())) {
                 // Check if we should mine the block at goal
                 BlockState targetState = level().getBlockState(currentGoal);
                 if (shouldMineBlock(targetState)) {
