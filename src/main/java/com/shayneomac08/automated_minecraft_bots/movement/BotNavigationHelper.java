@@ -170,7 +170,9 @@ public final class BotNavigationHelper {
     // ── Part 1e: canStandAt ───────────────────────────────────────────────────
 
     /**
-     * Returns true if pos is a solid floor, pos+1 is passable, and pos+2 is passable.
+     * Returns true if pos has solid floor, and both the feet and head positions are passable.
+     * Uses isSolid() for the floor check (stricter than canOcclude) to avoid placing
+     * waypoints on top of non-solid blocks like slabs that may not fully support the bot.
      */
     public static boolean canStandAt(ServerLevel level, BlockPos pos) {
         BlockState floor = level.getBlockState(pos);

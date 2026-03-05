@@ -119,6 +119,17 @@ public class AmbNpcEntity extends FakePlayer {
     private final HumanlikeMovement.MovementState movementState = new HumanlikeMovement.MovementState();
     private int ticksMoving = 0;
 
+    // Jump + progress tracking (Block 2)
+    private int jumpCooldown = 0;
+    private Vec3 lastExactMovingPos = Vec3.ZERO;
+    private int noProgressTicks = 0;
+    private int waypointStuckTicks = 0;
+    private static final int WAYPOINT_STUCK_THRESHOLD = 60; // 3 s
+
+    // Falling / floating detection (Block 4)
+    private int airborneTicks = 0;
+    private static final int AIRBORNE_RECOVERY_THRESHOLD = 20; // 1 s
+
     // A* pathfinding state
     private List<BlockPos> currentPath = new ArrayList<>();
     private int pathIndex = 0;
@@ -430,6 +441,72 @@ public class AmbNpcEntity extends FakePlayer {
             // ENHANCED: Use BotTicker for smooth look direction
             BotTicker.updateLookDirection(this, currentGoal, stillMoving);
 
+            // ── Block 2: jump cooldown + horizontal-progress tracking ────────────────
+            if (jumpCooldown > 0) jumpCooldown--;
+
+            Vec3 nowPos = position();
+            if (!lastExactMovingPos.equals(Vec3.ZERO)) {
+                double dx2 = nowPos.x - lastExactMovingPos.x;
+                double dz2 = nowPos.z - lastExactMovingPos.z;
+                double horizProgress = Math.sqrt(dx2 * dx2 + dz2 * dz2);
+                if (horizProgress < 0.05) {
+                    noProgressTicks++;
+                } else {
+                    noProgressTicks = 0;
+                }
+            }
+            lastExactMovingPos = nowPos;
+
+            // ── Block 4: airborne / falling detection ─────────────────────────────────
+            if (!onGround() && getDeltaMovement().y < -0.1) {
+                airborneTicks++;
+                if (airborneTicks > AIRBORNE_RECOVERY_THRESHOLD) {
+                    System.out.println("[AMB-NAV] " + getName().getString()
+                        + " falling for " + airborneTicks + " ticks — clearing path to recompute on landing");
+                    currentPath.clear();
+                    pathIndex = 0;
+                    airborneTicks = 0;
+                    noProgressTicks = 0;
+                }
+            } else {
+                airborneTicks = 0;
+            }
+
+            // ── Block 2: jump trigger ─────────────────────────────────────────────────
+            boolean shouldJump = false;
+            // Condition A: next waypoint is 1+ block higher and bot is within 2.5 blocks horizontally
+            if (!currentPath.isEmpty() && pathIndex < currentPath.size()) {
+                BlockPos nextWp = currentPath.get(pathIndex);
+                double wpHorizDistSq = Math.pow(getX() - (nextWp.getX() + 0.5), 2)
+                                     + Math.pow(getZ() - (nextWp.getZ() + 0.5), 2);
+                if (nextWp.getY() > blockPosition().getY() && wpHorizDistSq < 2.5 * 2.5) {
+                    shouldJump = true;
+                }
+            }
+            // Condition B: no horizontal progress for 3+ consecutive ticks (walking into wall)
+            if (noProgressTicks >= 3) {
+                shouldJump = true;
+                noProgressTicks = 0;
+                System.out.println("[AMB-JUMP] " + getName().getString()
+                    + " jump triggered by noProgress: onGnd=" + onGround()
+                    + " yVel=" + String.format("%.3f", getDeltaMovement().y)
+                    + " wpDY=" + (!currentPath.isEmpty() && pathIndex < currentPath.size()
+                        ? currentPath.get(pathIndex).getY() - blockPosition().getY() : 0));
+            }
+            if (shouldJump && jumpCooldown == 0) {
+                // nearGround catches the case where isOnGround() is falsely false due to
+                // sub-pixel collision resolution (bot pressed into a block face, floats 0.001 up)
+                boolean nearGround = onGround() || Math.abs(getDeltaMovement().y) < 0.1;
+                if (nearGround) {
+                    jumpFromGround();
+                    jumpCooldown = 10;
+                    System.out.println("[AMB-JUMP] " + getName().getString()
+                        + " jump fired: onGnd=" + onGround()
+                        + " yVel=" + String.format("%.3f", getDeltaMovement().y));
+                }
+            }
+            // ─────────────────────────────────────────────────────────────────────────
+
             // Debug logging every 2 seconds
             if (tickCount % 40 == 0) {
                 System.out.printf("[AMB] %s moving to goal %s (pos=(%.3f,%.3f,%.3f) blockPos=%s dist=%.2f pathIdx=%d/%d wp=%s)%n",
@@ -551,6 +628,23 @@ public class AmbNpcEntity extends FakePlayer {
             if (wpDx * wpDx + wpDz * wpDz < 1.5 * 1.5 && Math.abs(wpDy) < 2.0
                     && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
                 pathIndex++;
+                waypointStuckTicks = 0;
+            }
+
+            // Waypoint skip: if the bot has been close to (but unable to reach) the current waypoint
+            // for WAYPOINT_STUCK_THRESHOLD ticks, skip it and continue with the next one.
+            double wpHorizDistSq = wpDx * wpDx + wpDz * wpDz;
+            if (wpHorizDistSq < 2.5 * 2.5 && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
+                waypointStuckTicks++;
+                if (waypointStuckTicks >= WAYPOINT_STUCK_THRESHOLD) {
+                    System.out.println("[AMB-SKIP] " + getName().getString()
+                        + " waypoint " + waypoint + " skipped after " + waypointStuckTicks
+                        + " ticks, new index=" + (pathIndex + 1));
+                    pathIndex++;
+                    waypointStuckTicks = 0;
+                }
+            } else {
+                waypointStuckTicks = 0;
             }
 
             // Reached goal - trigger when close to goal AND path exhausted
@@ -867,6 +961,13 @@ public class AmbNpcEntity extends FakePlayer {
                 List<BlockPos> path = reconstructPath(cameFrom, current.pos);
                 System.out.println("[AMB-PATH] A* " + start + "→" + walkableGoal + ": " + path.size() + " nodes, walkable:" +
                     (!walkableGoal.equals(goal)) + ", dy:" + (walkableGoal.getY() - goal.getY()));
+                if (!path.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    int limit = Math.min(5, path.size());
+                    for (int pi = 0; pi < limit; pi++) sb.append(path.get(pi)).append(' ');
+                    System.out.println("[AMB-PATH-DETAIL] " + getName().getString()
+                        + " first " + limit + " waypoints: " + sb);
+                }
                 return path;
             }
             closed.add(current.pos);
@@ -986,24 +1087,29 @@ public class AmbNpcEntity extends FakePlayer {
     private List<BlockPos> getNeighbors(BlockPos pos) {
         List<BlockPos> out = new ArrayList<>();
 
-        // ENHANCED: 8-way neighbors (NSEW + diagonals) on same Y
+        // 8-way neighbors on the same Y level.
+        // Extra check: floor below neighbor must be canOcclude() to avoid placing waypoints
+        // on the edge of a cliff where the bot would immediately fall off.
         for (int i = 0; i < 8; i++) {
             BlockPos n = pos.offset(DIAGONAL_X[i], 0, DIAGONAL_Z[i]);
-            if (isPassable(n)) {
+            if (isPassable(n) && level().getBlockState(n.below()).canOcclude()) {
                 out.add(n);
             }
         }
 
-        // ENHANCED: Allow stepping up one block (with jump)
+        // Step up one block (+1 Y, adjacent XZ).
+        // Extra check: the block AT pos-XZ, pos-Y (the step surface) must be canOcclude()
+        // so the bot has a real surface to step UP FROM, not air beside it.
         for (int i = 0; i < 8; i++) {
             BlockPos n = pos.offset(DIAGONAL_X[i], 0, DIAGONAL_Z[i]);
             BlockPos up = n.above();
-            if (isPassable(up) && canJumpTo(pos, up)) {
+            if (isPassable(up) && canJumpTo(pos, up)
+                    && level().getBlockState(n).canOcclude()) { // step surface must be solid
                 out.add(up);
             }
         }
 
-        // ENHANCED: Allow stepping down one block
+        // Step down one block (-1 Y, adjacent XZ).
         for (int i = 0; i < 8; i++) {
             BlockPos n = pos.offset(DIAGONAL_X[i], 0, DIAGONAL_Z[i]);
             BlockPos down = n.below();
@@ -1012,24 +1118,13 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
-        // ENHANCED: Jump up 1 block (if on solid ground)
-        BlockPos up1 = pos.above();
-        if (level().getBlockState(up1).isAir() && canStandOn(pos.below())) {
-            out.add(up1);
-        }
-
-        // ENHANCED: Jump up 2 blocks (requires block placement or special terrain)
-        BlockPos up2 = pos.above(2);
-        if (level().getBlockState(up2).isAir() && level().getBlockState(up1).isAir() &&
-            canStandOn(pos.below()) && canJumpHeight(2)) {
-            out.add(up2);
-        }
-
-        // ENHANCED: Down (holes/ladders/water)
+        // Straight-down drop (holes / water).
         BlockPos down = pos.below();
         if (isPassable(down) || level().getBlockState(down).is(Blocks.WATER)) {
             out.add(down);
         }
+        // Note: straight-up jump (+1 / +2) is handled exclusively by
+        // VerticalNavigation.addVerticalNeighbors() below, so no duplicate here.
 
         // ENHANCED: Add vertical neighbors for climbing/jumping
         if (level() instanceof ServerLevel sl) {
@@ -1629,15 +1724,26 @@ public class AmbNpcEntity extends FakePlayer {
                     System.out.println("[AMB-DOOR] " + getName().getString() + " opening door at " + originalDoorPos);
                 }
 
-                // Set goal to 3 blocks beyond the door in the direction it faces
+                // Determine which side of the door the bot is on, then walk through to the FAR side.
+                // Bug 3: the old code always went in the FACING direction regardless of bot position,
+                // sending the bot into the wall when it was already on the facing side of the door.
                 Direction facing = st.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).orElse(Direction.NORTH);
-                BlockPos beyond = originalDoorPos.relative(facing, 3);
+                Vec3 doorCenter = Vec3.atCenterOf(originalDoorPos);
+                // dot > 0 → bot is on the FACING side of the door → must travel OPPOSITE to exit
+                double dotWithFacing = (getX() - doorCenter.x) * facing.getStepX()
+                                     + (getZ() - doorCenter.z) * facing.getStepZ();
+                Direction travelDir = dotWithFacing <= 0 ? facing : facing.getOpposite();
+
+                BlockPos beyond = originalDoorPos.relative(travelDir, 3);
                 BlockPos walkable = RealisticMovement.findNearestWalkable((ServerLevel) level(), beyond, blockPosition());
 
                 // Update the doorPos to be the target beyond the door
                 doorPos = walkable;
                 doorPhase = 2; // Move to phase 2: pass through
-                System.out.println("[AMB-DOOR] " + getName().getString() + " attempting to pass through door to " + walkable);
+                System.out.println("[AMB-DOOR] " + getName().getString()
+                    + " traversal: door=" + originalDoorPos + " facing=" + facing
+                    + " botDot=" + String.format("%.2f", dotWithFacing)
+                    + " travelDir=" + travelDir + " target=" + walkable);
             }
         }
 
