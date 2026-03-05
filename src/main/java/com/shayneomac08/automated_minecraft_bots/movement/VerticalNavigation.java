@@ -288,7 +288,7 @@ public class VerticalNavigation {
      * Get neighbors including vertical positions for A* pathfinding
      */
     public static void addVerticalNeighbors(BlockPos pos, ServerLevel level, java.util.List<BlockPos> neighbors) {
-        // Add positions 1 block up (if can jump)
+        // Add positions 1 block up (if passable)
         BlockPos up = pos.above();
         if (isPassableVertical(level, up)) {
             neighbors.add(up);
@@ -300,11 +300,8 @@ public class VerticalNavigation {
             neighbors.add(down);
         }
 
-        // Add positions 2 blocks up (if can place block)
-        BlockPos up2 = pos.above(2);
-        if (canPlaceBlockAt(level, pos.above()) && isPassableVertical(level, up2)) {
-            neighbors.add(up2);
-        }
+        // Bug 3: removed +2 block up — bot cannot physically execute a 2-block vertical jump.
+        // Maximum step-up is 1 block to match actual player physics.
     }
 
     /**

@@ -25,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -137,6 +138,9 @@ public class AmbNpcEntity extends FakePlayer {
     private BlockPos exitBeyond = BlockPos.ZERO;
     private int exitTimer = 0;
     private int doorInteractCooldown = 0;
+    // Bug 1: guard against stuck-detection infinite loop while door rescue is running
+    private boolean doorRescueActive = false;
+    private BlockPos doorRescueStartPos = BlockPos.ZERO;
 
     // Structural escape system
     private final BotEscapeHelper escapeHelper = new BotEscapeHelper(this);
@@ -434,8 +438,14 @@ public class AmbNpcEntity extends FakePlayer {
                     Math.sqrt(blockPosition().distSqr(currentGoal)) + ")");
             }
 
+            // Bug 1: clear doorRescueActive once bot has genuinely moved away
+            if (doorRescueActive && blockPosition().distSqr(doorRescueStartPos) > 4.0) {
+                doorRescueActive = false;
+            }
+
             // ENHANCED: Multi-level stuck detection with progressive recovery
-            if (StuckDetection.isStuck(this, stuckState, currentGoal)) {
+            // Bug 1: skip entirely while door rescue is already in progress
+            if (!doorRescueActive && StuckDetection.isStuck(this, stuckState, currentGoal)) {
                 System.out.println("[AMB-STUCK] " + getName().getString() + " stuck at " + blockPosition() +
                     " (level " + stuckState.recoveryLevel + ", ticks: " + stuckState.stuckTicks + ")");
 
@@ -750,10 +760,21 @@ public class AmbNpcEntity extends FakePlayer {
                 exitingInterior = false;
                 exitDoorCenter = BlockPos.ZERO;
                 exitBeyond = BlockPos.ZERO;
+                doorRescueActive = false; // Bug 1: release rescue guard on timeout
             }
             return true; // suppress other tasks while exiting
         }
         return false;
+    }
+
+    /** Bug 2: directly set a door block to open state, skipping interaction animations. */
+    private void forceDoorOpen(ServerLevel sl, BlockPos pos) {
+        BlockState state = sl.getBlockState(pos);
+        if (state.getBlock() instanceof DoorBlock
+                && state.hasProperty(BlockStateProperties.OPEN)
+                && !state.getValue(BlockStateProperties.OPEN)) {
+            sl.setBlock(pos, state.setValue(BlockStateProperties.OPEN, true), Block.UPDATE_ALL);
+        }
     }
 
     private BlockPos findNearestDoor(int radius) {
@@ -1526,6 +1547,9 @@ public class AmbNpcEntity extends FakePlayer {
             originalDoorPos = best; // Store the actual door position
             doorPhase = 1;
             doorTimer = 60; // 3 seconds plan
+            // Bug 1: mark door rescue active so stuck detection is suppressed
+            doorRescueActive = true;
+            doorRescueStartPos = blockPosition();
             return true;
         }
         return false;
@@ -1578,6 +1602,27 @@ public class AmbNpcEntity extends FakePlayer {
 
         // Phase 2: Pass through the door
         if (doorPhase == 2) {
+            // Bug 2: force both door halves open every tick so collision doesn't block movement
+            if (level() instanceof ServerLevel sl) {
+                forceDoorOpen(sl, originalDoorPos);
+                forceDoorOpen(sl, originalDoorPos.above());
+            }
+
+            // Bug 2: apply direct forward movement toward exit target (bypasses collision with door)
+            Vec3 toTarget = Vec3.atBottomCenterOf(doorPos).subtract(position());
+            double hDist = Math.sqrt(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
+            if (hDist > 0.01) {
+                float yaw = (float)(Math.atan2(toTarget.z, toTarget.x) * 180.0 / Math.PI) - 90.0f;
+                setYRot(yaw);
+                setYHeadRot(yaw);
+                yBodyRot = yaw;
+                setXRot(0.0f);
+                float spd = 0.13f;
+                Vec3 movement = new Vec3((toTarget.x / hDist) * spd, getDeltaMovement().y, (toTarget.z / hDist) * spd);
+                move(MoverType.SELF, movement);
+                setDeltaMovement(0, getDeltaMovement().y * 0.98, 0);
+            }
+
             // Check if we've reached the position beyond the door
             if (this.position().distanceToSqr(Vec3.atBottomCenterOf(doorPos)) < 2.5 * 2.5) {
                 // Move to phase 3: verify passage
