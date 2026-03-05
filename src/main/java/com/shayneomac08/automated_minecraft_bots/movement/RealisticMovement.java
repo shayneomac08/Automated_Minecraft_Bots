@@ -98,17 +98,14 @@ public class RealisticMovement {
         // Keep Y so gravity accumulates correctly between ticks.
         entity.setDeltaMovement(0, entity.getDeltaMovement().y * 0.98, 0);
 
-        // Check if we should jump using the velocity computed BEFORE move() zeroed X/Z.
-        // (currentVel after setDeltaMovement would always be 0, giving false positives.)
-        double horizontalSpeed = Math.sqrt(newVX * newVX + newVZ * newVZ);
-
-        if (horizontalSpeed < 0.02 && entity.onGround() && !onNonSolidBlock) {
-            // Check if there's a block in front that we can jump over
+        // Jump when horizontally blocked (check post-move collision flag, not pre-move speed).
+        // Pre-move speed is always ~speed, so the old "< 0.02" check never fired.
+        if (entity.horizontalCollision && entity.onGround() && !onNonSolidBlock) {
             BlockPos ahead = feetPos.relative(entity.getDirection());
             BlockState blockAhead = entity.level().getBlockState(ahead);
             BlockState blockAbove = entity.level().getBlockState(ahead.above());
 
-            // Only jump if there's a solid block ahead and space above
+            // Only jump if there's a solid block ahead and clear space above it
             if (blockAhead.canOcclude() && !blockAbove.canOcclude()) {
                 entity.setDeltaMovement(entity.getDeltaMovement().x, 0.42, entity.getDeltaMovement().z);
             }

@@ -432,9 +432,20 @@ public class AmbNpcEntity extends FakePlayer {
 
             // Debug logging every 2 seconds
             if (tickCount % 40 == 0) {
-                System.out.println("[AMB] " + getName().getString() + " moving to goal " + currentGoal +
-                    " (current pos: " + blockPosition() + ", distance: " +
-                    Math.sqrt(blockPosition().distSqr(currentGoal)) + ")");
+                System.out.printf("[AMB] %s moving to goal %s (pos=(%.3f,%.3f,%.3f) blockPos=%s dist=%.2f pathIdx=%d/%d wp=%s)%n",
+                    getName().getString(), currentGoal,
+                    getX(), getY(), getZ(), blockPosition(),
+                    Math.sqrt(blockPosition().distSqr(currentGoal)),
+                    pathIndex, currentPath.size(), waypoint);
+            }
+            // Diagnostic every second: exact pos, deltaMovement, collision flags
+            if (tickCount % 20 == 0) {
+                Vec3 dm = getDeltaMovement();
+                System.out.printf("[AMB-DIAG] %s pos=(%.3f,%.3f,%.3f) delta=(%.4f,%.4f,%.4f) hColl=%b onGnd=%b sprint=%b%n",
+                    getName().getString(),
+                    getX(), getY(), getZ(),
+                    dm.x, dm.y, dm.z,
+                    horizontalCollision, onGround(), isSprinting());
             }
 
             // Bug 1: clear doorRescueActive once bot has genuinely moved away
@@ -485,6 +496,34 @@ public class AmbNpcEntity extends FakePlayer {
                 ticksMoving++;
             }
 
+            // Proactively force-open doors along the movement direction (up to 3 blocks ahead).
+            // This handles the case where a door is in the path but horizontalCollision hasn't
+            // fired yet (e.g. the bot is 1-2 blocks away and would otherwise walk into a closed door).
+            if (level() instanceof ServerLevel sl && doorInteractCooldown == 0) {
+                double toWpX = (waypoint.getX() + 0.5) - getX();
+                double toWpZ = (waypoint.getZ() + 0.5) - getZ();
+                double toWpLen = Math.sqrt(toWpX * toWpX + toWpZ * toWpZ);
+                if (toWpLen > 0.01) {
+                    double normX = toWpX / toWpLen;
+                    double normZ = toWpZ / toWpLen;
+                    for (int steps = 1; steps <= 3; steps++) {
+                        BlockPos checkPos = BlockPos.containing(getX() + normX * steps, getY(), getZ() + normZ * steps);
+                        BlockState checkState = sl.getBlockState(checkPos);
+                        if (checkState.getBlock() instanceof DoorBlock || checkState.getBlock() instanceof FenceGateBlock) {
+                            if (!checkState.getOptionalValue(BlockStateProperties.OPEN).orElse(false)) {
+                                forceDoorOpen(sl, checkPos);
+                                forceDoorOpen(sl, checkPos.above());
+                                doorInteractCooldown = 20;
+                                System.out.println("[AMB-DOOR] " + getName().getString() + " proactively opened door at " + checkPos);
+                            }
+                            break; // door found — stop scanning further regardless of open state
+                        } else if (checkState.canOcclude()) {
+                            break; // solid non-door block — no door to open this direction
+                        }
+                    }
+                }
+            }
+
             // IMPROVED: Check for doors in multiple directions when colliding
             if (this.horizontalCollision && doorInteractCooldown == 0) {
                 // Check all horizontal directions for doors
@@ -504,10 +543,13 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
 
-            // Advance waypoint using 2D horizontal distance (matches moveTowards threshold)
+            // Advance waypoint: 2D horizontal distance AND vertical within 2 blocks.
+            // The Y-guard prevents skipping elevated waypoints the bot hasn't physically climbed to.
             double wpDx = this.getX() - (waypoint.getX() + 0.5);
             double wpDz = this.getZ() - (waypoint.getZ() + 0.5);
-            if (wpDx * wpDx + wpDz * wpDz < 1.5 * 1.5 && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
+            double wpDy = this.getY() - waypoint.getY();
+            if (wpDx * wpDx + wpDz * wpDz < 1.5 * 1.5 && Math.abs(wpDy) < 2.0
+                    && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
                 pathIndex++;
             }
 
