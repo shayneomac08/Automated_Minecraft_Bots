@@ -1,6 +1,7 @@
 package com.shayneomac08.automated_minecraft_bots;
 
 import com.mojang.logging.LogUtils;
+import com.shayneomac08.automated_minecraft_bots.BotConfig;
 import com.shayneomac08.automated_minecraft_bots.command.AmbCommands;
 import com.shayneomac08.automated_minecraft_bots.registry.ModEntities;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -62,6 +63,7 @@ public class AutomatedMinecraftBots {
 
         // Config
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, BotConfig.SPEC, "automated_minecraft_bots-bot.toml");
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

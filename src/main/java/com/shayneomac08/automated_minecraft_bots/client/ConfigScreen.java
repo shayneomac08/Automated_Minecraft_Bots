@@ -1,6 +1,6 @@
 package com.shayneomac08.automated_minecraft_bots.client;
 
-import com.shayneomac08.automated_minecraft_bots.Config;
+import com.shayneomac08.automated_minecraft_bots.BotConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -10,17 +10,20 @@ import net.minecraft.network.chat.Component;
 public class ConfigScreen extends Screen {
     private final Screen parent;
 
-    // API Key text fields (wider for full keys)
-    private EditBox openaiKeyField;
-    private EditBox openaiModelField;
-    private EditBox geminiKeyField;
-    private EditBox geminiModelField;
+    // Six input fields: provider selector + one per API provider
+    private EditBox providerField;
     private EditBox grokKeyField;
-    private EditBox grokModelField;
-    private EditBox defaultLlmField;
+    private EditBox openaiKeyField;
+    private EditBox geminiKeyField;
+    private EditBox claudeKeyField;
+    private EditBox ollamaUrlField;
 
-    // Scroll offset for when content exceeds screen height (unused - kept for future scrolling feature)
-    // private final int scrollOffset = 0;
+    // Layout constants
+    private static final int LABEL_W  = 70;
+    private static final int GAP      = 4;
+    private static final int FIELD_H  = 20;
+    private static final int SPACING  = 32;
+    private static final int START_Y  = 50;
 
     public ConfigScreen(Screen parent) {
         super(Component.literal("Automated Minecraft Bots - Configuration"));
@@ -31,134 +34,111 @@ public class ConfigScreen extends Screen {
     protected void init() {
         super.init();
 
-        int fieldWidth = Math.min(400, this.width - 40); // Wide fields for API keys
-        int fieldHeight = 20;
-        int leftMargin = (this.width - fieldWidth) / 2;
-        int startY = 40;
-        int spacing = 30;
+        int totalW  = Math.min(500, this.width - 20);
+        int leftX   = (this.width - totalW) / 2;
+        int fieldX  = leftX + LABEL_W + GAP;
+        int fieldW  = totalW - LABEL_W - GAP;
 
-        // OpenAI API Key
-        this.openaiKeyField = new EditBox(this.font, leftMargin, startY, fieldWidth, fieldHeight,
-            Component.literal("OpenAI API Key"));
-        this.openaiKeyField.setMaxLength(512);
-        this.openaiKeyField.setValue(Config.OPENAI_KEY.get());
-        this.openaiKeyField.setHint(Component.literal("sk-proj-..."));
-        this.addRenderableWidget(this.openaiKeyField);
+        // ── Label buttons (left side) ─────────────────────────────────────────
+        String[] labels = {"Provider", "Grok", "OpenAI", "Gemini", "Claude", "Ollama"};
+        for (int i = 0; i < labels.length; i++) {
+            final String lbl = labels[i];
+            this.addRenderableWidget(
+                Button.builder(Component.literal(lbl), btn -> {})
+                      .bounds(leftX, START_Y + SPACING * i, LABEL_W, FIELD_H)
+                      .build()
+            );
+        }
 
-        // OpenAI Model
-        this.openaiModelField = new EditBox(this.font, leftMargin, startY + spacing, fieldWidth, fieldHeight,
-            Component.literal("OpenAI Model"));
-        this.openaiModelField.setMaxLength(100);
-        this.openaiModelField.setValue(Config.OPENAI_MODEL.get());
-        this.openaiModelField.setHint(Component.literal("gpt-4o"));
-        this.addRenderableWidget(this.openaiModelField);
+        // ── Input fields (right side) ──────────────────────────────────────────
+        // Provider selector (grok / openai / gemini / claude / ollama)
+        this.providerField = new EditBox(this.font, fieldX, START_Y, fieldW, FIELD_H,
+                Component.literal("Active LLM Provider"));
+        this.providerField.setMaxLength(32);
+        this.providerField.setValue(BotConfig.LLM_PROVIDER.get());
+        this.providerField.setHint(Component.literal("grok / openai / gemini / claude / ollama"));
+        this.addRenderableWidget(this.providerField);
 
-        // Gemini API Key
-        this.geminiKeyField = new EditBox(this.font, leftMargin, startY + spacing * 2, fieldWidth, fieldHeight,
-            Component.literal("Gemini API Key"));
-        this.geminiKeyField.setMaxLength(512);
-        this.geminiKeyField.setValue(Config.GEMINI_KEY.get());
-        this.geminiKeyField.setHint(Component.literal("AIza..."));
-        this.addRenderableWidget(this.geminiKeyField);
-
-        // Gemini Model
-        this.geminiModelField = new EditBox(this.font, leftMargin, startY + spacing * 3, fieldWidth, fieldHeight,
-            Component.literal("Gemini Model"));
-        this.geminiModelField.setMaxLength(100);
-        this.geminiModelField.setValue(Config.GEMINI_MODEL.get());
-        this.geminiModelField.setHint(Component.literal("gemini-2.0-flash-exp"));
-        this.addRenderableWidget(this.geminiModelField);
-
-        // Grok API Key
-        this.grokKeyField = new EditBox(this.font, leftMargin, startY + spacing * 4, fieldWidth, fieldHeight,
-            Component.literal("Grok API Key"));
+        // Grok
+        this.grokKeyField = new EditBox(this.font, fieldX, START_Y + SPACING, fieldW, FIELD_H,
+                Component.literal("Grok API Key"));
         this.grokKeyField.setMaxLength(512);
-        this.grokKeyField.setValue(Config.GROK_KEY.get());
+        this.grokKeyField.setValue(BotConfig.GROK_API_KEY.get());
         this.grokKeyField.setHint(Component.literal("xai-..."));
         this.addRenderableWidget(this.grokKeyField);
 
-        // Grok Model
-        this.grokModelField = new EditBox(this.font, leftMargin, startY + spacing * 5, fieldWidth, fieldHeight,
-            Component.literal("Grok Model"));
-        this.grokModelField.setMaxLength(100);
-        this.grokModelField.setValue(Config.GROK_MODEL.get());
-        this.grokModelField.setHint(Component.literal("grok-beta"));
-        this.addRenderableWidget(this.grokModelField);
+        // OpenAI
+        this.openaiKeyField = new EditBox(this.font, fieldX, START_Y + SPACING * 2, fieldW, FIELD_H,
+                Component.literal("OpenAI API Key"));
+        this.openaiKeyField.setMaxLength(512);
+        this.openaiKeyField.setValue(BotConfig.OPENAI_API_KEY.get());
+        this.openaiKeyField.setHint(Component.literal("sk-proj-..."));
+        this.addRenderableWidget(this.openaiKeyField);
 
-        // Default LLM
-        this.defaultLlmField = new EditBox(this.font, leftMargin, startY + spacing * 6, fieldWidth, fieldHeight,
-            Component.literal("Default LLM"));
-        this.defaultLlmField.setMaxLength(20);
-        this.defaultLlmField.setValue(Config.DEFAULT_LLM.get());
-        this.defaultLlmField.setHint(Component.literal("openai, gemini, or grok"));
-        this.addRenderableWidget(this.defaultLlmField);
+        // Gemini
+        this.geminiKeyField = new EditBox(this.font, fieldX, START_Y + SPACING * 3, fieldW, FIELD_H,
+                Component.literal("Gemini API Key"));
+        this.geminiKeyField.setMaxLength(512);
+        this.geminiKeyField.setValue(BotConfig.GEMINI_API_KEY.get());
+        this.geminiKeyField.setHint(Component.literal("AIza..."));
+        this.addRenderableWidget(this.geminiKeyField);
 
-        // Save button
-        this.addRenderableWidget(Button.builder(Component.literal("Save"), button -> this.saveAndClose())
-            .bounds(this.width / 2 - 155, startY + spacing * 7 + 10, 150, 20).build());
+        // Claude
+        this.claudeKeyField = new EditBox(this.font, fieldX, START_Y + SPACING * 4, fieldW, FIELD_H,
+                Component.literal("Claude API Key"));
+        this.claudeKeyField.setMaxLength(512);
+        this.claudeKeyField.setValue(BotConfig.CLAUDE_API_KEY.get());
+        this.claudeKeyField.setHint(Component.literal("sk-ant-..."));
+        this.addRenderableWidget(this.claudeKeyField);
 
-        // Cancel button
-        this.addRenderableWidget(Button.builder(Component.literal("Cancel"), button -> this.onClose())
-            .bounds(this.width / 2 + 5, startY + spacing * 7 + 10, 150, 20).build());
+        // Ollama
+        this.ollamaUrlField = new EditBox(this.font, fieldX, START_Y + SPACING * 5, fieldW, FIELD_H,
+                Component.literal("Ollama URL"));
+        this.ollamaUrlField.setMaxLength(256);
+        this.ollamaUrlField.setValue(BotConfig.OLLAMA_URL.get());
+        this.ollamaUrlField.setHint(Component.literal("http://localhost:11434"));
+        this.addRenderableWidget(this.ollamaUrlField);
+
+        // ── Save / Cancel ──────────────────────────────────────────────────────
+        int btnY = START_Y + SPACING * 6 + 10;
+        this.addRenderableWidget(
+            Button.builder(Component.literal("Save"), btn -> this.saveAndClose())
+                  .bounds(this.width / 2 - 155, btnY, 150, 20).build()
+        );
+        this.addRenderableWidget(
+            Button.builder(Component.literal("Cancel"), btn -> this.onClose())
+                  .bounds(this.width / 2 + 5, btnY, 150, 20).build()
+        );
     }
 
     private void saveAndClose() {
-        this.saveConfig();
+        saveConfig();
         this.minecraft.setScreen(this.parent);
     }
 
     private void saveConfig() {
-        // Save all values to config
-        Config.OPENAI_KEY.set(this.openaiKeyField.getValue());
-        Config.OPENAI_MODEL.set(this.openaiModelField.getValue());
-        Config.GEMINI_KEY.set(this.geminiKeyField.getValue());
-        Config.GEMINI_MODEL.set(this.geminiModelField.getValue());
-        Config.GROK_KEY.set(this.grokKeyField.getValue());
-        Config.GROK_MODEL.set(this.grokModelField.getValue());
-
-        String defaultLlm = this.defaultLlmField.getValue().toLowerCase();
-        if (defaultLlm.equals("openai") || defaultLlm.equals("gemini") || defaultLlm.equals("grok")) {
-            Config.DEFAULT_LLM.set(defaultLlm);
-        }
-
-        // Save to disk
-        Config.SPEC.save();
+        BotConfig.LLM_PROVIDER.set(this.providerField.getValue().toLowerCase().trim());
+        BotConfig.GROK_API_KEY.set(this.grokKeyField.getValue());
+        BotConfig.OPENAI_API_KEY.set(this.openaiKeyField.getValue());
+        BotConfig.GEMINI_API_KEY.set(this.geminiKeyField.getValue());
+        BotConfig.CLAUDE_API_KEY.set(this.claudeKeyField.getValue());
+        BotConfig.OLLAMA_URL.set(this.ollamaUrlField.getValue());
+        BotConfig.SPEC.save();
     }
 
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        // Render a simple transparent background without blur to avoid the "Can only blur once per frame" error
         graphics.fillGradient(0, 0, this.width, this.height, 0xC0101010, 0xD0101010);
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        // Render background first
         this.renderBackground(graphics, mouseX, mouseY, partialTick);
-
-        // Render all widgets (buttons and text fields) BEFORE labels so labels appear on top
         super.render(graphics, mouseX, mouseY, partialTick);
-
-        // Render title
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 15, 0xFFFFFF);
-
-        // Render labels for each field (AFTER widgets so they're visible)
-        int fieldWidth = Math.min(400, this.width - 40);
-        int leftMargin = (this.width - fieldWidth) / 2;
-        int startY = 40;
-        int spacing = 30;
-
-        graphics.drawString(this.font, "OpenAI API Key:", leftMargin, startY - 12, 0xFFFFFF);
-        graphics.drawString(this.font, "OpenAI Model:", leftMargin, startY + spacing - 12, 0xFFFFFF);
-        graphics.drawString(this.font, "Gemini API Key:", leftMargin, startY + spacing * 2 - 12, 0xFFFFFF);
-        graphics.drawString(this.font, "Gemini Model:", leftMargin, startY + spacing * 3 - 12, 0xFFFFFF);
-        graphics.drawString(this.font, "Grok API Key:", leftMargin, startY + spacing * 4 - 12, 0xFFFFFF);
-        graphics.drawString(this.font, "Grok Model:", leftMargin, startY + spacing * 5 - 12, 0xFFFFFF);
-        graphics.drawString(this.font, "Default LLM (openai/gemini/grok):", leftMargin, startY + spacing * 6 - 12, 0xFFFFFF);
-
-        // Render help text at bottom
-        String helpText = "API keys support up to 512 characters. Changes are saved to config file.";
-        graphics.drawCenteredString(this.font, helpText, this.width / 2, this.height - 25, 0x808080);
+        graphics.drawCenteredString(this.font,
+            "API keys are saved to the config file. Changes take effect immediately.",
+            this.width / 2, this.height - 25, 0x808080);
     }
 
     @Override

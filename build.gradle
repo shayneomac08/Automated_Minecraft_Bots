@@ -173,6 +173,15 @@ publishing {
     }
 }
 
+// Embed Implementation-Version in the jar manifest so ${file.jarVersion} in mods.toml resolves correctly.
+jar {
+    manifest {
+        attributes([
+            'Implementation-Version': project.version
+        ])
+    }
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
     options.compilerArgs += ['-Xlint:deprecation', '-Xlint:unchecked']

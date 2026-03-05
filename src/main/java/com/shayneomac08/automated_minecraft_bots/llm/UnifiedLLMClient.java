@@ -32,6 +32,11 @@ public class UnifiedLLMClient {
                 this.geminiClient = null;
                 this.grokClient = new GrokClient(apiKey, model);
             }
+            case CLAUDE, OLLAMA -> {
+                this.openaiClient = null;
+                this.geminiClient = null;
+                this.grokClient = null;
+            }
             default -> throw new IllegalArgumentException("Unknown LLM provider: " + provider);
         }
     }
@@ -40,7 +45,9 @@ public class UnifiedLLMClient {
         return switch (provider) {
             case OPENAI -> openaiClient.chat(messages, maxTokens);
             case GEMINI -> geminiClient.chat(messages, maxTokens);
-            case GROK -> grokClient.chat(messages, maxTokens);
+            case GROK   -> grokClient.chat(messages, maxTokens);
+            case CLAUDE, OLLAMA -> throw new UnsupportedOperationException(
+                    provider + " is not supported by UnifiedLLMClient — use LLMClient.query() instead");
         };
     }
 

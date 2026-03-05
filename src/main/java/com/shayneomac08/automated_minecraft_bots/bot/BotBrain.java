@@ -1,10 +1,11 @@
 package com.shayneomac08.automated_minecraft_bots.bot;
 
+import com.shayneomac08.automated_minecraft_bots.BotConfig;
 import com.shayneomac08.automated_minecraft_bots.agent.ActionExecutor;
 import com.shayneomac08.automated_minecraft_bots.agent.ActionPlan;
+import com.shayneomac08.automated_minecraft_bots.llm.LLMClient;
 import com.shayneomac08.automated_minecraft_bots.llm.LLMProvider;
 import com.shayneomac08.automated_minecraft_bots.llm.SimpleJson;
-import com.shayneomac08.automated_minecraft_bots.llm.UnifiedLLMClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 
@@ -161,53 +162,22 @@ public final class BotBrain {
             return;
         }
 
-        // Get API key and model based on bot's LLM provider
-        String apiKey;
-        String model;
+        // Check that the required API key is configured for this bot's provider
+        final String provider = st.llmProvider.getId();
+        System.out.println("[AMB] Loading config for bot: " + botName + " using LLM: " + provider);
 
-        System.out.println("[AMB] Loading config for bot: " + botName + " using LLM: " + st.llmProvider);
-
-        switch (st.llmProvider) {
-            case GEMINI -> {
-                apiKey = com.shayneomac08.automated_minecraft_bots.Config.GEMINI_KEY.get();
-                model = com.shayneomac08.automated_minecraft_bots.Config.GEMINI_MODEL.get();
-                System.out.println("[AMB] Gemini - Model: " + model + ", Key length: " + (apiKey != null ? apiKey.length() : 0));
-                if (apiKey == null || apiKey.isBlank()) {
-                    st.lastError = "Missing Gemini API key. Set it in the mod config (gemini_key).";
-                    st.nextThinkTick = tick + 200;
-                    return;
-                }
-            }
-            case GROK -> {
-                apiKey = com.shayneomac08.automated_minecraft_bots.Config.GROK_KEY.get();
-                model = com.shayneomac08.automated_minecraft_bots.Config.GROK_MODEL.get();
-                System.out.println("[AMB] Grok - Model: " + model + ", Key length: " + (apiKey != null ? apiKey.length() : 0));
-                if (apiKey == null || apiKey.isBlank()) {
-                    st.lastError = "Missing Grok API key. Set it in the mod config (grok_key).";
-                    st.nextThinkTick = tick + 200;
-                    return;
-                }
-            }
-            default -> { // OPENAI
-                apiKey = com.shayneomac08.automated_minecraft_bots.Config.OPENAI_KEY.get();
-                model = com.shayneomac08.automated_minecraft_bots.Config.OPENAI_MODEL.get();
-                System.out.println("[AMB] OpenAI - Model: " + model + ", Key length: " + (apiKey != null ? apiKey.length() : 0));
-                if (apiKey == null || apiKey.isBlank()) {
-                    apiKey = System.getenv("AMB_OPENAI_KEY"); // optional fallback
-                    System.out.println("[AMB] Tried env fallback, Key length: " + (apiKey != null ? apiKey.length() : 0));
-                }
-                if (apiKey == null || apiKey.isBlank()) {
-                    st.lastError = "Missing OpenAI API key. Set it in the mod config (openai_key).";
-                    st.nextThinkTick = tick + 200;
-                    return;
-                }
-            }
+        boolean keyMissing = switch (st.llmProvider) {
+            case GROK   -> BotConfig.GROK_API_KEY.get().isBlank();
+            case OPENAI -> BotConfig.OPENAI_API_KEY.get().isBlank();
+            case GEMINI -> BotConfig.GEMINI_API_KEY.get().isBlank();
+            case CLAUDE -> BotConfig.CLAUDE_API_KEY.get().isBlank();
+            case OLLAMA -> false;
+        };
+        if (keyMissing) {
+            st.lastError = "Missing API key for " + provider + ". Configure it in the mod settings GUI.";
+            st.nextThinkTick = tick + 200;
+            return;
         }
-
-        // Create final copies for use in lambda
-        final String finalApiKey = apiKey;
-        final String finalModel = model;
-        final LLMProvider finalProvider = st.llmProvider;
 
         final var bot = hands; // Perception (very small, stable)
         final var body = pair.body();
@@ -244,8 +214,10 @@ public final class BotBrain {
 
         // Get personality based on LLM type (HUMAN-LIKE FEATURE)
         String personality = switch (st.llmProvider) {
-            case GROK -> "Be sassy and funny. Say 'fuck' sometimes. You're a rebellious bot.";
+            case GROK   -> "Be sassy and funny. Say 'fuck' sometimes. You're a rebellious bot.";
             case GEMINI -> "Be friendly and optimistic. You love helping and exploring.";
+            case CLAUDE -> "Be thoughtful and precise. You reason carefully before acting.";
+            case OLLAMA -> "Be concise and direct. You prefer simple, efficient actions.";
             case OPENAI -> "Be polite and helpful. You're professional and efficient.";
         };
 
@@ -444,15 +416,10 @@ public final class BotBrain {
 
 
 
-                // Run the network call off-thread
+        // Run the network call off-thread
         st.pending = CompletableFuture.supplyAsync(() -> {
             try {
-                UnifiedLLMClient client = new UnifiedLLMClient(finalProvider, finalApiKey, finalModel);
-                String response = client.chat(
-                    List.of(Map.of("role", "system", "content", prompt)),
-                    500
-                );
-                // Extract JSON from response
+                String response = LLMClient.query(prompt, provider, 500);
                 String json = extractFirstJsonObject(response);
                 return SimpleJson.parseActionPlan(json);
             } catch (Exception e) {
@@ -501,38 +468,20 @@ public final class BotBrain {
         // Add to chat history
         addChatMessage(botName, sender, command);
 
-        // Get LLM configuration
-        String apiKey;
-        String model;
-
         System.out.println("[AMB] Processing chat command for bot: " + botName + " using LLM: " + st.llmProvider);
 
-        switch (st.llmProvider) {
-            case GEMINI -> {
-                apiKey = com.shayneomac08.automated_minecraft_bots.Config.GEMINI_KEY.get();
-                model = com.shayneomac08.automated_minecraft_bots.Config.GEMINI_MODEL.get();
-                System.out.println("[AMB] Chat - Gemini - Model: " + model + ", Key length: " + (apiKey != null ? apiKey.length() : 0));
-            }
-            case GROK -> {
-                apiKey = com.shayneomac08.automated_minecraft_bots.Config.GROK_KEY.get();
-                model = com.shayneomac08.automated_minecraft_bots.Config.GROK_MODEL.get();
-                System.out.println("[AMB] Chat - Grok - Model: " + model + ", Key length: " + (apiKey != null ? apiKey.length() : 0));
-            }
-            default -> {
-                apiKey = com.shayneomac08.automated_minecraft_bots.Config.OPENAI_KEY.get();
-                model = com.shayneomac08.automated_minecraft_bots.Config.OPENAI_MODEL.get();
-                System.out.println("[AMB] Chat - OpenAI - Model: " + model + ", Key length: " + (apiKey != null ? apiKey.length() : 0));
-            }
-        }
-
-        if (apiKey == null || apiKey.isBlank()) {
-            System.out.println("[AMB] Chat command aborted - API key is null or blank");
+        final String chatProvider = st.llmProvider.getId();
+        boolean chatKeyMissing = switch (st.llmProvider) {
+            case GROK   -> BotConfig.GROK_API_KEY.get().isBlank();
+            case OPENAI -> BotConfig.OPENAI_API_KEY.get().isBlank();
+            case GEMINI -> BotConfig.GEMINI_API_KEY.get().isBlank();
+            case CLAUDE -> BotConfig.CLAUDE_API_KEY.get().isBlank();
+            case OLLAMA -> false;
+        };
+        if (chatKeyMissing) {
+            System.out.println("[AMB] Chat command aborted - API key missing for " + chatProvider);
             return CompletableFuture.completedFuture(false);
         }
-
-        final String finalApiKey = apiKey;
-        final String finalModel = model;
-        final LLMProvider finalProvider = st.llmProvider;
 
         // Ask LLM if bot wants to obey this command
         return CompletableFuture.supplyAsync(() -> {
@@ -541,9 +490,11 @@ public final class BotBrain {
                 String verificationContext = getVerificationContext(botName);
 
                 // Get personality based on LLM type (HUMAN-LIKE FEATURE)
-                String personality = switch (finalProvider) {
-                    case GROK -> "Be sassy and funny. Say 'fuck' sometimes. You're a rebellious bot.";
+                String personality = switch (st.llmProvider) {
+                    case GROK   -> "Be sassy and funny. Say 'fuck' sometimes. You're a rebellious bot.";
                     case GEMINI -> "Be friendly and optimistic. You love helping and exploring.";
+                    case CLAUDE -> "Be thoughtful and precise. You reason carefully before acting.";
+                    case OLLAMA -> "Be concise and direct. You prefer simple, efficient actions.";
                     case OPENAI -> "Be polite and helpful. You're professional and efficient.";
                 };
 
@@ -564,11 +515,7 @@ public final class BotBrain {
                         "{\"obey\": true, \"response\": \"Sure, I'll help you chop trees!\"}\n" +
                         "{\"obey\": false, \"response\": \"Sorry, I'm busy gathering food right now.\"}\n";
 
-                UnifiedLLMClient client = new UnifiedLLMClient(finalProvider, finalApiKey, finalModel);
-                String response = client.chat(
-                    List.of(Map.of("role", "system", "content", prompt)),
-                    200
-                );
+                String response = LLMClient.query(prompt, chatProvider, 200);
 
                 // Parse response
                 Map<String, Object> json = null;

@@ -3,7 +3,9 @@ package com.shayneomac08.automated_minecraft_bots.llm;
 public enum LLMProvider {
     OPENAI("openai"),
     GEMINI("gemini"),
-    GROK("grok");
+    GROK("grok"),
+    CLAUDE("claude"),
+    OLLAMA("ollama");
 
     private final String id;
 
@@ -17,10 +19,12 @@ public enum LLMProvider {
 
     public static LLMProvider fromString(String str) {
         if (str == null) return OPENAI;
-        return switch (str.toLowerCase()) {
+        return switch (str.toLowerCase().trim()) {
             case "gemini" -> GEMINI;
-            case "grok" -> GROK;
-            default -> OPENAI;
+            case "grok"   -> GROK;
+            case "claude" -> CLAUDE;
+            case "ollama" -> OLLAMA;
+            default       -> OPENAI;
         };
     }
 
