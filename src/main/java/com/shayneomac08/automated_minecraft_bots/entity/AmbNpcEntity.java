@@ -495,14 +495,16 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
 
-            // Advance waypoint if close
-            if (this.position().distanceToSqr(Vec3.atCenterOf(waypoint)) < 1.5 * 1.5) {
-                if (!currentPath.isEmpty() && pathIndex < currentPath.size()) pathIndex++;
+            // Advance waypoint using 2D horizontal distance (matches moveTowards threshold)
+            double wpDx = this.getX() - (waypoint.getX() + 0.5);
+            double wpDz = this.getZ() - (waypoint.getZ() + 0.5);
+            if (wpDx * wpDx + wpDz * wpDz < 1.5 * 1.5 && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
+                pathIndex++;
             }
 
-            // Reached goal - only trigger when path is exhausted AND bot is actually close to goal
+            // Reached goal - trigger when close to goal AND path exhausted
             double distToGoal = position().distanceTo(Vec3.atCenterOf(currentGoal));
-            if (!stillMoving && distToGoal < 3.5 && (currentPath.isEmpty() || pathIndex >= currentPath.size())) {
+            if (distToGoal < 3.5 && (currentPath.isEmpty() || pathIndex >= currentPath.size())) {
                 // Check if we should mine the block at goal
                 BlockState targetState = level().getBlockState(currentGoal);
                 if (shouldMineBlock(targetState)) {
