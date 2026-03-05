@@ -6,7 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -75,41 +74,25 @@ public class RealisticMovement {
         boolean onNonSolidBlock = !feetBlock.isAir() && !feetBlock.canOcclude();
 
         // Apply speed directly each tick.
-        // deltaMovement is zeroed after every move() call, so using it as an
-        // accumulator would never build up — the 0.35 factor would permanently
-        // cap speed at 21% of the intended value.
-        Vec3 cur = entity.getDeltaMovement(); // still needed for verticalVelocity
         double variation = 0.02;
         double newVX = dirX * speed * (1.0 + (Math.random() * variation * 2 - variation));
         double newVZ = dirZ * speed * (1.0 + (Math.random() * variation * 2 - variation));
 
-        // Gravity is applied by super.tick() via the entity physics system.
-        // Force downward only when standing on a non-solid block (e.g. door frame).
-        double verticalVelocity = cur.y;
+        // Vertical physics are handled entirely by super.tick() (gravity, air resistance,
+        // jump impulse). We must NOT pass cur.y into move() here — super.tick() already
+        // moved the entity vertically this tick, so passing cur.y again would double the
+        // vertical displacement and cause the entity to fly upward indefinitely.
         if (onNonSolidBlock && !entity.onGround()) {
-            verticalVelocity = Math.min(verticalVelocity, -0.2);
+            // Override: push down so bot doesn't get stuck standing on door frames.
+            entity.setDeltaMovement(0, -0.2, 0);
         }
 
-        // Apply movement with collision detection
-        Vec3 movement = new Vec3(newVX, verticalVelocity, newVZ);
-        entity.move(MoverType.SELF, movement);
+        // Apply only horizontal movement; Y=0 prevents double-moving vertically.
+        entity.move(MoverType.SELF, new Vec3(newVX, 0, newVZ));
 
-        // Clear horizontal velocity so super.tick() doesn't re-apply it next tick.
-        // Keep Y so gravity accumulates correctly between ticks.
-        entity.setDeltaMovement(0, entity.getDeltaMovement().y * 0.98, 0);
-
-        // Jump when horizontally blocked (check post-move collision flag, not pre-move speed).
-        // Pre-move speed is always ~speed, so the old "< 0.02" check never fired.
-        if (entity.horizontalCollision && entity.onGround() && !onNonSolidBlock) {
-            BlockPos ahead = feetPos.relative(entity.getDirection());
-            BlockState blockAhead = entity.level().getBlockState(ahead);
-            BlockState blockAbove = entity.level().getBlockState(ahead.above());
-
-            // Only jump if there's a solid block ahead and clear space above it
-            if (blockAhead.canOcclude() && !blockAbove.canOcclude()) {
-                entity.setDeltaMovement(entity.getDeltaMovement().x, 0.42, entity.getDeltaMovement().z);
-            }
-        }
+        // Zero horizontal so super.tick() doesn't re-apply it next tick.
+        // Preserve Y as-is — super.tick() will apply gravity on the next tick.
+        entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
 
         // Update rotation to face movement direction
         float yaw = (float) (Math.atan2(dirZ, dirX) * 180 / Math.PI) - 90;

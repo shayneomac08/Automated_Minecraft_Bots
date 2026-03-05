@@ -449,7 +449,12 @@ public class AmbNpcEntity extends FakePlayer {
                 double dx2 = nowPos.x - lastExactMovingPos.x;
                 double dz2 = nowPos.z - lastExactMovingPos.z;
                 double horizProgress = Math.sqrt(dx2 * dx2 + dz2 * dz2);
-                if (horizProgress < 0.05) {
+                if (!onGround()) {
+                    // Don't count no-progress while airborne — horizontal movement is
+                    // constrained by physics mid-jump, not by a wall. Accumulating here
+                    // would trigger a spurious jump the instant the bot lands.
+                    noProgressTicks = 0;
+                } else if (horizProgress < 0.05) {
                     noProgressTicks++;
                 } else {
                     noProgressTicks = 0;
@@ -494,12 +499,9 @@ public class AmbNpcEntity extends FakePlayer {
                         ? currentPath.get(pathIndex).getY() - blockPosition().getY() : 0));
             }
             if (shouldJump && jumpCooldown == 0) {
-                // nearGround catches the case where isOnGround() is falsely false due to
-                // sub-pixel collision resolution (bot pressed into a block face, floats 0.001 up)
-                boolean nearGround = onGround() || Math.abs(getDeltaMovement().y) < 0.1;
-                if (nearGround) {
+                if (onGround()) {
                     jumpFromGround();
-                    jumpCooldown = 10;
+                    jumpCooldown = 15;
                     System.out.println("[AMB-JUMP] " + getName().getString()
                         + " jump fired: onGnd=" + onGround()
                         + " yVel=" + String.format("%.3f", getDeltaMovement().y));
@@ -1090,7 +1092,12 @@ public class AmbNpcEntity extends FakePlayer {
         // 8-way neighbors on the same Y level.
         // Extra check: floor below neighbor must be canOcclude() to avoid placing waypoints
         // on the edge of a cliff where the bot would immediately fall off.
+        // Diagonal corner-cutting prevention: for diagonal steps, both cardinal intermediates
+        // must be passable so the path doesn't clip through wall corners.
         for (int i = 0; i < 8; i++) {
+            if (DIAGONAL_X[i] != 0 && DIAGONAL_Z[i] != 0) {
+                if (!isPassable(pos.offset(DIAGONAL_X[i], 0, 0)) || !isPassable(pos.offset(0, 0, DIAGONAL_Z[i]))) continue;
+            }
             BlockPos n = pos.offset(DIAGONAL_X[i], 0, DIAGONAL_Z[i]);
             if (isPassable(n) && level().getBlockState(n.below()).canOcclude()) {
                 out.add(n);
@@ -1101,6 +1108,9 @@ public class AmbNpcEntity extends FakePlayer {
         // Extra check: the block AT pos-XZ, pos-Y (the step surface) must be canOcclude()
         // so the bot has a real surface to step UP FROM, not air beside it.
         for (int i = 0; i < 8; i++) {
+            if (DIAGONAL_X[i] != 0 && DIAGONAL_Z[i] != 0) {
+                if (!isPassable(pos.offset(DIAGONAL_X[i], 0, 0)) || !isPassable(pos.offset(0, 0, DIAGONAL_Z[i]))) continue;
+            }
             BlockPos n = pos.offset(DIAGONAL_X[i], 0, DIAGONAL_Z[i]);
             BlockPos up = n.above();
             if (isPassable(up) && canJumpTo(pos, up)
@@ -1111,6 +1121,9 @@ public class AmbNpcEntity extends FakePlayer {
 
         // Step down one block (-1 Y, adjacent XZ).
         for (int i = 0; i < 8; i++) {
+            if (DIAGONAL_X[i] != 0 && DIAGONAL_Z[i] != 0) {
+                if (!isPassable(pos.offset(DIAGONAL_X[i], 0, 0)) || !isPassable(pos.offset(0, 0, DIAGONAL_Z[i]))) continue;
+            }
             BlockPos n = pos.offset(DIAGONAL_X[i], 0, DIAGONAL_Z[i]);
             BlockPos down = n.below();
             if (isPassable(down) && (level() instanceof ServerLevel sl) && RealisticMovement.isWalkable(sl, down)) {
