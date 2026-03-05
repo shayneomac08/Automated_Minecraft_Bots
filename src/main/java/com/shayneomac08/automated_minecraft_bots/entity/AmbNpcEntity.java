@@ -82,6 +82,7 @@ public class AmbNpcEntity extends FakePlayer {
     // Movement and action state
     private BlockPos currentGoal = BlockPos.ZERO;
     private int goalLockTimer = 0;
+    private int pathRetryTimer = 0; // Ticks to wait before retrying a failed A* computation
     private BlockPos currentBreakingBlock = BlockPos.ZERO;
     private int messageCooldown = 0;
     private int spawnIdleTimer = 100;
@@ -360,12 +361,21 @@ public class AmbNpcEntity extends FakePlayer {
 
         if (!currentGoal.equals(BlockPos.ZERO)) {
 
-            // Recompute path if needed
-            if (currentPath.isEmpty() || goalLockTimer == 0 || pathIndex >= currentPath.size() || stuckTimer > 20) {
+            // Throttle A* retries on failure to avoid re-running 2500 nodes every tick
+            if (pathRetryTimer > 0) pathRetryTimer--;
+
+            // Recompute path when: empty and retry timer expired, path exhausted, or stuck
+            boolean needNewPath = (currentPath.isEmpty() && pathRetryTimer == 0)
+                    || (!currentPath.isEmpty() && pathIndex >= currentPath.size())
+                    || stuckTimer > 20;
+            if (needNewPath) {
                 currentPath = computeAStarPath(blockPosition(), currentGoal);
                 pathIndex = 0;
-                goalLockTimer = 400; // 20s commitment
-                System.out.println("[AMB-DEBUG] " + getName().getString() + " computed A* path with " + currentPath.size() + " waypoints");
+                // On failure, wait 3 seconds (60 ticks) before trying again
+                pathRetryTimer = currentPath.isEmpty() ? 60 : 0;
+                if (tickCount % 40 == 0 || needNewPath) {
+                    System.out.println("[AMB-DEBUG] " + getName().getString() + " computed A* path with " + currentPath.size() + " waypoints");
+                }
             }
 
             // Choose waypoint (center of target if no path)
@@ -478,8 +488,9 @@ public class AmbNpcEntity extends FakePlayer {
                 if (!currentPath.isEmpty() && pathIndex < currentPath.size()) pathIndex++;
             }
 
-            // Reached goal - only trigger when all path waypoints are exhausted
-            if (!stillMoving && (currentPath.isEmpty() || pathIndex >= currentPath.size())) {
+            // Reached goal - only trigger when path is exhausted AND bot is actually close to goal
+            double distToGoal = position().distanceTo(Vec3.atCenterOf(currentGoal));
+            if (!stillMoving && distToGoal < 3.5 && (currentPath.isEmpty() || pathIndex >= currentPath.size())) {
                 // Check if we should mine the block at goal
                 BlockState targetState = level().getBlockState(currentGoal);
                 if (shouldMineBlock(targetState)) {
@@ -770,7 +781,7 @@ public class AmbNpcEntity extends FakePlayer {
         open.add(new Node(start, 0, heuristic(start, walkableGoal)));
         gScore.put(start, 0);
 
-        int maxNodes = 800; // Increased for better pathfinding
+        int maxNodes = 2500; // Enough for ~30-block paths through complex terrain
         int expanded = 0;
 
         while (!open.isEmpty() && expanded < maxNodes) {
@@ -812,28 +823,43 @@ public class AmbNpcEntity extends FakePlayer {
      * Searches downward up to 3 blocks to find solid ground
      */
     private BlockPos getWalkableGoal(BlockPos goal) {
+        if (!(level() instanceof ServerLevel sl)) return goal;
+
         // Check if goal is already walkable
-        if (level() instanceof ServerLevel sl && RealisticMovement.isWalkable(sl, goal)) {
-            return goal;
-        }
+        if (RealisticMovement.isWalkable(sl, goal)) return goal;
 
-        // Search downward for walkable position
-        for (int dy = 0; dy >= -3; dy--) {
+        // Search vertically (down 4, up 2)
+        for (int dy = -1; dy >= -4; dy--) {
             BlockPos candidate = goal.offset(0, dy, 0);
-            if (level() instanceof ServerLevel sl && RealisticMovement.isWalkable(sl, candidate)) {
-                return candidate;
-            }
+            if (RealisticMovement.isWalkable(sl, candidate)) return candidate;
         }
-
-        // If no walkable position found below, try above
         for (int dy = 1; dy <= 2; dy++) {
             BlockPos candidate = goal.offset(0, dy, 0);
-            if (level() instanceof ServerLevel sl && RealisticMovement.isWalkable(sl, candidate)) {
-                return candidate;
+            if (RealisticMovement.isWalkable(sl, candidate)) return candidate;
+        }
+
+        // Search horizontally adjacent (N/S/E/W) at same Y and Y-1
+        // Critical for tree trunks and solid blocks where bot must stand beside the block
+        int[] dx = {1, -1, 0,  0};
+        int[] dz = {0,  0, 1, -1};
+        for (int i = 0; i < 4; i++) {
+            BlockPos candidate = goal.offset(dx[i], 0, dz[i]);
+            if (RealisticMovement.isWalkable(sl, candidate)) return candidate;
+            candidate = goal.offset(dx[i], -1, dz[i]);
+            if (RealisticMovement.isWalkable(sl, candidate)) return candidate;
+        }
+
+        // Wider horizontal search (radius 2)
+        for (int ddx = -2; ddx <= 2; ddx++) {
+            for (int ddz = -2; ddz <= 2; ddz++) {
+                if (ddx == 0 && ddz == 0) continue;
+                BlockPos candidate = goal.offset(ddx, 0, ddz);
+                if (RealisticMovement.isWalkable(sl, candidate)) return candidate;
+                candidate = goal.offset(ddx, -1, ddz);
+                if (RealisticMovement.isWalkable(sl, candidate)) return candidate;
             }
         }
 
-        // Return original goal if no walkable position found
         return goal;
     }
 
@@ -1643,19 +1669,29 @@ public class AmbNpcEntity extends FakePlayer {
                         currentGoal = eyeHeightLog;
                         System.out.println("[AMB-TASK] " + getName().getString() + " near tree, setting goal to eye-height log at " + eyeHeightLog + " for mining");
                     } else {
-                        // We're far - move to the ground position below the base log
+                        // We're far - find a walkable position adjacent to the tree base
+                        ServerLevel sl = (ServerLevel) level();
                         BlockPos groundPos = baseLog.below();
-                        // Make sure it's walkable
-                        if (!level().getBlockState(groundPos).canOcclude()) {
-                            groundPos = RealisticMovement.findNearestWalkable((ServerLevel) level(), baseLog, blockPosition());
+                        // Use isWalkable (not canOcclude) - the ground below a log trunk is solid, not walkable
+                        if (!RealisticMovement.isWalkable(sl, groundPos)) {
+                            groundPos = RealisticMovement.findNearestWalkable(sl, baseLog, blockPosition());
+                        }
+                        // Don't set goal to our own position (findNearestWalkable fallback) - that means no path exists
+                        if (groundPos.equals(blockPosition())) {
+                            System.out.println("[AMB-TASK] " + getName().getString() + " no walkable position found near tree at " + baseLog + ", trying another tree");
+                            return;
                         }
                         currentGoal = groundPos;
-                        System.out.println("[AMB-TASK] " + getName().getString() + " found tree base at " + baseLog + ", moving to ground position " + groundPos + " (distance: " + distToTree + ")");
+                        System.out.println("[AMB-TASK] " + getName().getString() + " found tree base at " + baseLog + ", moving to walkable position " + groundPos + " (distance: " + distToTree + ")");
                     }
 
                     // Clear any door plan when pursuing resource
                     doorPhase = 0; doorPos = BlockPos.ZERO; originalDoorPos = BlockPos.ZERO; doorTimer = 0; avoidTicks = 0;
                     goalLockTimer = 400;
+                    // Force immediate path recomputation for the new goal
+                    currentPath.clear();
+                    pathIndex = 0;
+                    pathRetryTimer = 0;
                 } else {
                     // No tree found - explore
                     currentGoal = blockPosition().offset(
