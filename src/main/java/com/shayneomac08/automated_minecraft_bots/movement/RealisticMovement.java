@@ -89,32 +89,24 @@ public class RealisticMovement {
         double newVX = cur.x + ax;
         double newVZ = cur.z + az;
 
-        // FIXED: Apply gravity properly - don't let bots float on doors
+        // Gravity is applied by super.tick() via the entity physics system.
+        // Force downward only when standing on a non-solid block (e.g. door frame).
         double verticalVelocity = cur.y;
         if (onNonSolidBlock && !entity.onGround()) {
-            // Force downward movement if standing on non-solid blocks
             verticalVelocity = Math.min(verticalVelocity, -0.2);
-        } else if (!entity.onGround()) {
-            // Normal gravity
-            verticalVelocity -= 0.08;
-        } else {
-            // On ground, reset vertical velocity
-            verticalVelocity = cur.y;
         }
 
-        // CRITICAL FIX: Apply movement with proper physics
-        Vec3 movement = new Vec3(newVX, verticalVelocity, newVZ);
-
         // Apply movement with collision detection
+        Vec3 movement = new Vec3(newVX, verticalVelocity, newVZ);
         entity.move(MoverType.SELF, movement);
 
-        // Clear velocity to prevent super.tick() from applying movement again
-        // We only keep the Y velocity for gravity
+        // Clear horizontal velocity so super.tick() doesn't re-apply it next tick.
+        // Keep Y so gravity accumulates correctly between ticks.
         entity.setDeltaMovement(0, entity.getDeltaMovement().y * 0.98, 0);
 
-        // Check if we should jump (only if on solid ground and not moving much)
-        Vec3 currentVel = entity.getDeltaMovement();
-        double horizontalSpeed = Math.sqrt(currentVel.x * currentVel.x + currentVel.z * currentVel.z);
+        // Check if we should jump using the velocity computed BEFORE move() zeroed X/Z.
+        // (currentVel after setDeltaMovement would always be 0, giving false positives.)
+        double horizontalSpeed = Math.sqrt(newVX * newVX + newVZ * newVZ);
 
         if (horizontalSpeed < 0.02 && entity.onGround() && !onNonSolidBlock) {
             // Check if there's a block in front that we can jump over

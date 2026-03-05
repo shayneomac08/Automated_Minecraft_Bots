@@ -981,8 +981,10 @@ public class AmbNpcEntity extends FakePlayer {
         boolean feetClear = !feet.canOcclude() || feetIsDoor;
         boolean headClear = !head.canOcclude() || headIsDoor;
 
-        // FIXED: Must have solid ground below (not a door or non-solid block)
-        boolean solidGround = below.canOcclude() && !(below.getBlock() instanceof DoorBlock) && !(below.getBlock() instanceof FenceGateBlock);
+        // Must have solid ground or water below (not a door or non-solid block)
+        boolean solidGround = (below.canOcclude() || below.is(Blocks.WATER)) &&
+                              !(below.getBlock() instanceof DoorBlock) &&
+                              !(below.getBlock() instanceof FenceGateBlock);
 
         return feetClear && headClear && solidGround;
     }
@@ -1870,9 +1872,6 @@ public class AmbNpcEntity extends FakePlayer {
     public void tick() {
         this.setNoGravity(false); // enforce gravity every tick
         super.tick();
-
-        // ENHANCED: Human-like head movement with natural sway
-        HumanlikeMovement.applyHumanlikeHeadMovement(this, movementState, currentGoal);
 
         runAllPlayerActions();
         if (spawnIdleTimer == 99 && !roleAnnouncementDone) {

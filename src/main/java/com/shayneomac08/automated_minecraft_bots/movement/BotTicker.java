@@ -23,15 +23,6 @@ public class BotTicker {
         // Handle climbing (ladders, vines, water)
         handleClimbing(bot, goal);
 
-        // Apply travel physics (replaces default entity movement)
-        applyTravelPhysics(bot, movementState);
-
-        // Clear horizontal velocity if not sprinting (prevents sliding)
-        if (!bot.isSprinting() && bot.onGround()) {
-            Vec3 vel = bot.getDeltaMovement();
-            bot.setDeltaMovement(vel.x * 0.5, vel.y, vel.z * 0.5);
-        }
-
         // Random exploration if no goal and no cooldown
         if (goal == null || goal.equals(BlockPos.ZERO)) {
             if (bot.tickCount % 100 == 0 && Math.random() < 0.3) {
