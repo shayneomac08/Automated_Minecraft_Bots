@@ -41,10 +41,22 @@ public class BotEscapeHelper {
 
     /**
      * Called every game tick from AmbNpcEntity.runAllPlayerActions().
+     * @param currentGoal the bot's current navigation goal — if non-zero and escape
+     *                    is not already active, escape evaluation is skipped so the
+     *                    task goal is never overwritten.
      * @return true while the escape is active (other tasks should be suppressed).
      */
-    public boolean tick(int currentTick) {
+    public boolean tick(int currentTick, net.minecraft.core.BlockPos currentGoal) {
         if (!(bot.level() instanceof ServerLevel level)) return false;
+
+        // CRITICAL: Never interrupt an active task goal with escape logic.
+        // Only allow escape to run if it is already active OR the bot has no goal.
+        boolean hasActiveGoal = currentGoal != null && !currentGoal.equals(net.minecraft.core.BlockPos.ZERO);
+        if (hasActiveGoal && phase == Phase.IDLE) {
+            // Bot is navigating somewhere — don't start escape evaluation
+            enclosedTicks = 0;
+            return false;
+        }
 
         // Handle cooldown
         if (cooldownTicks > 0) {

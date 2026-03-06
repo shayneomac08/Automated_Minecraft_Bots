@@ -355,7 +355,7 @@ public class AmbNpcEntity extends FakePlayer {
         // Prioritize exiting interiors each tick (door-based plan first, then structural escape)
         boolean exitingNow = handleInteriorExitPlan();
         if (!exitingNow) {
-            exitingNow = escapeHelper.tick(tickCount);
+            exitingNow = escapeHelper.tick(tickCount, currentGoal);
         }
 
         // DEBUG: Log exitingNow state every 2 seconds
@@ -670,9 +670,12 @@ public class AmbNpcEntity extends FakePlayer {
                 waypointStuckTicks = 0;
             }
 
-            // Reached goal - trigger when close to goal AND path exhausted
+            // Reached goal - only trigger when PHYSICALLY close (≤2.5 blocks).
+            // Never trigger on an empty path alone — that just means A* hasn't found a
+            // route yet, not that the bot has arrived.
             double distToGoal = position().distanceTo(Vec3.atCenterOf(currentGoal));
-            if (distToGoal < 3.5 && (currentPath.isEmpty() || pathIndex >= currentPath.size())) {
+            boolean pathExhausted = !currentPath.isEmpty() && pathIndex >= currentPath.size();
+            if (distToGoal < 2.5 && (pathExhausted || distToGoal < 1.5)) {
                 // Check if we should mine the block at goal
                 BlockState targetState = level().getBlockState(currentGoal);
                 if (shouldMineBlock(targetState)) {
@@ -704,11 +707,15 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
         } else {
-            // No goal - execute current task to find one (but NOT if exiting interior)
-            if (!exitingNow && tickCount % 40 == 0) {
-                System.out.println("[AMB-DEBUG] " + getName().getString() + " executeCurrentTask() called from line 501");
-                executeCurrentTask();
-                System.out.println("[AMB-DEBUG] " + getName().getString() + " AFTER executeCurrentTask(): currentGoal=" + currentGoal);
+            // No goal - execute current task to find one (but NOT if exiting interior).
+            // Run every tick so the bot starts moving immediately after getting a goal,
+            // but throttle expensive searches to every 40 ticks.
+            if (!exitingNow) {
+                if (tickCount % 40 == 0) {
+                    System.out.println("[AMB-DEBUG] " + getName().getString() + " executeCurrentTask() called from no-goal branch");
+                    executeCurrentTask();
+                    System.out.println("[AMB-DEBUG] " + getName().getString() + " AFTER executeCurrentTask(): currentGoal=" + currentGoal);
+                }
             }
         }
 
@@ -1447,7 +1454,11 @@ public class AmbNpcEntity extends FakePlayer {
 
     // ==================== STATION MANAGEMENT ====================
     private void manageStationsAndCrafting() {
-        ensureCraftingTableAvailable();
+        // CRITICAL: Never overwrite an active navigation goal with station goals.
+        // Station management only redirects the bot when it has no current goal.
+        boolean hasActiveGoal = !currentGoal.equals(BlockPos.ZERO);
+
+        ensureCraftingTableAvailable(hasActiveGoal);
         // Simple starter tool progression at table (wood tier)
         if (!knownCraftingTable.equals(BlockPos.ZERO) && this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
             craftStarterToolsAtTable();
@@ -1458,14 +1469,17 @@ public class AmbNpcEntity extends FakePlayer {
         BlockPos furnacePos = chooseFurnaceForPendingSmelts();
         if (furnacePos != null) {
             if (!this.blockPosition().closerThan(furnacePos, 4.0)) {
-                this.currentGoal = furnacePos;
+                // Only redirect to furnace if bot has no active goal
+                if (!hasActiveGoal) {
+                    this.currentGoal = furnacePos;
+                }
             } else {
                 serviceFurnaceAt(furnacePos);
             }
         }
     }
 
-    private void ensureCraftingTableAvailable() {
+    private void ensureCraftingTableAvailable(boolean hasActiveGoal) {
         // If we know one and it's loaded, done
         if (!knownCraftingTable.equals(BlockPos.ZERO)) {
             if (!level().getBlockState(knownCraftingTable).is(Blocks.CRAFTING_TABLE)) {
@@ -1499,15 +1513,15 @@ public class AmbNpcEntity extends FakePlayer {
                     }
                 }
             } else {
-                // Move toward a good placement area if carrying planks to craft
-                if (countTotalPlanks() >= 4) {
+                // Only redirect to placement area if bot has no active goal
+                if (!hasActiveGoal && countTotalPlanks() >= 4) {
                     BlockPos target = blockPosition().offset(2, 0, 2);
                     this.currentGoal = target;
                 }
             }
         } else {
-            // move toward table if far and intend to craft
-            if (!this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
+            // Only move toward table if bot has no active goal and intends to craft
+            if (!hasActiveGoal && !this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
                 this.currentGoal = knownCraftingTable;
             }
         }
