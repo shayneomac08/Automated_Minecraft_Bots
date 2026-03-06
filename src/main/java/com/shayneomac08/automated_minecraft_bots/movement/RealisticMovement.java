@@ -78,20 +78,21 @@ public class RealisticMovement {
         double newVX = dirX * speed * (1.0 + (Math.random() * variation * 2 - variation));
         double newVZ = dirZ * speed * (1.0 + (Math.random() * variation * 2 - variation));
 
-        // Vertical physics are handled entirely by super.tick() (gravity, air resistance,
-        // jump impulse). We must NOT pass cur.y into move() here — super.tick() already
-        // moved the entity vertically this tick, so passing cur.y again would double the
-        // vertical displacement and cause the entity to fly upward indefinitely.
+        // FakePlayer's super.tick() applies gravity to deltaMovement but does NOT call
+        // travel()→move(deltaMovement) because isEffectiveAi()=false for player-type entities.
+        // We must include the Y component in our move() call so gravity, jumping, and
+        // the vanilla step-up mechanism (maxUpStep=0.6) all work correctly.
+        // Without this, jump impulse and gravity are stored in deltaMovement but never applied
+        // to the entity position, and onGround is never set (step-up requires onGround=true).
         if (onNonSolidBlock && !entity.onGround()) {
             // Override: push down so bot doesn't get stuck standing on door frames.
             entity.setDeltaMovement(0, -0.2, 0);
         }
 
-        // Apply only horizontal movement; Y=0 prevents double-moving vertically.
-        entity.move(MoverType.SELF, new Vec3(newVX, 0, newVZ));
+        double currentDY = entity.getDeltaMovement().y;
+        entity.move(MoverType.SELF, new Vec3(newVX, currentDY, newVZ));
 
-        // Zero horizontal so super.tick() doesn't re-apply it next tick.
-        // Preserve Y as-is — super.tick() will apply gravity on the next tick.
+        // Zero horizontal so it isn't re-applied; preserve updated Y from the move result.
         entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
 
         // Update rotation to face movement direction
