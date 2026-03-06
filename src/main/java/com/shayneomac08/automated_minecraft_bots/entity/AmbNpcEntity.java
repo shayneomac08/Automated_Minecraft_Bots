@@ -707,15 +707,13 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
         } else {
-            // No goal - execute current task to find one (but NOT if exiting interior).
-            // Run every tick so the bot starts moving immediately after getting a goal,
-            // but throttle expensive searches to every 40 ticks.
-            if (!exitingNow) {
-                if (tickCount % 40 == 0) {
-                    System.out.println("[AMB-DEBUG] " + getName().getString() + " executeCurrentTask() called from no-goal branch");
-                    executeCurrentTask();
-                    System.out.println("[AMB-DEBUG] " + getName().getString() + " AFTER executeCurrentTask(): currentGoal=" + currentGoal);
-                }
+            // No goal — execute current task to find one (but NOT if exiting interior).
+            // Throttle expensive world-searches to every 40 ticks; the bot starts
+            // moving the very next tick once a goal is assigned.
+            if (!exitingNow && tickCount % 40 == 0) {
+                System.out.println("[AMB-DEBUG] " + getName().getString() + " executeCurrentTask() called from no-goal branch");
+                executeCurrentTask();
+                System.out.println("[AMB-DEBUG] " + getName().getString() + " AFTER executeCurrentTask(): currentGoal=" + currentGoal);
             }
         }
 
@@ -790,8 +788,9 @@ public class AmbNpcEntity extends FakePlayer {
         // Lightweight auto-crafting for basics: planks and sticks
         if (tickCount % 100 == 0) {
             tryAutoCraftBasics();
-            // Prioritize getting outside first before station work
-            if (!handleInteriorExitPlan() && !escapeHelper.isActive()) {
+            // Only run station management if not currently exiting and has no active goal
+            // (handleInteriorExitPlan already runs every tick at the top of the loop)
+            if (!exitingNow && !escapeHelper.isActive()) {
                 manageStationsAndCrafting();
             }
         }

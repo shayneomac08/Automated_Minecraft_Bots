@@ -97,18 +97,18 @@ public class StuckDetection {
             state.measurementTicks = 0;
         }
 
-        // Criterion 3: Distance to goal stalled for 40 ticks
+        // Criterion 3: Distance to goal stalled — update reference position each check
         if (goal != null && !goal.equals(BlockPos.ZERO)) {
             double distToGoal = entity.blockPosition().distSqr(goal);
-            if (state.lastStuckPos.equals(BlockPos.ZERO)) {
-                state.lastStuckPos = entity.blockPosition();
-            } else {
+            if (!state.lastStuckPos.equals(BlockPos.ZERO)) {
                 double lastDistToGoal = state.lastStuckPos.distSqr(goal);
                 if (Math.abs(distToGoal - lastDistToGoal) < 1.0) {
-                    // Not making progress toward goal
+                    // Not making meaningful progress toward goal
                     state.ticksSinceProgress++;
                 }
             }
+            // Always update reference so next check is from current position
+            state.lastStuckPos = entity.blockPosition();
         }
 
         // Criterion 4: Colliding with non-solid block

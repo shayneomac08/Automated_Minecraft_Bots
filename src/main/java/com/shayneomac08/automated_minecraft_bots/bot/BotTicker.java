@@ -41,48 +41,35 @@ public final class BotTicker {
                 brain.lastThought = "Was stuck, took corrective action";
             }
 
-            boolean isNight = (level.getDayTime() % 24000L) >= 13000L;
-            boolean hostilesNearby = hasHostileNearby(level, body);
-            boolean danger = isNight || hostilesNearby;
+            // AmbNpcEntity has a complete autonomous system (runAllPlayerActions) that
+            // manages its own movement, survival, and goal decisions every tick.
+            // Any movement override here (stopMovement, setMoveTarget) runs AFTER
+            // AmbNpcEntity.tick() in the same server tick and would wipe the goal.
+            // Skip all movement overrides for AmbNpcEntity — they handle everything internally.
+            if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity) {
+                // AmbNpcEntity is fully autonomous — no external movement overrides needed.
+            } else {
+                boolean isNight = (level.getDayTime() % 24000L) >= 13000L;
+                boolean hostilesNearby = hasHostileNearby(level, body);
+                boolean danger = isNight || hostilesNearby;
 
-// PRIORITY 1: shelter in danger
-            if (danger) {
-                if (isSheltered(level, body.blockPosition())) {
-                    // FakePlayer compatible: Stop movement
-                    if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
-                        ambBot.stopMovement();
-                    }
-                    brain.goalUntilTick = tick + 40; // short lock
-                } else {
-                    BlockPos shelter = findShelter(level, body.blockPosition());
-                    if (shelter != null && body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
-                        // FakePlayer compatible: Use setMoveTarget with urgency speed
-                        Vec3 shelterPos = new Vec3(shelter.getX() + 0.5, shelter.getY(), shelter.getZ() + 0.5);
-                        ambBot.setMoveTarget(shelterPos, 0.13f); // Sprint speed for urgency
-                        brain.goalUntilTick = tick + Math.min(ticksUntilDawn(level), 20 * 120);
-                        brain.goalX = shelter.getX() + 0.5;
-                        brain.goalY = (double) shelter.getY();
-                        brain.goalZ = shelter.getZ() + 0.5;
-                        brain.lastThought = "seeking shelter";
-                    } else {
-                        // FakePlayer compatible: Stop movement
-                        if (body instanceof com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity ambBot) {
-                            ambBot.stopMovement();
-                        }
+                if (danger) {
+                    if (isSheltered(level, body.blockPosition())) {
                         brain.goalUntilTick = tick + 40;
+                    } else {
+                        BlockPos shelter = findShelter(level, body.blockPosition());
+                        if (shelter != null) {
+                            Vec3 shelterPos = new Vec3(shelter.getX() + 0.5, shelter.getY(), shelter.getZ() + 0.5);
+                            brain.goalUntilTick = tick + Math.min(ticksUntilDawn(level), 20 * 120);
+                            brain.goalX = shelter.getX() + 0.5;
+                            brain.goalY = (double) shelter.getY();
+                            brain.goalZ = shelter.getZ() + 0.5;
+                            brain.lastThought = "seeking shelter";
+                        } else {
+                            brain.goalUntilTick = tick + 40;
+                        }
                     }
                 }
-            }
-// PRIORITY 2: manual follow (only when NOT in danger)
-            // Note: followRequested is currently always false, but kept for future feature
-            // else if (brain.followRequested) {
-            //     smoothFollowNearestPlayer(server, level, body, tick, brain);
-            // }
-// PRIORITY 3: execute goal logic (LLM-driven)
-            else {
-                // The smart need-assessment system in AmbNpcEntity.tick() handles goal decisions
-                // Goal system (AMBTaskGoal, etc.) handles all movement now
-                // No manual wandering needed - RandomStrollGoal handles idle movement
             }
 
 
