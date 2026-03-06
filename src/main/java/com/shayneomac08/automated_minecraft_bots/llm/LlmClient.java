@@ -12,8 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-// Package-private interface kept here so OpenAIResponsesClient can implement it.
-// LlmClient.java and LLMClient.java are the same path on Windows (case-insensitive FS).
+// Package-private interface implemented by OpenAIResponsesClient.
 interface LlmClient {
     ActionPlan plan(String prompt) throws Exception;
 }
