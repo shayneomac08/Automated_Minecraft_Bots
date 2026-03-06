@@ -238,9 +238,13 @@ public final class BotNavigationHelper {
     /**
      * A block is passable for navigation if it does not fully occlude,
      * or if it is a door (which can be opened).
+     * Fences and walls are NOT passable — they have canOcclude()=false but
+     * are physically 1.5 blocks tall and block entity movement.
      */
     public static boolean isPassableBlock(BlockState state) {
         if (state.isAir()) return true;
+        if (state.is(BlockTags.FENCES)) return false;   // 1.5-block tall, not walkable through
+        if (state.is(BlockTags.WALLS))  return false;   // Same
         if (state.is(BlockTags.DOORS))     return true;  // Can be opened
         if (state.is(BlockTags.TRAPDOORS)) return true;  // Trapdoors
         return !state.canOcclude();                       // Non-solid blocks

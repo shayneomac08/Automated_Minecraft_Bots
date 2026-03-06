@@ -123,6 +123,7 @@ public class AmbNpcEntity extends FakePlayer {
     private int jumpCooldown = 0;
     private Vec3 lastExactMovingPos = Vec3.ZERO;
     private int noProgressTicks = 0;
+    private int hCollTicks = 0;       // consecutive ticks with horizontalCollision=true
     private int waypointStuckTicks = 0;
     private static final int WAYPOINT_STUCK_THRESHOLD = 60; // 3 s
 
@@ -168,6 +169,10 @@ public class AmbNpcEntity extends FakePlayer {
         this.setHealth(20.0F);
         this.setInvisible(false);
         this.setInvulnerable(false);
+        // Enable auto step-up (same as vanilla players: 0.6 blocks).
+        // FakePlayers may default to 0, which prevents climbing 1-block walls automatically.
+        var stepAttr = this.getAttribute(Attributes.STEP_HEIGHT);
+        if (stepAttr != null) stepAttr.setBaseValue(0.6);
     }
 
     // Visual entity that mirrors this FakePlayer
@@ -478,6 +483,13 @@ public class AmbNpcEntity extends FakePlayer {
             }
 
             // ── Block 2: jump trigger ─────────────────────────────────────────────────
+            // Track consecutive ticks with horizontal collision (pressed into a wall on ground).
+            if (horizontalCollision && onGround()) {
+                hCollTicks++;
+            } else {
+                hCollTicks = 0;
+            }
+
             boolean shouldJump = false;
             // Condition A: next waypoint is 1+ block higher and bot is within 2.5 blocks horizontally
             if (!currentPath.isEmpty() && pathIndex < currentPath.size()) {
@@ -488,24 +500,33 @@ public class AmbNpcEntity extends FakePlayer {
                     shouldJump = true;
                 }
             }
-            // Condition B: no horizontal progress for 3+ consecutive ticks (walking into wall)
-            if (noProgressTicks >= 3) {
+            // Condition B: pressed against a wall for 2+ ticks (horizontalCollision on ground)
+            if (hCollTicks >= 2) {
+                shouldJump = true;
+                hCollTicks = 0;
+            }
+            // Condition C: general no-progress fallback (wall without collision flag, e.g. fence post)
+            if (noProgressTicks >= 5) {
                 shouldJump = true;
                 noProgressTicks = 0;
-                System.out.println("[AMB-JUMP] " + getName().getString()
-                    + " jump triggered by noProgress: onGnd=" + onGround()
-                    + " yVel=" + String.format("%.3f", getDeltaMovement().y)
-                    + " wpDY=" + (!currentPath.isEmpty() && pathIndex < currentPath.size()
-                        ? currentPath.get(pathIndex).getY() - blockPosition().getY() : 0));
             }
+
             if (shouldJump && jumpCooldown == 0) {
-                if (onGround()) {
-                    jumpFromGround();
-                    jumpCooldown = 15;
-                    System.out.println("[AMB-JUMP] " + getName().getString()
-                        + " jump fired: onGnd=" + onGround()
-                        + " yVel=" + String.format("%.3f", getDeltaMovement().y));
+                // Gather context for log
+                int waypointDY = 0;
+                double horizDist = 0;
+                if (!currentPath.isEmpty() && pathIndex < currentPath.size()) {
+                    BlockPos wp = currentPath.get(pathIndex);
+                    waypointDY = wp.getY() - blockPosition().getY();
+                    horizDist = Math.sqrt(Math.pow(getX() - (wp.getX() + 0.5), 2)
+                                        + Math.pow(getZ() - (wp.getZ() + 0.5), 2));
                 }
+                // Trust jumpFromGround() to handle its own preconditions.
+                // hCollTicks only accumulates when onGround(), so this is already gated.
+                jumpFromGround();
+                jumpCooldown = 15;
+                System.out.printf("[AMB-JUMP] %s jump: hColl=%s waypointDY=%d horizDist=%.2f%n",
+                    getName().getString(), horizontalCollision, waypointDY, horizDist);
             }
             // ─────────────────────────────────────────────────────────────────────────
 
@@ -1183,7 +1204,11 @@ public class AmbNpcEntity extends FakePlayer {
         BlockState head = level().getBlockState(p.above());
         BlockState below = level().getBlockState(p.below());
 
-        // IMPROVED: Doors and fence gates are passable (bot can open them)
+        // Fences and walls have canOcclude()=false but block movement — treat as solid.
+        if (feet.is(BlockTags.FENCES) || feet.is(BlockTags.WALLS)) return false;
+        if (head.is(BlockTags.FENCES) || head.is(BlockTags.WALLS)) return false;
+
+        // Doors and fence gates are passable (bot can open them)
         boolean feetIsDoor = feet.getBlock() instanceof DoorBlock || feet.getBlock() instanceof FenceGateBlock;
         boolean headIsDoor = head.getBlock() instanceof DoorBlock || head.getBlock() instanceof FenceGateBlock;
 
