@@ -506,8 +506,13 @@ public class AmbNpcEntity extends FakePlayer {
                 hCollTicks = 0;
             }
             // Condition C: general no-progress fallback (wall without collision flag, e.g. fence post)
+            // Only jump if the next waypoint is at or above current Y — never jump toward a lower waypoint.
             if (noProgressTicks >= 5) {
-                shouldJump = true;
+                boolean nextWpIsAboveOrLevel = currentPath.isEmpty() || pathIndex >= currentPath.size()
+                    || currentPath.get(pathIndex).getY() >= blockPosition().getY();
+                if (nextWpIsAboveOrLevel) {
+                    shouldJump = true;
+                }
                 noProgressTicks = 0;
             }
 
@@ -854,11 +859,11 @@ public class AmbNpcEntity extends FakePlayer {
                 return false; // Goal is inside, no need to exit
             }
 
-            // CRITICAL FIX: If goal is too high (>5 blocks vertical difference), it's unreachable
-            // Clear the goal and find a new one instead of looping forever
-            int verticalDiff = Math.abs(currentGoal.getY() - blockPosition().getY());
+            // CRITICAL FIX: If goal is unreachably HIGH above bot (>5 blocks up), it's unreachable.
+            // Only clear when goal.Y > bot.Y + 5 — don't clear when bot is on a hill ABOVE the goal.
+            int verticalDiff = currentGoal.getY() - blockPosition().getY();
             if (verticalDiff > 5) {
-                System.out.println("[AMB] " + getName().getString() + " goal at " + currentGoal + " is " + verticalDiff + " blocks higher - unreachable, clearing goal");
+                System.out.println("[AMB] " + getName().getString() + " goal at " + currentGoal + " is " + verticalDiff + " blocks above - unreachable from interior, clearing goal");
                 currentGoal = BlockPos.ZERO; // Clear unreachable goal
                 return false;
             }
@@ -1697,11 +1702,12 @@ public class AmbNpcEntity extends FakePlayer {
         BlockState feet = level().getBlockState(pos);
         BlockState head = level().getBlockState(pos.above());
 
-        // Check if we're inside a door or other non-solid block
+        // Check if we're clipped inside a door or fence gate (geometry glitch only)
+        // Do NOT flag generic non-solid blocks (leaves, slabs, etc.) — bots can stand on them legitimately.
         boolean inDoor = (feet.getBlock() instanceof DoorBlock || feet.getBlock() instanceof FenceGateBlock) ||
                         (head.getBlock() instanceof DoorBlock || head.getBlock() instanceof FenceGateBlock);
 
-        return inDoor || (!feet.isAir() && !feet.canOcclude());
+        return inDoor;
     }
 
     private boolean attemptDoorRescue() {

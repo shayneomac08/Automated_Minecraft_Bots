@@ -111,13 +111,10 @@ public class StuckDetection {
             state.lastStuckPos = entity.blockPosition();
         }
 
-        // Criterion 4: Colliding with non-solid block
-        BlockPos pos = entity.blockPosition();
-        BlockState feetState = entity.level().getBlockState(pos);
-        boolean inNonSolid = !feetState.isAir() && !feetState.canOcclude();
-
-        // Stuck if any criterion is met
-        return state.stuckTicks >= 60 || state.ticksSinceProgress >= 40 || inNonSolid;
+        // Stuck if position-based criteria are met
+        // Note: inNonSolid (leaf/glass blocks) was removed — bots can legitimately stand on
+        // non-occluding blocks (leaves, slabs) and this caused an infinite recovery loop.
+        return state.stuckTicks >= 60 || state.ticksSinceProgress >= 40;
     }
 
     /**
