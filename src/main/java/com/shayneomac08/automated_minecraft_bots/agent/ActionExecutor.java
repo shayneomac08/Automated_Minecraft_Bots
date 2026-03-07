@@ -2,6 +2,7 @@ package com.shayneomac08.automated_minecraft_bots.agent;
 
 import com.shayneomac08.automated_minecraft_bots.bot.BotBrain;
 import com.shayneomac08.automated_minecraft_bots.bot.BotPair;
+import com.shayneomac08.automated_minecraft_bots.bot.BotSubGoal;
 import com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -54,6 +55,7 @@ public final class ActionExecutor {
                         case "build_shelter", "shelter", "build_house", "build" -> "build_shelter";
                         case "craft", "crafting" -> "craft";
                         case "place_crafting_table", "place_table" -> "place_crafting_table";
+                        case "build_underground_base", "dig_base", "underground_base" -> "build_underground_base";
                         case "idle", "stop", "wait" -> "idle";
                         default -> g; // Pass through unknown tasks
                     };
@@ -185,6 +187,42 @@ public final class ActionExecutor {
                     st.lastThought = "exploring for " + secs + "s";
                 } else {
                     st.lastError = "Body cannot explore.";
+                }
+            }
+
+            case "plan_queue" -> {
+                // Multi-step plan: load queue and execute the first task immediately.
+                var tasks = a.queuedTasks();
+                var mins  = a.queuedMinutes();
+                if (tasks == null || tasks.isEmpty()) break;
+
+                if (a.thought() != null && !a.thought().isBlank()) {
+                    st.lastThought = a.thought();
+                    System.out.println("[AMB] " + botKeyName + " thinks: " + a.thought());
+                }
+
+                st.subGoalQueue.clear();
+                for (int i = 1; i < tasks.size(); i++) {
+                    double m = (mins != null && i < mins.size()) ? mins.get(i) : 3.0;
+                    st.subGoalQueue.add(new BotSubGoal(tasks.get(i), (int) m));
+                }
+
+                // Execute first step immediately
+                String firstTask = tasks.get(0);
+                double firstMins = (mins != null && !mins.isEmpty()) ? mins.get(0) : 3.0;
+                if (body instanceof AmbNpcEntity ambBot) {
+                    ambBot.setTask(firstTask);
+                }
+                st.goalUntilTick = server.getTickCount() + (int)(firstMins * 1200);
+                st.mode = BotBrain.Mode.GOAL;
+                st.lastThought = "[plan] " + firstTask + " (+" + st.subGoalQueue.size() + " queued)";
+                System.out.println("[AMB] " + botKeyName + " loaded plan: " + firstTask
+                    + " → " + st.subGoalQueue.size() + " more steps queued");
+
+                // Optional say message
+                if (a.text() != null && !a.text().isBlank()) {
+                    server.getPlayerList().broadcastSystemMessage(
+                        net.minecraft.network.chat.Component.literal("[AMB] " + botKeyName + ": " + a.text()), false);
                 }
             }
 

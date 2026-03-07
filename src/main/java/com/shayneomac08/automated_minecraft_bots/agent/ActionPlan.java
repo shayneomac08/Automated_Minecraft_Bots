@@ -13,8 +13,16 @@ public record ActionPlan(List<Action> actions) {
             Double speed,
             Integer seconds,
 
-            // NEW: used by set_goal
+            // set_goal fields
             String goal,
-            Double minutes
+            Double minutes,
+
+            // plan_queue fields: ordered list of tasks + durations
+            List<String> queuedTasks,
+            List<Double> queuedMinutes,
+
+            // LLM reasoning trace (for logging)
+            String thought
     ) {}
 }
+

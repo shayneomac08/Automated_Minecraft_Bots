@@ -52,8 +52,13 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
+import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.levelgen.Heightmap;
+
 import java.util.Queue;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.UUID;
 import java.util.List;
@@ -63,6 +68,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Comparator;
 
 /**
  * NEW STABLE FAKEPLAYER AMBNPCENTITY
@@ -184,6 +190,15 @@ public class AmbNpcEntity extends FakePlayer {
     private final List<BlockPos> knownChests = new ArrayList<>();
     private BlockPos lastInteractedStation = BlockPos.ZERO;
 
+    // ── Underground base construction system ──────────────────────────────────
+    // Phase 0=find spot, 1=digging, 2=placing support, 3=complete/self-repair
+    private int baseConstructionPhase = 0;
+    private final Queue<BlockPos> baseDigQueue = new LinkedList<>();
+    private final List<BlockPos> baseSupportQueue = new ArrayList<>();
+    // Tracks blocks we placed (for self-repair): pos → Block
+    private final Map<BlockPos, Block> knownStructureBlocks = new HashMap<>();
+    private int selfRepairCooldown = 0; // ticks until next self-repair scan
+
     // Interior exit plan (door-focused)
     private boolean exitingInterior = false;
     private BlockPos exitDoorCenter = BlockPos.ZERO;
@@ -262,6 +277,7 @@ public class AmbNpcEntity extends FakePlayer {
             case "craft"                                     -> Items.CRAFTING_TABLE.asItem();
             case "cook", "smelt"                             -> Items.COAL.asItem();
             case "explore", "scout"                          -> Items.COMPASS.asItem();
+            case "build_underground_base"                    -> Items.WOODEN_PICKAXE;
             default                                          -> Items.OAK_LOG;
         };
         // Only set if hand is currently empty — don't override an actively equipped mining tool
@@ -887,9 +903,41 @@ public class AmbNpcEntity extends FakePlayer {
                     // Pillar system will detect block gone next tick and find the next one
                     miningState.isMining = false;
                 } else {
+                    // For underground base: pop the dug block from the dig queue
+                    if ("build_underground_base".equals(currentTask)
+                            && !baseDigQueue.isEmpty()
+                            && currentGoal.equals(baseDigQueue.peek())) {
+                        baseDigQueue.poll();
+                        if (baseDigQueue.isEmpty() && baseConstructionPhase == 1) {
+                            baseConstructionPhase = 2;
+                            broadcastGroupChat("Digging done! Placing supports...");
+                        }
+                    }
                     // Normal mining complete - find next goal
                     currentGoal = BlockPos.ZERO;
                     executeCurrentTask();
+                }
+            }
+        }
+
+        // SELF-REPAIR - Periodically scan for damaged structure blocks
+        if (selfRepairCooldown > 0) {
+            selfRepairCooldown--;
+        } else if (!knownStructureBlocks.isEmpty()) {
+            selfRepairCooldown = 400;
+            int damaged = 0;
+            for (Map.Entry<BlockPos, Block> entry : knownStructureBlocks.entrySet()) {
+                BlockState actual = level().getBlockState(entry.getKey());
+                if (actual.isAir() && !baseSupportQueue.contains(entry.getKey())) {
+                    baseSupportQueue.add(0, entry.getKey()); // high priority: front of queue
+                    damaged++;
+                }
+            }
+            if (damaged > 0) {
+                broadcastGroupChat("Detected " + damaged + " damaged block(s) — repairing!");
+                if (!"build_underground_base".equals(currentTask)) {
+                    setTask("build_underground_base");
+                    baseConstructionPhase = 2; // jump straight to placement phase
                 }
             }
         }
@@ -1474,6 +1522,12 @@ public class AmbNpcEntity extends FakePlayer {
                 return state.is(Blocks.COAL_ORE) || state.is(Blocks.IRON_ORE) ||
                        state.is(Blocks.COPPER_ORE) || state.is(Blocks.GOLD_ORE) ||
                        state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.EMERALD_ORE);
+            case "build_underground_base":
+                // Mine any solid non-bedrock block that is the current dig target
+                if (!baseDigQueue.isEmpty() && state.canOcclude() && !state.is(Blocks.BEDROCK)) {
+                    return currentGoal.equals(baseDigQueue.peek());
+                }
+                return false;
             default:
                 return false;
         }
@@ -2550,6 +2604,57 @@ public class AmbNpcEntity extends FakePlayer {
                 goalLockTimer = 100;
                 System.out.println("[AMB] " + getName().getString() + " idling");
             }
+            case "build_underground_base" -> {
+                if (baseConstructionPhase == 0 || (baseConstructionPhase == 1 && baseDigQueue.isEmpty())) {
+                    // Phase 0: no base yet — find a good underground spot and initialise dig queue
+                    if (baseConstructionPhase == 0) {
+                        BlockPos spot = findUndergroundBaseSpot();
+                        if (spot == null) {
+                            // No stone-rich area yet — explore first
+                            currentGoal = blockPosition().offset(random.nextInt(30) - 15, 0, random.nextInt(30) - 15);
+                            goalLockTimer = 200;
+                            broadcastGroupChat("Scouting for a good base location...");
+                            break;
+                        }
+                        populateBaseQueues(spot);
+                    }
+                    // Phase transitions after dig queue exhausted are handled in mining callback
+                }
+
+                if (baseConstructionPhase == 1 && !baseDigQueue.isEmpty()) {
+                    // Navigate to next block and let shouldMineBlock + mining state machine handle it
+                    BlockPos nextDig = baseDigQueue.peek();
+                    currentGoal = nextDig;
+                    goalLockTimer = 200;
+                    currentPath.clear();
+                    pathIndex = 0;
+                    pathRetryTimer = 0;
+
+                } else if (baseConstructionPhase == 2) {
+                    // Placement phase: navigate to base center, then place all support blocks
+                    if (baseSupportQueue.isEmpty()) {
+                        baseConstructionPhase = 3;
+                        broadcastGroupChat("Underground base is complete!");
+                        setTask("idle");
+                    } else if (!baseLocation.equals(BlockPos.ZERO)
+                            && blockPosition().closerThan(baseLocation, 8.0)) {
+                        // Close enough — place support blocks
+                        placeBaseSupportBlocks();
+                    } else if (!baseLocation.equals(BlockPos.ZERO)) {
+                        currentGoal = baseLocation;
+                        goalLockTimer = 300;
+                        currentPath.clear();
+                        pathIndex = 0;
+                        pathRetryTimer = 0;
+                    }
+
+                } else if (baseConstructionPhase == 3) {
+                    // Base is done — idle until damage triggers repair
+                    currentGoal = BlockPos.ZERO;
+                    goalLockTimer = 200;
+                }
+            }
+
             case "craft", "place_crafting_table" -> {
                 // Ensure a crafting table exists (find nearby, or craft one from planks and place it)
                 ensureCraftingTableAvailable(false);
@@ -2581,6 +2686,173 @@ public class AmbNpcEntity extends FakePlayer {
                 goalLockTimer = 200;
                 System.out.println("[AMB] " + getName().getString() + " unknown task '" + currentTask + "', wandering to " + currentGoal);
             }
+        }
+    }
+
+    // ==================== UNDERGROUND BASE HELPERS ====================
+
+    /**
+     * Scan the area for the most stone-rich underground location.
+     * Returns a BlockPos at floor level of the proposed main room, or null if none found.
+     */
+    private BlockPos findUndergroundBaseSpot() {
+        if (!(level() instanceof ServerLevel sl)) return null;
+        BlockPos myPos = blockPosition();
+        BlockPos best = null;
+        int bestScore = -1;
+
+        for (int dx = -20; dx <= 20; dx += 4) {
+            for (int dz = -20; dz <= 20; dz += 4) {
+                int x = myPos.getX() + dx;
+                int z = myPos.getZ() + dz;
+                int surfaceY = sl.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+                int floorY = surfaceY - 9; // room floor is 9 blocks below surface (3-tall room + 3 ceiling clearance + 3 shaft)
+                if (floorY < 5) continue; // too close to bedrock
+
+                // Count solid blocks in the proposed 5x3x5 main room volume
+                int score = 0;
+                for (int bx = -2; bx <= 2; bx++) {
+                    for (int by = 0; by <= 2; by++) {
+                        for (int bz = -2; bz <= 2; bz++) {
+                            BlockState bs = sl.getBlockState(new BlockPos(x + bx, floorY + by, z + bz));
+                            if (bs.canOcclude() && !bs.is(Blocks.BEDROCK)) score++;
+                        }
+                    }
+                }
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = new BlockPos(x, floorY, z);
+                }
+            }
+        }
+        return (bestScore >= 20) ? best : null; // require at least 20/75 solid blocks
+    }
+
+    /**
+     * Initialise the dig queue (ordered: furthest→closest, ceiling→floor) and the
+     * support placement queue (ladders, torches, chest) for a new underground base.
+     */
+    private void populateBaseQueues(BlockPos center) {
+        if (!(level() instanceof ServerLevel sl)) return;
+        baseDigQueue.clear();
+        baseSupportQueue.clear();
+        knownStructureBlocks.clear();
+
+        List<BlockPos> toDigList = new ArrayList<>();
+        // Main room: 5 wide × 3 tall × 5 deep
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = 0; dy <= 2; dy++) {
+                for (int dz = -2; dz <= 2; dz++) {
+                    BlockPos p = center.offset(dx, dy, dz);
+                    if (!sl.getBlockState(p).isAir()) toDigList.add(p);
+                }
+            }
+        }
+        // Ladder shaft: single-block column from room ceiling (center.y+3) to surface
+        int surfaceY = sl.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, center.getX(), center.getZ());
+        for (int y = center.getY() + 3; y <= surfaceY; y++) {
+            BlockPos p = new BlockPos(center.getX(), y, center.getZ());
+            if (!sl.getBlockState(p).isAir() && !sl.getBlockState(p).is(Blocks.BEDROCK)) toDigList.add(p);
+        }
+
+        // Sort: furthest from bot first (so bot digs inward), then highest-Y first (ceiling before floor)
+        BlockPos botPos = blockPosition();
+        toDigList.sort(Comparator
+            .comparingDouble((BlockPos p) -> -p.distSqr(botPos)) // furthest first
+            .thenComparingInt(p -> -p.getY()));                   // highest Y first within same distance
+
+        baseDigQueue.addAll(toDigList);
+
+        // Support placements: torches at floor corners, chest on north wall, ladders in shaft
+        // Torches (floor level, near corners)
+        for (int[] corner : new int[][]{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}}) {
+            BlockPos torch = new BlockPos(center.getX() + corner[0], center.getY(), center.getZ() + corner[1]);
+            baseSupportQueue.add(torch);
+            knownStructureBlocks.put(torch, Blocks.TORCH);
+        }
+        // Chest on north wall floor
+        BlockPos chest = new BlockPos(center.getX(), center.getY(), center.getZ() - 2);
+        baseSupportQueue.add(chest);
+        knownStructureBlocks.put(chest, Blocks.CHEST);
+        // Ladders in shaft (attached to the south wall — z+1 is solid)
+        for (int y = center.getY() + 3; y <= surfaceY; y++) {
+            BlockPos ladder = new BlockPos(center.getX(), y, center.getZ());
+            baseSupportQueue.add(ladder);
+            knownStructureBlocks.put(ladder, Blocks.LADDER);
+        }
+
+        baseLocation = center; // use baseLocation to track the base center
+        baseConstructionPhase = 1;
+        System.out.printf("[AMB-BASE] %s initialised base at %s: %d blocks to dig, %d supports to place%n",
+            getName().getString(), center.toShortString(), baseDigQueue.size(), baseSupportQueue.size());
+        broadcastGroupChat("Found great spot at " + center.toShortString() + "! Digging " + baseDigQueue.size() + " blocks!");
+    }
+
+    /**
+     * Place all queued support blocks that the bot can reach from its current position.
+     * Handles torches, chests, and ladders with correct block states.
+     */
+    private void placeBaseSupportBlocks() {
+        if (!(level() instanceof ServerLevel sl)) return;
+        int placed = 0;
+        Iterator<BlockPos> it = baseSupportQueue.iterator();
+        while (it.hasNext()) {
+            BlockPos pos = it.next();
+            Block toPlace = knownStructureBlocks.get(pos);
+            if (toPlace == null) { it.remove(); continue; }
+            BlockState current = sl.getBlockState(pos);
+            if (!current.isAir()) { it.remove(); continue; } // already placed / blocked
+
+            // Check bot has the block in inventory (or it's free to place)
+            if (toPlace == Blocks.TORCH) {
+                if (getInventory().countItem(Items.TORCH) > 0) {
+                    BlockPos below = pos.below();
+                    if (sl.getBlockState(below).canOcclude()) {
+                        sl.setBlock(pos, Blocks.TORCH.defaultBlockState(), 3);
+                        removeItems(Items.TORCH, 1);
+                        it.remove();
+                        placed++;
+                    }
+                }
+            } else if (toPlace == Blocks.LADDER) {
+                if (getInventory().countItem(Items.LADDER) > 0) {
+                    // Ladder needs a solid wall — check north wall (z-1) first, else south
+                    Direction facing = sl.getBlockState(pos.north()).canOcclude() ? Direction.NORTH
+                                     : sl.getBlockState(pos.south()).canOcclude() ? Direction.SOUTH
+                                     : sl.getBlockState(pos.east()).canOcclude()  ? Direction.EAST
+                                     : Direction.WEST;
+                    BlockState ladderState = Blocks.LADDER.defaultBlockState()
+                        .setValue(LadderBlock.FACING, facing);
+                    sl.setBlock(pos, ladderState, 3);
+                    removeItems(Items.LADDER, 1);
+                    it.remove();
+                    placed++;
+                }
+            } else if (toPlace == Blocks.CHEST) {
+                if (getInventory().countItem(Items.CHEST) > 0) {
+                    sl.setBlock(pos, Blocks.CHEST.defaultBlockState(), 3);
+                    removeItems(Items.CHEST, 1);
+                    it.remove();
+                    placed++;
+                }
+            } else {
+                // Generic block placement (e.g. cobblestone for repairs)
+                if (getInventory().countItem(toPlace.asItem()) > 0) {
+                    sl.setBlock(pos, toPlace.defaultBlockState(), 3);
+                    removeItems(toPlace.asItem(), 1);
+                    it.remove();
+                    placed++;
+                }
+            }
+        }
+
+        if (placed > 0) {
+            System.out.println("[AMB-BASE] " + getName().getString() + " placed " + placed + " support blocks");
+        }
+        if (baseSupportQueue.isEmpty()) {
+            baseConstructionPhase = 3;
+            broadcastGroupChat("Underground base is complete!");
+            setTask("idle");
         }
     }
 

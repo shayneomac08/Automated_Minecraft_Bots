@@ -3,6 +3,7 @@ package com.shayneomac08.automated_minecraft_bots.bot;
 import com.shayneomac08.automated_minecraft_bots.BotConfig;
 import com.shayneomac08.automated_minecraft_bots.agent.ActionExecutor;
 import com.shayneomac08.automated_minecraft_bots.agent.ActionPlan;
+import com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity;
 import com.shayneomac08.automated_minecraft_bots.llm.LLMClient;
 import com.shayneomac08.automated_minecraft_bots.llm.LLMProvider;
 import com.shayneomac08.automated_minecraft_bots.llm.SimpleJson;
@@ -55,6 +56,10 @@ public final class BotBrain {
 
         // Pending async LLM request
         public CompletableFuture<ActionPlan> pending = null;
+
+        // Multi-step plan queue — populated by plan_queue action, drained before calling LLM
+        public java.util.Queue<BotSubGoal> subGoalQueue = new java.util.LinkedList<>();
+        public String currentObjective = "";
 
         public String lastThought = "";
         public String lastError = "";
@@ -142,6 +147,25 @@ public final class BotBrain {
 // This prevents constant API spam and lets bots complete tasks
         if (tick < st.goalUntilTick) {
             // Goal is still active - don't interrupt
+            return;
+        }
+
+        // Sub-goal queue: execute next queued step without calling LLM
+        if (!st.subGoalQueue.isEmpty()) {
+            BotSubGoal next = st.subGoalQueue.poll();
+            var body = (pair != null) ? pair.body() : null;
+            if (body instanceof AmbNpcEntity ambBot) {
+                ambBot.setTask(next.task());
+            }
+            if (next.chatMessage() != null && !next.chatMessage().isBlank()) {
+                st.pendingChatMessages.add(next.chatMessage());
+            }
+            st.goalUntilTick = tick + next.durationTicks();
+            st.mode = Mode.GOAL;
+            st.lastThought = "[queue] " + next.task() + " (" + st.subGoalQueue.size() + " remaining)";
+            st.nextThinkTick = tick + 40;
+            System.out.println("[AMB] " + botName + " queued sub-goal: " + next.task()
+                + " (" + next.durationTicks() / 20 + "s), " + st.subGoalQueue.size() + " remaining");
             return;
         }
 
@@ -379,41 +403,29 @@ public final class BotBrain {
                         "8. CHECK RECENT CHAT - if a player commanded you to do something, DO IT NOW (override other priorities)\n" +
                         "9. THINK AUTONOMOUSLY - if something is unreachable, gather blocks and build up! Don't wait for commands!\n" +
                         "10. ADAPT - if stuck doing the same thing repeatedly, CHANGE YOUR STRATEGY!\n\n" +
-                        "=== YOUR RESPONSE ===\n" +
-                        "THINK LIKE A REAL MINECRAFT PLAYER:\n" +
-                        "1. CHECK RECENT CHAT - if a player commanded you, DO IT NOW (overrides everything)\n" +
-                        "2. ANALYZE YOUR SITUATION - what do you need? What's blocking you?\n" +
-                        "3. SOLVE PROBLEMS AUTONOMOUSLY - if something is unreachable, gather blocks and build up!\n" +
-                        "4. ADAPT YOUR STRATEGY - if stuck, try something different!\n" +
-                        "5. BE CREATIVE - you have FULL PLAYER FREEDOM to build, farm, explore, or do anything!\n\n" +
-                        "Return ONLY JSON:\n" +
-                        "{\"actions\":[{\"type\":\"set_goal\",\"goal\":\"<any_goal_from_above>\",\"minutes\":3}]}\n\n" +
-                        "EXAMPLES:\n\n" +
-                        "PLAYER COMMANDS (override everything):\n" +
-                        "• Player commanded 'get dirt and build scaffold' → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":2}]} (mine dirt/stone blocks to build with)\n" +
-                        "• Player commanded 'mine stone' → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":3}]} (do what they asked)\n" +
-                        "• Player commanded 'build a house' → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"build_shelter\",\"minutes\":5}]} (build it)\n\n" +
-                        "AUTONOMOUS PROBLEM-SOLVING (no player command needed):\n" +
-                        "• Gathering wood BUT tree is 5 blocks high AND have 0 dirt → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":2}]} (get blocks to pillar up first!)\n" +
-                        "• Gathering wood BUT tree is 5 blocks high AND have 10 dirt → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"gather_wood\",\"minutes\":3}]} (use dirt to pillar up!)\n" +
-                        "• Want to build shelter BUT have 0 blocks → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":3}]} (get cobblestone first!)\n" +
-                        "• Have crafting table in inventory BUT no table nearby → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"place_crafting_table\",\"minutes\":1}]} (place it to craft tools!)\n" +
-                        "• Have planks+sticks BUT no pickaxe AND no table nearby → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"place_crafting_table\",\"minutes\":1}]} (place table first!)\n" +
-                        "• Stuck trying same thing for 30+ seconds → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"explore\",\"minutes\":2}]} (try something different!)\n" +
-                        "• See oak log at Y=65, I'm at Y=59, have 0 blocks → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":2}]} (get dirt to build up!)\n\n" +
-                        "SURVIVAL PRIORITIES:\n" +
-                        "• Hunger < 6 AND Food = 0 → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"hunt_animals\",\"minutes\":3}]} (hunt for food)\n" +
-                        "• Wood < 8 → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"gather_wood\",\"minutes\":3}]}\n" +
-                        "• Stone < 16 → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"mine_stone\",\"minutes\":3}]}\n" +
-                        "• Night → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"build_shelter\",\"minutes\":3}]}\n\n" +
-                        "CREATIVE GAMEPLAY:\n" +
-                        "• Have seeds → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"farm\",\"minutes\":5}]} (plant crops)\n" +
-                        "• Have wheat → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"breed_animals\",\"minutes\":3}]} (breed cows/sheep)\n" +
-                        "• Have fishing rod → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"fish\",\"minutes\":5}]} (catch fish)\n" +
-                        "• Have saplings → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"plant_trees\",\"minutes\":3}]} (reforest)\n" +
-                        "• Have blocks → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"build_house\",\"minutes\":5}]} (build shelter)\n" +
-                        "• Need iron but have excess wood → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"trade_bots\",\"minutes\":2}]} (trade with other bots)\n" +
-                        "• Inventory full → {\"actions\":[{\"type\":\"set_goal\",\"goal\":\"manage_resources\",\"minutes\":2}]} (store in shared chest)\n";
+                        "=== YOUR RESPONSE FORMAT ===\n" +
+                        "Think multi-step. Return a SEQUENTIAL PLAN — the bot executes each task in order.\n" +
+                        "Return ONLY JSON (no markdown, no explanation):\n\n" +
+                        "{\"thought\":\"<your reasoning — what you need and why>\",\"objective\":\"<short name for long-term goal>\",\"queue\":[{\"task\":\"<task>\",\"minutes\":3},{\"task\":\"<task>\",\"minutes\":2}],\"say\":\"<optional chat message>\"}\n\n" +
+                        "RULES:\n" +
+                        "• queue = ordered steps, first executed first\n" +
+                        "• thought = your internal reasoning (be honest about what you need)\n" +
+                        "• say = only include if you have something worth saying to players\n" +
+                        "• If only one step needed, queue has one item\n\n" +
+                        "=== PLANNING EXAMPLES ===\n\n" +
+                        "Starting fresh (no tools, no resources):\n" +
+                        "{\"thought\":\"No tools and no resources. Need to gather wood first, then craft tools at a table, then I can start my underground base.\",\"objective\":\"establish_base\",\"queue\":[{\"task\":\"gather_wood\",\"minutes\":3},{\"task\":\"craft\",\"minutes\":2},{\"task\":\"mine_stone\",\"minutes\":3},{\"task\":\"build_underground_base\",\"minutes\":30}],\"say\":\"Time to get started — gathering wood first!\"}\n\n" +
+                        "Player commanded me to do something:\n" +
+                        "{\"thought\":\"Player told me to mine stone. I should do that immediately.\",\"objective\":\"obey_player\",\"queue\":[{\"task\":\"mine_stone\",\"minutes\":3}]}\n\n" +
+                        "Hungry:\n" +
+                        "{\"thought\":\"Hunger is critical. Must find food before anything else.\",\"objective\":\"survival\",\"queue\":[{\"task\":\"hunt_animals\",\"minutes\":3}]}\n\n" +
+                        "Have resources, ready to build base:\n" +
+                        "{\"thought\":\"I have plenty of stone and wood. Time to dig my underground base.\",\"objective\":\"underground_base\",\"queue\":[{\"task\":\"build_underground_base\",\"minutes\":30}],\"say\":\"Starting my underground base!\"}\n\n" +
+                        "Missing crafting table:\n" +
+                        "{\"thought\":\"I have planks and sticks but no crafting table nearby. Need to place one first.\",\"objective\":\"craft_tools\",\"queue\":[{\"task\":\"place_crafting_table\",\"minutes\":1},{\"task\":\"craft\",\"minutes\":2}]}\n\n" +
+                        "Night:\n" +
+                        "{\"thought\":\"Night is dangerous. Find shelter immediately.\",\"objective\":\"survive_night\",\"queue\":[{\"task\":\"build_shelter\",\"minutes\":5}]}\n\n" +
+                        "• build_underground_base - Dig and furnish a hidden underground base (rooms, ladders, chests, torches)\n";
 
 
 
@@ -657,7 +669,10 @@ public final class BotBrain {
             null,           // speed
             null,           // seconds
             initialGoal,    // goal
-            (double) minutes // minutes
+            (double) minutes, // minutes
+            null,           // queuedTasks
+            null,           // queuedMinutes
+            null            // thought
         );
 
         ActionPlan plan = new ActionPlan(java.util.List.of(action));

@@ -1,5 +1,9 @@
 package com.shayneomac08.automated_minecraft_bots.llm;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.shayneomac08.automated_minecraft_bots.agent.ActionPlan;
 
 import java.util.*;
@@ -11,14 +15,40 @@ public final class SimpleJson {
         List<ActionPlan.Action> actions = new ArrayList<>();
         if (json == null) return new ActionPlan(actions);
 
-        // TODO: Parse JSON properly
-        String type = extractString(json, "\"type\"");
-        String text = extractString(json, "\"text\"");
-        String goal = extractString(json, "\"goal\"");
+        // ── New format: {"thought":"...","objective":"...","queue":[{task,minutes}...],"say":"..."} ──
+        if (json.contains("\"queue\"")) {
+            try {
+                JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
+                String thought = obj.has("thought") ? obj.get("thought").getAsString() : null;
+                String say     = obj.has("say")     ? obj.get("say").getAsString()     : null;
+                JsonArray queue = obj.getAsJsonArray("queue");
+                List<String> tasks = new ArrayList<>();
+                List<Double> mins  = new ArrayList<>();
+                for (JsonElement el : queue) {
+                    JsonObject item = el.getAsJsonObject();
+                    tasks.add(item.has("task") ? item.get("task").getAsString() : "idle");
+                    mins.add(item.has("minutes") ? item.get("minutes").getAsDouble() : 3.0);
+                }
+                actions.add(new ActionPlan.Action(
+                    "plan_queue", say, null, null, null, null, null,
+                    null, null, tasks, mins, thought));
+                return new ActionPlan(actions);
+            } catch (Exception ignored) {
+                // fall through to legacy parser
+            }
+        }
+
+        // ── Legacy format: {"actions":[{"type":"set_goal","goal":"...","minutes":3}]} ──
+        String type    = extractString(json, "\"type\"");
+        String text    = extractString(json, "\"text\"");
+        String goal    = extractString(json, "\"goal\"");
         Integer minutes = extractInt(json, "\"minutes\"");
 
         if (type != null) {
-            actions.add(new ActionPlan.Action(type, text, null, null, null, null, null, goal, minutes != null ? minutes.doubleValue() : null));
+            actions.add(new ActionPlan.Action(
+                type, text, null, null, null, null, null,
+                goal, minutes != null ? minutes.doubleValue() : null,
+                null, null, null));
         }
 
         return new ActionPlan(actions);
