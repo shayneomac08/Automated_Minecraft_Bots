@@ -92,8 +92,20 @@ public class RealisticMovement {
         double currentDY = entity.getDeltaMovement().y;
         entity.move(MoverType.SELF, new Vec3(newVX, currentDY, newVZ));
 
-        // Zero horizontal so it isn't re-applied; preserve updated Y from the move result.
-        entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
+        // Apply gravity manually each tick.
+        // FakePlayer's super.tick() does not call aiStep/travel(), so gravity is never applied
+        // automatically. Entity.move() only zeroes getDeltaMovement().y when vertical movement
+        // is physically blocked; it does not decrement it for gravity.
+        double nextDY;
+        if (entity.onGround()) {
+            // On ground: keep a small downward press so onGround remains true next tick.
+            nextDY = -0.08;
+        } else {
+            // Airborne: gravity decelerates upward movement and accelerates downward.
+            // getDeltaMovement().y is unchanged by entity.move() when Y was not blocked.
+            nextDY = Math.max(entity.getDeltaMovement().y - 0.08, -3.5);
+        }
+        entity.setDeltaMovement(0, nextDY, 0);
 
         // Update rotation to face movement direction
         float yaw = (float) (Math.atan2(dirZ, dirX) * 180 / Math.PI) - 90;

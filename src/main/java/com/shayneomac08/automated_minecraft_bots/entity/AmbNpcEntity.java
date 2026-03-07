@@ -491,15 +491,10 @@ public class AmbNpcEntity extends FakePlayer {
             }
 
             boolean shouldJump = false;
-            // Condition A: next waypoint is 1+ block higher and bot is within 2.5 blocks horizontally
-            if (!currentPath.isEmpty() && pathIndex < currentPath.size()) {
-                BlockPos nextWp = currentPath.get(pathIndex);
-                double wpHorizDistSq = Math.pow(getX() - (nextWp.getX() + 0.5), 2)
-                                     + Math.pow(getZ() - (nextWp.getZ() + 0.5), 2);
-                if (nextWp.getY() > blockPosition().getY() && wpHorizDistSq < 2.5 * 2.5) {
-                    shouldJump = true;
-                }
-            }
+            // Condition A removed: jumping preemptively when nextWp.Y > bot.Y caused the bot to
+            // jump at every terrain step and bypass the vanilla step-up mechanism (maxUpStep=0.6).
+            // With proper gravity now applied, Conditions B and C handle all legitimate jumps.
+
             // Condition B: pressed against a wall for 2+ ticks (horizontalCollision on ground)
             if (hCollTicks >= 2) {
                 shouldJump = true;
