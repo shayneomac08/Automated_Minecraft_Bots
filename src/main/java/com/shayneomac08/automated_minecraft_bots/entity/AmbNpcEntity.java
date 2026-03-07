@@ -450,9 +450,11 @@ public class AmbNpcEntity extends FakePlayer {
             boolean needNewPath = (currentPath.isEmpty() && pathRetryTimer == 0)
                     || (!currentPath.isEmpty() && pathIndex >= currentPath.size())
                     || stuckTimer > 20;
-            // Reset fail counter when goal changes externally (interior exit, task switch, etc.)
+            // Reset fail counter AND retry timer when goal changes externally
+            // (interior exit redirects to door, task switch, etc.)
             if (!currentGoal.equals(lastAStarGoal)) {
                 aStarFailCount = 0;
+                pathRetryTimer = 0; // Compute A* immediately for new goal
                 lastAStarGoal = currentGoal;
             }
 
@@ -932,39 +934,12 @@ public class AmbNpcEntity extends FakePlayer {
             return false;
         }
 
-        // IMPROVED: Only start exit plan if we have a goal that's outside AND reachable
-        if (!exitingInterior && !currentGoal.equals(BlockPos.ZERO)) {
-            // Check if our goal is outside — check up to 12 blocks above and 2 blocks to each
-            // side (tree logs under leaf canopy may block skylight at the log block itself)
-            boolean goalIsOutside = false;
-            for (int dy = 0; dy <= 12; dy++) {
-                if (level().canSeeSky(currentGoal.above(dy))) { goalIsOutside = true; break; }
-            }
-            if (!goalIsOutside) {
-                int[] ddx = {2, -2, 0, 0};
-                int[] ddz = {0, 0, 2, -2};
-                outer2:
-                for (int d = 0; d < 4; d++) {
-                    BlockPos side = currentGoal.offset(ddx[d], 0, ddz[d]);
-                    for (int dy = 0; dy <= 5; dy++) {
-                        if (level().canSeeSky(side.above(dy))) { goalIsOutside = true; break outer2; }
-                    }
-                }
-            }
-
-            // Only exit if our goal is actually outside
-            if (!goalIsOutside) {
-                return false; // Goal is inside, no need to exit
-            }
-
-            // CRITICAL FIX: If goal is unreachably HIGH above bot (>5 blocks up), it's unreachable.
-            // Only clear when goal.Y > bot.Y + 5 — don't clear when bot is on a hill ABOVE the goal.
-            int verticalDiff = currentGoal.getY() - blockPosition().getY();
-            if (verticalDiff > 5) {
-                System.out.println("[AMB] " + getName().getString() + " goal at " + currentGoal + " is " + verticalDiff + " blocks above - unreachable from interior, clearing goal");
-                currentGoal = BlockPos.ZERO; // Clear unreachable goal
-                return false;
-            }
+        // Trigger interior exit when indoors AND A* has been failing (goal unreachable from here).
+        // We do NOT check whether the goal is "outside" via canSeeSky because tree goals in
+        // dense forests have leaf canopy blocking sky even 12+ blocks above the log block.
+        // If A* can find an indoor path (e.g. to a crafting table), it succeeds and this block
+        // is never reached with aStarFailCount > 0, so indoor goals are naturally excluded.
+        if (!exitingInterior && !currentGoal.equals(BlockPos.ZERO) && aStarFailCount >= 2) {
 
             BlockPos door = findNearestDoor(12);
             if (door != null) {
