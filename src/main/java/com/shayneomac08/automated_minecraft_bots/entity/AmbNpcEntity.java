@@ -809,12 +809,13 @@ public class AmbNpcEntity extends FakePlayer {
 
             // Waypoint skip: if the bot has been close to (but unable to reach) the current waypoint
             // for WAYPOINT_STUCK_THRESHOLD ticks, skip it and continue with the next one.
-            // CRITICAL: Do NOT skip if the waypoint is significantly above the bot — the bot needs
-            // to climb up, not skip past ascending waypoints while stuck at the bottom of a pit.
+            // CRITICAL: Never skip uphill waypoints (wpVertDiff > 0). The bot must physically climb
+            // to each Y level before advancing. Skipping Y=74 while at Y=73 moves the index to Y=75
+            // which is 2 blocks up — unreachable with a single jump, causing a permanent freeze.
             double wpHorizDistSq = wpDx * wpDx + wpDz * wpDz;
             double wpVertDiff = waypoint.getY() - this.getY(); // positive = waypoint is above bot
-            boolean waypointReachableVertically = wpVertDiff <= 1.5; // only skip if same/lower level
-            if (wpHorizDistSq < 2.5 * 2.5 && waypointReachableVertically
+            boolean waypointSkippable = wpVertDiff <= 0.0; // only skip if waypoint is at same level or BELOW bot
+            if (wpHorizDistSq < 2.5 * 2.5 && waypointSkippable
                     && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
                 waypointStuckTicks++;
                 if (waypointStuckTicks >= WAYPOINT_STUCK_THRESHOLD) {
@@ -1471,7 +1472,8 @@ public class AmbNpcEntity extends FakePlayer {
 
         switch (currentTask) {
             case "gather_wood":
-                return state.is(BlockTags.LOGS);
+                // Logs are the primary target; leaves are cleared to reach logs (instant by hand)
+                return state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES);
             case "mine_stone":
                 return state.is(Blocks.STONE) || state.is(Blocks.COBBLESTONE) ||
                        state.is(Blocks.ANDESITE) || state.is(Blocks.DIORITE) || state.is(Blocks.GRANITE);
@@ -2647,8 +2649,10 @@ public class AmbNpcEntity extends FakePlayer {
      * Find mineable blocks nearby for the current task
      */
     private BlockPos findMineableNearby(BlockPos center, int radius, String task) {
-        BlockPos nearest = null;
-        double nearestDist = Double.MAX_VALUE;
+        BlockPos nearestLog = null;
+        double nearestLogDist = Double.MAX_VALUE;
+        BlockPos nearestLeaf = null;
+        double nearestLeafDist = Double.MAX_VALUE;
 
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dy = -2; dy <= 8; dy++) { // +8 to reach top of tallest trees (logs at center+7)
@@ -2656,18 +2660,18 @@ public class AmbNpcEntity extends FakePlayer {
                     BlockPos check = center.offset(dx, dy, dz);
                     BlockState state = level().getBlockState(check);
 
-                    if (shouldMineBlock(state)) {
-                        double dist = blockPosition().distSqr(check);
-                        if (dist < nearestDist) {
-                            nearestDist = dist;
-                            nearest = check;
-                        }
+                    if (!shouldMineBlock(state)) continue;
+                    double dist = blockPosition().distSqr(check);
+                    if (state.is(BlockTags.LOGS)) {
+                        if (dist < nearestLogDist) { nearestLogDist = dist; nearestLog = check; }
+                    } else if (state.is(BlockTags.LEAVES)) {
+                        if (dist < nearestLeafDist) { nearestLeafDist = dist; nearestLeaf = check; }
                     }
                 }
             }
         }
-
-        return nearest;
+        // Prefer logs. Fall back to clearing leaves only when no log is reachable nearby.
+        return nearestLog != null ? nearestLog : nearestLeaf;
     }
 
     // ==================== TICK - MAIN CONTROL LOOP ====================
