@@ -103,6 +103,7 @@ public class AmbNpcEntity extends FakePlayer {
     public int hunger = 20;
     public BlockPos baseLocation = BlockPos.ZERO;
     public BlockPos knownCraftingTable = BlockPos.ZERO;
+    private boolean craftingTableSelfPlaced = false; // true if this bot placed the table (so it can pick it up)
 
     // Legacy compatibility fields
     private boolean brainEnabled = true;
@@ -638,11 +639,12 @@ public class AmbNpcEntity extends FakePlayer {
             // Only act when we have an actual path — with an empty path, wpDY=0 is a
             // meaningless default (bot is just pressing against a wall waiting for A*).
             if (hCollTicks >= 2 && !currentPath.isEmpty()) {
-                if (wpDY <= 1) {
-                    // Obstacle is at most 1 block high — a jump will clear it
+                if (wpDY <= 2) {
+                    // Obstacle is at most 2 blocks high — a jump + step-up will clear it.
+                    // wpDY=2 is common on stairs; always try jumping before breaking anything.
                     shouldJump = true;
                 } else {
-                    // Too tall to jump: break the blocking blocks to create a path
+                    // 3+ blocks above: a jump won't reach — break the blocking block
                     tryBreakPathBlock(wpDY);
                 }
                 hCollTicks = 0;
@@ -651,12 +653,11 @@ public class AmbNpcEntity extends FakePlayer {
                 hCollTicks = 0;
             }
             // Condition C: no-progress fallback (wall without collision flag, e.g. fence post)
-            // Only jump if the waypoint is reachable by a single jump (≤1 block above).
             if (noProgressTicks >= 5 && !currentPath.isEmpty()) {
-                if (wpDY >= 0 && wpDY <= 1) {
+                if (wpDY >= 0 && wpDY <= 2) {
                     shouldJump = true;
-                } else if (wpDY > 1) {
-                    // Waypoint is multiple blocks above — break path blocks to climb
+                } else if (wpDY > 2) {
+                    // Waypoint is 3+ blocks above — break path blocks to climb
                     tryBreakPathBlock(wpDY);
                 }
                 noProgressTicks = 0;
@@ -1690,6 +1691,11 @@ public class AmbNpcEntity extends FakePlayer {
         // Simple starter tool progression at table (wood tier)
         if (!knownCraftingTable.equals(BlockPos.ZERO) && this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
             craftStarterToolsAtTable();
+            // If we self-placed this table and have no established base, pick it back up.
+            // A real player wouldn't leave a crafting table in the middle of a field.
+            if (craftingTableSelfPlaced && baseLocation.equals(BlockPos.ZERO)) {
+                pickUpCraftingTable();
+            }
         }
 
         // Furnace pipeline (basic): ensure, move to, smelt inputs, collect outputs
@@ -1737,6 +1743,7 @@ public class AmbNpcEntity extends FakePlayer {
                     if (removeItems(Blocks.CRAFTING_TABLE.asItem(), 1) == 1) {
                         level().setBlock(place, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
                         knownCraftingTable = place;
+                        craftingTableSelfPlaced = true; // remember we placed this so we can pick it up later
                         broadcastGroupChat("Placed a crafting table at " + place + ".");
                     }
                 }
@@ -1826,6 +1833,25 @@ public class AmbNpcEntity extends FakePlayer {
                 broadcastGroupChat("Crafted a wooden sword.");
             }
         }
+    }
+
+    /**
+     * Break the self-placed crafting table and let the dropped item be picked up.
+     * Only called when craftingTableSelfPlaced=true and no base is established.
+     */
+    private void pickUpCraftingTable() {
+        if (knownCraftingTable.equals(BlockPos.ZERO)) return;
+        if (!level().getBlockState(knownCraftingTable).is(Blocks.CRAFTING_TABLE)) {
+            knownCraftingTable = BlockPos.ZERO;
+            craftingTableSelfPlaced = false;
+            return;
+        }
+        // Break the block so it drops as an item; the item pickup loop will collect it next tick
+        level().destroyBlock(knownCraftingTable, true);
+        knownCraftingTable = BlockPos.ZERO;
+        craftingTableSelfPlaced = false;
+        broadcastGroupChat("Packed up my crafting table.");
+        System.out.println("[AMB] " + getName().getString() + " picked up crafting table");
     }
 
     // ==================== Furnace/Smoker/Blast management ====================
@@ -2522,27 +2548,19 @@ public class AmbNpcEntity extends FakePlayer {
                 System.out.println("[AMB] " + getName().getString() + " idling");
             }
             case "craft", "place_crafting_table" -> {
-                // Ensure a crafting table exists (find nearby, craft+place if needed)
-                // Pass hasActiveGoal=false so ensureCraftingTableAvailable will set currentGoal
+                // Ensure a crafting table exists (find nearby, or craft one from planks and place it)
                 ensureCraftingTableAvailable(false);
 
                 if (!knownCraftingTable.equals(BlockPos.ZERO)) {
-                    if (this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
-                        // Already at the table — craft tools immediately
-                        craftStarterToolsAtTable();
-                        // Stay near the table so repeated tick calls keep crafting
-                        currentGoal = knownCraftingTable;
-                        goalLockTimer = 200;
-                        System.out.println("[AMB] " + getName().getString() + " at crafting table " + knownCraftingTable + ", crafting tools");
-                    } else {
-                        // Navigate to the table
-                        currentGoal = knownCraftingTable;
-                        goalLockTimer = 400;
-                        currentPath.clear();
-                        pathIndex = 0;
-                        pathRetryTimer = 0;
-                        System.out.println("[AMB] " + getName().getString() + " navigating to crafting table at " + knownCraftingTable);
-                    }
+                    // Always navigate to the table — crafting only happens via the 100-tick timer
+                    // once the bot has physically walked there. This ensures the player can see the
+                    // bot walk up to the table before tools appear in inventory.
+                    currentGoal = knownCraftingTable;
+                    goalLockTimer = 400;
+                    currentPath.clear();
+                    pathIndex = 0;
+                    pathRetryTimer = 0;
+                    System.out.println("[AMB] " + getName().getString() + " navigating to crafting table at " + knownCraftingTable);
                 } else {
                     // No table and can't place one yet (not enough planks) — retry soon
                     currentGoal = BlockPos.ZERO;
