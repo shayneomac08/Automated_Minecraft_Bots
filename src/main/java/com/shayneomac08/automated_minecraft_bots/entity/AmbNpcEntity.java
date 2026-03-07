@@ -501,8 +501,21 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
 
-            // Choose waypoint (center of target if no path)
-            BlockPos waypoint = (!currentPath.isEmpty() && pathIndex < currentPath.size()) ? currentPath.get(pathIndex) : currentGoal;
+            // Choose waypoint. When A* returned a partial path, follow it.
+            // When path is completely empty (start enclosed, no partial either), do NOT fall
+            // back to direct movement toward the goal — that sends the bot into walls.
+            // Instead, stay still and wait for pathRetryTimer to expire.
+            if (currentPath.isEmpty()) {
+                // Apply gravity only — stay in place until pathRetryTimer fires.
+                // Direct movement toward the goal without a path walks the bot into walls.
+                double dy = getDeltaMovement().y;
+                move(MoverType.SELF, new Vec3(0, dy, 0));
+                double nextDY = onGround() ? -0.08 : Math.max(getDeltaMovement().y - 0.08, -3.5);
+                setDeltaMovement(0, nextDY, 0);
+                handleInteriorExitPlan();
+                return;
+            }
+            BlockPos waypoint = (pathIndex < currentPath.size()) ? currentPath.get(pathIndex) : currentGoal;
 
             // Determine sprint before movement so the correct speed is passed to moveTowards
             boolean shouldSprint = BotTicker.shouldSprint(this, currentGoal);
@@ -1113,12 +1126,28 @@ public class AmbNpcEntity extends FakePlayer {
         open.add(new Node(start, 0, heuristic(start, walkableGoal)));
         gScore.put(start, 0);
 
-        int maxNodes = 8000; // Increased for paths through structures and complex terrain
+        // Increase budget for complex terrain / structures requiring detour
+        int maxNodes = 16000;
         int expanded = 0;
+
+        // Best partial path tracking: record the explored node closest to the goal.
+        // When the full path cannot be found (obstacle, node budget exhausted),
+        // return the partial path to that node. The bot follows it toward the goal,
+        // then re-runs A* from the new position — same approach used by Baritone / Mineflayer.
+        BlockPos bestPartialNode = start;
+        int bestPartialH = heuristic(start, walkableGoal);
 
         while (!open.isEmpty() && expanded < maxNodes) {
             Node current = open.poll();
             expanded++;
+
+            // Track the closest-to-goal explored node for partial path fallback
+            int h = heuristic(current.pos, walkableGoal);
+            if (h < bestPartialH) {
+                bestPartialH = h;
+                bestPartialNode = current.pos;
+            }
+
             if (current.pos.equals(walkableGoal)) {
                 List<BlockPos> path = reconstructPath(cameFrom, current.pos);
                 System.out.println("[AMB-PATH] A* " + start + "→" + walkableGoal + ": " + path.size() + " nodes, walkable:" +
@@ -1146,7 +1175,20 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
-        // Path not found
+        // Full path not found — try partial path to best explored node so far.
+        // This ensures the bot always makes progress toward the goal even when the
+        // complete path can't be computed in one shot (large detour, complex terrain).
+        if (!bestPartialNode.equals(start)) {
+            List<BlockPos> partial = reconstructPath(cameFrom, bestPartialNode);
+            if (!partial.isEmpty()) {
+                System.out.println("[AMB-PATH] A* partial path (" + expanded + " nodes): "
+                    + partial.size() + " waypoints, reached " + bestPartialNode
+                    + " (heuristic " + bestPartialH + " from goal " + walkableGoal + ")");
+                return partial;
+            }
+        }
+
+        // Truly no path (start is enclosed or completely unreachable)
         double distance = Math.sqrt(start.distSqr(walkableGoal));
         if (distance > 32) {
             System.out.println("[AMB-PATH] A* failed: distance " + distance + " > 32, may need LLM replan");
