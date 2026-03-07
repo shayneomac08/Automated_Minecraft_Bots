@@ -2142,33 +2142,38 @@ public class AmbNpcEntity extends FakePlayer {
                     System.out.println("[AMB-DOOR] " + getName().getString() + " opening door at " + originalDoorPos);
                 }
 
-                // Determine travel direction: prefer using the goal position so we always exit
-                // toward our actual destination rather than relying on door-facing semantics.
+                // Determine which side of the door leads OUTSIDE using sky visibility.
+                // Goal-direction heuristic fails when the door is in a perpendicular wall:
+                // e.g. bot is inside hitting the south wall, goal is south, door is in the
+                // north wall — goal-direction says "go south" but south is deeper inside.
                 Direction facing = st.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).orElse(Direction.NORTH);
-                Vec3 doorCenterVec = Vec3.atCenterOf(originalDoorPos);
+                BlockPos sideA = originalDoorPos.relative(facing, 2);
+                BlockPos sideB = originalDoorPos.relative(facing.getOpposite(), 2);
+                boolean aOutside = level().canSeeSky(sideA) || level().canSeeSky(sideA.above());
+                boolean bOutside = level().canSeeSky(sideB) || level().canSeeSky(sideB.above());
                 Direction travelDir;
-                if (!preExitGoal.equals(BlockPos.ZERO)) {
-                    // Which side of the door is closer to the goal?
-                    Vec3 goalVec = Vec3.atCenterOf(preExitGoal).subtract(doorCenterVec);
+                if (aOutside && !bOutside) {
+                    travelDir = facing;
+                } else if (bOutside && !aOutside) {
+                    travelDir = facing.getOpposite();
+                } else {
+                    // Both/neither open sky (underground or open area): use goal direction
+                    Vec3 doorCenterVec = Vec3.atCenterOf(originalDoorPos);
+                    Vec3 goalVec = Vec3.atCenterOf(preExitGoal.equals(BlockPos.ZERO) ? blockPosition() : preExitGoal)
+                                     .subtract(doorCenterVec);
                     double dot = goalVec.x * facing.getStepX() + goalVec.z * facing.getStepZ();
                     travelDir = dot >= 0 ? facing : facing.getOpposite();
-                } else {
-                    // Fallback: the side of the door the bot is NOT on
-                    double dotWithFacing = (getX() - doorCenterVec.x) * facing.getStepX()
-                                         + (getZ() - doorCenterVec.z) * facing.getStepZ();
-                    travelDir = dotWithFacing <= 0 ? facing : facing.getOpposite();
                 }
                 doorTravelDir = travelDir;
 
-                // Exit target: 3 blocks beyond door, perfectly aligned with door center
-                // Do NOT use findNearestWalkable — it starts at radius=1 and can return an
-                // offset position that makes the bot walk into the adjacent wall.
-                BlockPos beyond = originalDoorPos.relative(travelDir, 3);
-                // If the floor level differs, scan up/down a couple blocks for walkable spot
-                // on the exact XZ of the door-aligned target.
+                // Exit target: 6 blocks beyond door (not 3) so bot clears the building's
+                // outer walls and lands in open air, not still inside an adjacent room.
+                // Aligned with door center XZ so the bot doesn't drift into wall blocks.
+                BlockPos beyond = originalDoorPos.relative(travelDir, 6);
+                // Scan up/down on the exact XZ for a walkable floor level.
                 BlockPos walkable = beyond;
                 if (level() instanceof ServerLevel sl) {
-                    for (int dy = 0; dy <= 2; dy++) {
+                    for (int dy = 0; dy <= 3; dy++) {
                         if (RealisticMovement.isWalkable(sl, beyond.above(dy))) { walkable = beyond.above(dy); break; }
                         if (dy > 0 && RealisticMovement.isWalkable(sl, beyond.below(dy))) { walkable = beyond.below(dy); break; }
                     }
@@ -2179,6 +2184,7 @@ public class AmbNpcEntity extends FakePlayer {
                 doorPhase = 2; // Move to phase 2: pass through
                 System.out.println("[AMB-DOOR] " + getName().getString()
                     + " traversal: door=" + originalDoorPos + " facing=" + facing
+                    + " sideA(facing)sky=" + aOutside + " sideB(opp)sky=" + bOutside
                     + " travelDir=" + travelDir + " target=" + walkable);
             }
         }
