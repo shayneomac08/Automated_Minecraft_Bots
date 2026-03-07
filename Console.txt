@@ -1,584 +1,363 @@
+[15:32:41] [Render thread/WARN] [minecraft/ClientPacketListener]: Server attempted to add player prior to sending player info (Player id edd6174d-f75c-40ed-b7b2-856cd6437d86)
+[15:32:41] [Render thread/WARN] [minecraft/ClientPacketListener]: Skipping Entity with id entity.minecraft.player
 [AMB] bot task set to: gather_wood for 3 minutes
 [AMB] bot spawned with player mindset: gather_wood (thinking: Need wood for tools and crafting)
-[15:00:01] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned bot (grok) - FakePlayer mode]
+[15:32:41] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned bot (grok) - FakePlayer mode]
 [AMB] Spawned FakePlayer bot: bot (LLM: grok)
-[15:00:01] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] I am now the EXPLORER of the tribe. Let's begin our journey.
-[15:00:01] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned bot (grok) - FakePlayer mode
-[15:00:01] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] I am now the EXPLORER of the tribe. Let's begin our journey.
-[15:00:03] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[15:00:03] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[15:00:03] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[15:00:03] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[15:32:41] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[15:32:41] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned bot (grok) - FakePlayer mode
+[15:32:41] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] I am now the BUILDER of the tribe. Let's begin our journey.
+[15:32:42] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] I am now the BUILDER of the tribe. Let's begin our journey.
+[15:32:43] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 1024 reached during a single frame. New capacity will be 2048.
 [AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=0, y=0, z=0}, currentTask=gather_wood
 [AMB-DEBUG] bot NOT in movement system - currentGoal is ZERO!
 [AMB-DEBUG] bot executeCurrentTask() called from no-goal branch
 [AMB-DEBUG] bot executeCurrentTask() called from line 875
 [AMB] bot executing task: gather_wood
 [AMB-TASK] bot using adjusted goal: BlockPos{x=-33, y=66, z=94}
-[AMB-TASK] bot found tree base at BlockPos{x=-33, y=66, z=94}, moving to walkable position BlockPos{x=-34, y=66, z=93} (distance: 24.20743687382041)
+[AMB-TASK] bot found tree base at BlockPos{x=-33, y=66, z=94}, moving to walkable position BlockPos{x=-34, y=66, z=93} (distance: 23.194827009486403)
 [AMB-DEBUG] bot AFTER executeCurrentTask(): currentGoal=BlockPos{x=-34, y=66, z=93}
-[AMB-PATH] A* BlockPos{x=-32, y=63, z=70}?BlockPos{x=-34, y=66, z=93}: 63 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-32, y=63, z=69} BlockPos{x=-32, y=63, z=68} BlockPos{x=-31, y=63, z=67} BlockPos{x=-31, y=63, z=66} BlockPos{x=-30, y=63, z=65}
-[AMB-DEBUG] bot computed A* path with 63 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=63, z=71}?BlockPos{x=-34, y=66, z=93}: 58 nodes, walkable:false, dy:0
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-33, y=63, z=70} BlockPos{x=-33, y=63, z=69} BlockPos{x=-32, y=63, z=68} BlockPos{x=-31, y=63, z=67} BlockPos{x=-31, y=63, z=66}
+[AMB-DEBUG] bot computed A* path with 58 waypoints
 [AMB-DOOR] bot proactively opened door at BlockPos{x=-31, y=63, z=66}
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.43
-[AMB-DIAG] bot pos=(-30.107,63.000,66.352) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
-[AMB] bot opening door at BlockPos{x=-30, y=63, z=66} due to collision
+[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.82
+[AMB-DIAG] bot pos=(-30.725,63.760,67.300) delta=(0.0000,0.2600,0.0000) hColl=true onGnd=false sprint=false
+[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
 [AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=8
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=63, z=65}, stillMoving=true, speed=0.28
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-26.857,62.938,65.547) blockPos=BlockPos{x=-27, y=62, z=65} dist=29.14 pathIdx=8/63 wp=BlockPos{x=-26, y=63, z=65})
-[AMB-DIAG] bot pos=(-26.857,62.938,65.547) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=2.04
-[AMB-DIAG] bot pos=(-22.190,63.957,65.700) delta=(0.0000,0.1800,0.0000) hColl=true onGnd=false sprint=false
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=5
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-31, y=63, z=65}, stillMoving=true, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-30.518,63.960,67.300) blockPos=BlockPos{x=-31, y=63, z=67} dist=26.34 pathIdx=5/58 wp=BlockPos{x=-31, y=63, z=65})
+[AMB-DIAG] bot pos=(-30.518,63.960,67.300) delta=(0.0000,-0.2400,0.0000) hColl=true onGnd=false sprint=false
+[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=2.14
+[AMB-DIAG] bot pos=(-30.512,63.000,65.736) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
 [AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=15
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-22, y=64, z=68}, stillMoving=false, speed=0.28
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-21.535,63.500,67.865) blockPos=BlockPos{x=-22, y=63, z=67} dist=28.79 pathIdx=15/63 wp=BlockPos{x=-22, y=64, z=68})
-[AMB-DIAG] bot pos=(-21.535,63.500,67.865) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.64
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=12
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-38, y=63, z=65}, stillMoving=true, speed=0.28
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-35.480,62.938,65.511) blockPos=BlockPos{x=-36, y=62, z=65} dist=28.35 pathIdx=12/58 wp=BlockPos{x=-38, y=63, z=65})
+[AMB-DIAG] bot pos=(-35.480,62.938,65.511) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
+[AMB-BREAK] bot clearing upward path block at BlockPos{x=-38, y=63, z=66} (hardness=0.3, cooldown=5)
+[15:32:52] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.pearlescent_froglight
+[15:32:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.pearlescent_froglight
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.61
+[AMB-DIAG] bot pos=(-38.353,63.500,65.913) delta=(0.0317,0.4200,0.1975) hColl=false onGnd=true sprint=true
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.52
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=18
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-39, y=68, z=70}, stillMoving=true, speed=0.28
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-38.492,66.700,68.830) blockPos=BlockPos{x=-39, y=66, z=68} dist=25.50 pathIdx=18/58 wp=BlockPos{x=-39, y=68, z=70})
+[AMB-DIAG] bot pos=(-38.492,66.700,68.830) delta=(0.0000,0.1000,0.0000) hColl=false onGnd=false sprint=true
 [AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.53
-[AMB-DIAG] bot pos=(-21.504,65.500,69.966) delta=(-0.0954,0.4200,0.1758) hColl=false onGnd=true sprint=true
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.54
+[AMB-DIAG] bot pos=(-38.500,68.620,71.200) delta=(0.0000,-0.2200,0.0000) hColl=true onGnd=false sprint=false
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.53
 [AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=21
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-22, y=70, z=74}, stillMoving=true, speed=0.28
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-21.500,68.700,72.803) blockPos=BlockPos{x=-22, y=68, z=72} dist=24.27 pathIdx=21/63 wp=BlockPos{x=-22, y=70, z=74})
-[AMB-DIAG] bot pos=(-21.500,68.700,72.803) delta=(0.0000,0.1000,0.0000) hColl=false onGnd=false sprint=true
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=22
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-39, y=72, z=74}, stillMoving=false, speed=0.28
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-38.500,71.500,73.978) blockPos=BlockPos{x=-39, y=71, z=73} dist=21.21 pathIdx=22/58 wp=BlockPos{x=-39, y=72, z=74})
+[AMB-DIAG] bot pos=(-38.500,71.500,73.978) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
 [AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.52
-[AMB-DIAG] bot pos=(-21.500,70.620,75.200) delta=(0.0000,-0.2200,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.52
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=25
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-24, y=73, z=77}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-21.700,72.000,77.028) blockPos=BlockPos{x=-22, y=72, z=77} dist=20.88 pathIdx=25/63 wp=BlockPos{x=-24, y=73, z=77})
-[AMB-DIAG] bot pos=(-21.700,72.000,77.028) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.82
-[AMB-DIAG] bot pos=(-23.301,73.000,80.431) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=35
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-24, y=73, z=87}, stillMoving=true, speed=0.28
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-23.492,73.000,86.058) blockPos=BlockPos{x=-24, y=73, z=86} dist=14.07 pathIdx=35/63 wp=BlockPos{x=-24, y=73, z=87})
-[AMB-DIAG] bot pos=(-23.492,73.000,86.058) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
-[AMB-DIAG] bot pos=(-23.716,73.000,91.616) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.81
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB-BREAK] bot clearing upward path block at BlockPos{x=-26, y=74, z=93} (hardness=2.0, cooldown=20)
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:00:19] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.dark_oak_log
-[15:00:19] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.dark_oak_log
-[AMB-BREAK] bot clearing upward path block at BlockPos{x=-26, y=75, z=93} (hardness=2.0, cooldown=20)
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:00:20] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.dark_oak_log
-[15:00:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.dark_oak_log
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:00:21] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
-[15:00:21] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
-[15:00:21] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[15:00:21] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:00:26] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
-[15:00:26] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
-[15:00:26] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[15:00:26] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:00:31] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
-[15:00:31] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:00:36] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
-[15:00:36] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:01:06] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[15:01:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[15:01:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:01:21] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: Set own game mode to Survival Mode]
-[15:01:21] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Set own game mode to Survival Mode
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:02:32] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.pearlescent_froglight
-[15:02:32] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.pearlescent_froglight
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:02:33] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.smoker
-[15:02:33] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.smoker
-[15:02:34] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.dark_oak_door
-[15:02:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.dark_oak_door
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:02:35] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.grass_block
-[15:02:35] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.grass_block
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:02:37] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.chiseled_stone_bricks
-[15:02:37] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.chiseled_stone_bricks
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:02:45] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.crafting_table
-[15:02:45] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.crafting_table
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:02:50] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[15:02:50] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
-[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=63, pathIndex=43
-[AMB-DEBUG] bot moving to waypoint BlockPos{x=-26, y=75, z=94}, stillMoving=true, speed=0.215
-[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-24.700,73.000,93.700) blockPos=BlockPos{x=-25, y=73, z=93} dist=11.40 pathIdx=43/63 wp=BlockPos{x=-26, y=75, z=94})
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-DIAG] bot pos=(-24.700,73.000,93.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[15:02:58] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: bot]
+[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.97
+[AMB-DIAG] bot pos=(-38.300,72.420,75.700) delta=(0.0000,0.3400,0.0000) hColl=true onGnd=false sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=30
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-38, y=73, z=82}, stillMoving=true, speed=0.28
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-37.547,73.000,80.875) blockPos=BlockPos{x=-38, y=73, z=80} dist=15.30 pathIdx=30/58 wp=BlockPos{x=-38, y=73, z=82})
+[AMB-DIAG] bot pos=(-37.547,73.000,80.875) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
+[AMB-DIAG] bot pos=(-37.300,72.320,85.971) delta=(0.0000,-0.2800,0.0000) hColl=true onGnd=false sprint=false
+[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.84
+[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.82
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=38
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-35, y=72, z=87}, stillMoving=true, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-36.300,72.760,87.284) blockPos=BlockPos{x=-37, y=72, z=87} dist=9.00 pathIdx=38/58 wp=BlockPos{x=-35, y=72, z=87})
+[AMB-DIAG] bot pos=(-36.300,72.760,87.284) delta=(0.0000,0.2600,0.0000) hColl=true onGnd=false sprint=false
+[AMB-DIAG] bot pos=(-33.775,71.000,90.423) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.51
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,71.120,92.056) blockPos=BlockPos{x=-33, y=71, z=92} dist=5.20 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,71.120,92.056) delta=(0.0000,-0.1600,0.0000) hColl=false onGnd=false sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[15:33:12] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: Set the time to 6000]
+[15:33:12] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Set the time to 6000
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,70.000,92.056) blockPos=BlockPos{x=-33, y=70, z=92} dist=4.24 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,70.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-34, y=66, z=93}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-34, y=66, z=93}, pathSize=58, pathIndex=47
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=72, z=92}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-34, y=66, z=93} (pos=(-32.759,69.000,92.056) blockPos=BlockPos{x=-33, y=69, z=92} dist=3.32 pathIdx=47/58 wp=BlockPos{x=-33, y=72, z=92})
+[AMB-DIAG] bot pos=(-32.759,69.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-32.759,69.000,92.056) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-33, y=68, z=94}
+[AMB-PATH] A* BlockPos{x=-33, y=68, z=92}?BlockPos{x=-32, y=68, z=94}: 5 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-33, y=67, z=93} BlockPos{x=-33, y=68, z=93} BlockPos{x=-33, y=69, z=93} BlockPos{x=-32, y=69, z=93} BlockPos{x=-32, y=68, z=94}
+[AMB-DEBUG] bot computed A* path with 5 waypoints
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=68, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-33, y=68, z=94}, pathSize=5, pathIndex=1
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-33, y=68, z=93}, stillMoving=false, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-33, y=68, z=94} (pos=(-32.608,67.000,92.904) blockPos=BlockPos{x=-33, y=67, z=92} dist=2.24 pathIdx=1/5 wp=BlockPos{x=-33, y=68, z=93})
+[AMB-DIAG] bot pos=(-32.608,67.000,92.904) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.61
+[AMB-DEBUG] bot executeCurrentTask() called from line 890
+[AMB] bot executing task: gather_wood
+[AMB-TASK] bot using adjusted goal: BlockPos{x=-33, y=66, z=94}
+[AMB-TASK] bot near tree, setting goal to eye-height log at BlockPos{x=-33, y=67, z=94} for mining
+[15:33:28] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.dark_oak_log
+[15:33:28] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.dark_oak_log
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-JUMP] bot jump: hColl=false waypointDY=0 horizDist=0.61
+[AMB-DIAG] bot pos=(-32.608,67.000,92.904) delta=(0.0000,0.4200,0.0000) hColl=false onGnd=true sprint=false
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=68, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=68, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=68, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=68, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=68, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=68, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-33, y=67, z=93}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-33, y=67, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-DEBUG] bot executeCurrentTask() called from line 890
+[AMB] bot executing task: gather_wood
+[AMB-TASK] bot using adjusted goal: BlockPos{x=-32, y=67, z=95}
+[AMB-TASK] bot near tree, setting goal to eye-height log at BlockPos{x=-31, y=68, z=94} for mining
+[15:33:29] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.dark_oak_log
+[15:33:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.dark_oak_log
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=92}?BlockPos{x=-30, y=68, z=94}: 17 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-33, y=67, z=93} BlockPos{x=-33, y=67, z=94} BlockPos{x=-32, y=68, z=94} BlockPos{x=-32, y=69, z=93} BlockPos{x=-31, y=69, z=93}
+[AMB-DEBUG] bot computed A* path with 17 waypoints
+[AMB-JUMP] bot jump: hColl=false waypointDY=0 horizDist=0.61
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-31, y=68, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-31, y=68, z=94}, pathSize=17, pathIndex=2
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-32, y=68, z=94}, stillMoving=true, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-31, y=68, z=94} (pos=(-32.300,67.000,93.625) blockPos=BlockPos{x=-33, y=67, z=93} dist=2.45 pathIdx=2/17 wp=BlockPos{x=-32, y=68, z=94})
+[AMB-DIAG] bot pos=(-32.300,67.000,93.625) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
+[AMB-DIAG] bot pos=(-32.300,67.000,94.498) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DEBUG] bot executeCurrentTask() called from line 890
+[AMB] bot executing task: gather_wood
+[AMB-TASK] bot using adjusted goal: BlockPos{x=-32, y=67, z=95}
+[AMB-TASK] bot near tree, setting goal to eye-height log at BlockPos{x=-32, y=68, z=95} for mining
+[15:33:30] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.dark_oak_log
+[15:33:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.dark_oak_log
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=94}?BlockPos{x=-32, y=68, z=94}: 1 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-32, y=68, z=94}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-32, y=68, z=95}, currentTask=gather_wood
+[AMB-DEBUG] bot in movement system, goal=BlockPos{x=-32, y=68, z=95}, pathSize=1, pathIndex=0
+[AMB-DEBUG] bot moving to waypoint BlockPos{x=-32, y=68, z=94}, stillMoving=true, speed=0.215
+[AMB] bot moving to goal BlockPos{x=-32, y=68, z=95} (pos=(-32.300,67.000,94.500) blockPos=BlockPos{x=-33, y=67, z=94} dist=1.73 pathIdx=0/1 wp=BlockPos{x=-32, y=68, z=94})
+[AMB-DIAG] bot pos=(-32.300,67.000,94.500) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DEBUG] bot executeCurrentTask() called from line 890
+[AMB] bot executing task: gather_wood
+[AMB-TASK] bot using adjusted goal: BlockPos{x=-32, y=67, z=95}
+[AMB-TASK] bot near tree, setting goal to eye-height log at BlockPos{x=-32, y=67, z=95} for mining
+[15:33:31] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.dark_oak_log
+[15:33:31] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
+[15:33:31] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
+[15:33:31] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.dark_oak_log
+[15:33:31] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
+[15:33:31] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=94}?BlockPos{x=-34, y=66, z=93}: 2 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=67, z=93} BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 2 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=94}?BlockPos{x=-34, y=66, z=93}: 2 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=67, z=93} BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 2 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=94}?BlockPos{x=-34, y=66, z=93}: 2 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=67, z=93} BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 2 waypoints
+[AMB-PATH] A* BlockPos{x=-33, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-34, y=66, z=93}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=66, z=93}
+[AMB-DEBUG] bot computed A* path with 1 waypoints
+[AMB-DIAG] bot pos=(-33.051,67.000,93.807) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DEBUG] bot executeCurrentTask() called from line 890
+[AMB] bot executing task: gather_wood
+[AMB-TASK] bot using adjusted goal: BlockPos{x=-32, y=67, z=96}
+[AMB-TASK] bot near tree, setting goal to eye-height log at BlockPos{x=-33, y=69, z=94} for mining
+[15:33:32] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Picked up 1 block.minecraft.dark_oak_log
+[15:33:32] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Picked up 1 block.minecraft.dark_oak_log
+[AMB-PATH] A* BlockPos{x=-34, y=67, z=93}?BlockPos{x=-33, y=67, z=94}: 2 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=67, z=93} BlockPos{x=-33, y=67, z=94}
+[AMB-DEBUG] bot computed A* path with 2 waypoints
+[AMB-PILLAR] bot entering pillar mode target=BlockPos{x=-33, y=69, z=94} baseY=67
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[15:34:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
+[15:34:04] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[AMB-DEBUG] bot AT START OF TICK: exitingNow=false, currentGoal=BlockPos{x=-33, y=69, z=94}, currentTask=gather_wood
+[15:34:14] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: bot]
 [AMB] Bot removed: bot
-[15:02:58] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: bot
+[15:34:14] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: bot

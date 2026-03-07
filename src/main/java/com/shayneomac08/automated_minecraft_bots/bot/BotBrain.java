@@ -358,6 +358,7 @@ public final class BotBrain {
                         "• mine_coal, mine_iron, mine_copper, mine_gold, mine_diamond, mine_emerald - Mine specific ores\n" +
                         "• gather_sand, gather_gravel, gather_clay - Gather specific materials\n\n" +
                         "CRAFTING & PROCESSING:\n" +
+                        "• craft - Walk to crafting table and craft tools/weapons (table must exist or be placed first)\n" +
                         "• smelt - Smelt ores in furnace (requires furnace, fuel, ores)\n" +
                         "• trade - Trade with villagers (requires emeralds/items)\n\n" +
                         "COOPERATION & SHARING:\n" +

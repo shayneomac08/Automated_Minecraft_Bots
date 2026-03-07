@@ -950,12 +950,16 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
-        // Lightweight auto-crafting for basics: planks and sticks
+        // Lightweight auto-crafting for basics: planks and sticks (2x2 inventory recipes — always valid)
         if (tickCount % 100 == 0) {
             tryAutoCraftBasics();
-            // Only run station management if not currently exiting and has no active goal
-            // (handleInteriorExitPlan already runs every tick at the top of the loop)
-            if (!exitingNow && !escapeHelper.isActive()) {
+            // Station management (table placement, tool crafting) ONLY during craft tasks.
+            // Running this during gather_wood/mine_stone sets knownCraftingTable as currentGoal on
+            // the brief zero-goal tick between log harvests, hijacking the gathering task.
+            // 3x3 tool recipes require a crafting table — enforce that rule here by only running
+            // station logic when the task explicitly calls for it.
+            if (!exitingNow && !escapeHelper.isActive()
+                    && ("craft".equals(currentTask) || "place_crafting_table".equals(currentTask))) {
                 manageStationsAndCrafting();
             }
         }
@@ -2516,6 +2520,35 @@ public class AmbNpcEntity extends FakePlayer {
                 currentGoal = BlockPos.ZERO;
                 goalLockTimer = 100;
                 System.out.println("[AMB] " + getName().getString() + " idling");
+            }
+            case "craft", "place_crafting_table" -> {
+                // Ensure a crafting table exists (find nearby, craft+place if needed)
+                // Pass hasActiveGoal=false so ensureCraftingTableAvailable will set currentGoal
+                ensureCraftingTableAvailable(false);
+
+                if (!knownCraftingTable.equals(BlockPos.ZERO)) {
+                    if (this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
+                        // Already at the table — craft tools immediately
+                        craftStarterToolsAtTable();
+                        // Stay near the table so repeated tick calls keep crafting
+                        currentGoal = knownCraftingTable;
+                        goalLockTimer = 200;
+                        System.out.println("[AMB] " + getName().getString() + " at crafting table " + knownCraftingTable + ", crafting tools");
+                    } else {
+                        // Navigate to the table
+                        currentGoal = knownCraftingTable;
+                        goalLockTimer = 400;
+                        currentPath.clear();
+                        pathIndex = 0;
+                        pathRetryTimer = 0;
+                        System.out.println("[AMB] " + getName().getString() + " navigating to crafting table at " + knownCraftingTable);
+                    }
+                } else {
+                    // No table and can't place one yet (not enough planks) — retry soon
+                    currentGoal = BlockPos.ZERO;
+                    goalLockTimer = 60;
+                    System.out.println("[AMB] " + getName().getString() + " no crafting table available yet, need more planks");
+                }
             }
             default -> {
                 // Unknown task - wander
