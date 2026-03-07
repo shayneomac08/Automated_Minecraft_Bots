@@ -37,8 +37,10 @@ public class RealisticMovement {
         boolean targetIsDoor = targetBlock.getBlock() instanceof net.minecraft.world.level.block.DoorBlock ||
                               targetBlock.getBlock() instanceof net.minecraft.world.level.block.FenceGateBlock;
 
-        // Use normal threshold - door handling will set goal beyond the door
-        double reachedThreshold = 1.5;
+        // Tight threshold so the bot physically reaches waypoints rather than "coasting" through them.
+        // 1.5 was too large: a waypoint 1.46 blocks away was considered reached without moving there,
+        // causing ascending path waypoints (same XZ, different Y) to all be skipped in sequence.
+        double reachedThreshold = 0.7;
 
         // Reached destination horizontally — still apply vertical physics so bot falls if airborne
         if (horizontalDist < reachedThreshold) {

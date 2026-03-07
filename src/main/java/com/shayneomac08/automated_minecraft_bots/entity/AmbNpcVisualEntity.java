@@ -89,4 +89,16 @@ public class AmbNpcVisualEntity extends PathfinderMob {
     public float getSoundVolume() {
         return 0.0F;
     }
+
+    /**
+     * When the visual entity dies (drowning, mob attack, etc.), also kill the logic entity.
+     * This ensures respawn triggers correctly since the respawn system is on AmbNpcEntity.die().
+     */
+    @Override
+    public void die(net.minecraft.world.damagesource.DamageSource cause) {
+        super.die(cause);
+        if (logicEntity != null && logicEntity.isAlive()) {
+            logicEntity.die(cause);
+        }
+    }
 }

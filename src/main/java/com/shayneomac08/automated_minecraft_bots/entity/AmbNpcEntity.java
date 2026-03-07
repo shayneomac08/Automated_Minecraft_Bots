@@ -135,6 +135,7 @@ public class AmbNpcEntity extends FakePlayer {
     private BlockPos doorPos = BlockPos.ZERO;
     private int doorPhase = 0; // 0=none,1=approach,2=pass through,3=verify passage,4=post-exit check
     private BlockPos originalDoorPos = BlockPos.ZERO; // Store original door position
+    private Direction doorTravelDir = Direction.NORTH; // Direction bot should move to exit through door
     private int doorTimer = 0;
     private int exitCooldown = 0; // Cooldown after exiting to prevent re-triggering
     private int doorIgnoreTicks = 0; // Ticks to ignore door for pathfinding after exit
@@ -466,6 +467,12 @@ public class AmbNpcEntity extends FakePlayer {
                     pathRetryTimer = 60;
                     aStarFailCount++;
                     System.out.println("[AMB-DEBUG] " + getName().getString() + " A* failed (attempt " + aStarFailCount + ") for goal " + currentGoal);
+                    // On 2nd failure: immediately try door rescue (wall between bot and goal)
+                    if (aStarFailCount == 2 && !doorRescueActive && doorPhase == 0 && doorIgnoreTicks == 0) {
+                        if (attemptDoorRescue()) {
+                            System.out.println("[AMB-NAV] " + getName().getString() + " A* blocked — door rescue initiated toward " + doorPos);
+                        }
+                    }
                     if (aStarFailCount >= 5) {
                         // Goal is genuinely unreachable — abandon it and pick a new one
                         System.out.println("[AMB-NAV] " + getName().getString() + " abandoning unreachable goal " + currentGoal + " after " + aStarFailCount + " A* failures");
@@ -506,7 +513,12 @@ public class AmbNpcEntity extends FakePlayer {
 
             // If in door handling, bias toward door first
             if (doorPhase > 0 && !doorPos.equals(BlockPos.ZERO)) {
-                stillMoving = RealisticMovement.moveTowards(this, doorPos, speed);
+                // Phase 2 uses alignment-aware movement inside handleDoorPlan — skip moveTowards
+                if (doorPhase == 2) {
+                    stillMoving = true;
+                } else {
+                    stillMoving = RealisticMovement.moveTowards(this, doorPos, speed);
+                }
                 handleDoorPlan();
                 if (tickCount % 40 == 0) {
                     System.out.println("[AMB-DEBUG] " + getName().getString() + " moving to door at " + doorPos + ", stillMoving=" + stillMoving);
@@ -752,8 +764,13 @@ public class AmbNpcEntity extends FakePlayer {
 
             // Waypoint skip: if the bot has been close to (but unable to reach) the current waypoint
             // for WAYPOINT_STUCK_THRESHOLD ticks, skip it and continue with the next one.
+            // CRITICAL: Do NOT skip if the waypoint is significantly above the bot — the bot needs
+            // to climb up, not skip past ascending waypoints while stuck at the bottom of a pit.
             double wpHorizDistSq = wpDx * wpDx + wpDz * wpDz;
-            if (wpHorizDistSq < 2.5 * 2.5 && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
+            double wpVertDiff = waypoint.getY() - this.getY(); // positive = waypoint is above bot
+            boolean waypointReachableVertically = wpVertDiff <= 1.5; // only skip if same/lower level
+            if (wpHorizDistSq < 2.5 * 2.5 && waypointReachableVertically
+                    && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
                 waypointStuckTicks++;
                 if (waypointStuckTicks >= WAYPOINT_STUCK_THRESHOLD) {
                     System.out.println("[AMB-SKIP] " + getName().getString()
@@ -1096,7 +1113,7 @@ public class AmbNpcEntity extends FakePlayer {
         open.add(new Node(start, 0, heuristic(start, walkableGoal)));
         gScore.put(start, 0);
 
-        int maxNodes = 2500; // Enough for ~30-block paths through complex terrain
+        int maxNodes = 8000; // Increased for paths through structures and complex terrain
         int expanded = 0;
 
         while (!open.isEmpty() && expanded < maxNodes) {
@@ -2125,55 +2142,90 @@ public class AmbNpcEntity extends FakePlayer {
                     System.out.println("[AMB-DOOR] " + getName().getString() + " opening door at " + originalDoorPos);
                 }
 
-                // Determine which side of the door the bot is on, then walk through to the FAR side.
-                // Bug 3: the old code always went in the FACING direction regardless of bot position,
-                // sending the bot into the wall when it was already on the facing side of the door.
+                // Determine travel direction: prefer using the goal position so we always exit
+                // toward our actual destination rather than relying on door-facing semantics.
                 Direction facing = st.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).orElse(Direction.NORTH);
-                Vec3 doorCenter = Vec3.atCenterOf(originalDoorPos);
-                // dot > 0 → bot is on the FACING side of the door → must travel OPPOSITE to exit
-                double dotWithFacing = (getX() - doorCenter.x) * facing.getStepX()
-                                     + (getZ() - doorCenter.z) * facing.getStepZ();
-                Direction travelDir = dotWithFacing <= 0 ? facing : facing.getOpposite();
+                Vec3 doorCenterVec = Vec3.atCenterOf(originalDoorPos);
+                Direction travelDir;
+                if (!preExitGoal.equals(BlockPos.ZERO)) {
+                    // Which side of the door is closer to the goal?
+                    Vec3 goalVec = Vec3.atCenterOf(preExitGoal).subtract(doorCenterVec);
+                    double dot = goalVec.x * facing.getStepX() + goalVec.z * facing.getStepZ();
+                    travelDir = dot >= 0 ? facing : facing.getOpposite();
+                } else {
+                    // Fallback: the side of the door the bot is NOT on
+                    double dotWithFacing = (getX() - doorCenterVec.x) * facing.getStepX()
+                                         + (getZ() - doorCenterVec.z) * facing.getStepZ();
+                    travelDir = dotWithFacing <= 0 ? facing : facing.getOpposite();
+                }
+                doorTravelDir = travelDir;
 
+                // Exit target: 3 blocks beyond door, perfectly aligned with door center
+                // Do NOT use findNearestWalkable — it starts at radius=1 and can return an
+                // offset position that makes the bot walk into the adjacent wall.
                 BlockPos beyond = originalDoorPos.relative(travelDir, 3);
-                BlockPos walkable = RealisticMovement.findNearestWalkable((ServerLevel) level(), beyond, blockPosition());
+                // If the floor level differs, scan up/down a couple blocks for walkable spot
+                // on the exact XZ of the door-aligned target.
+                BlockPos walkable = beyond;
+                if (level() instanceof ServerLevel sl) {
+                    for (int dy = 0; dy <= 2; dy++) {
+                        if (RealisticMovement.isWalkable(sl, beyond.above(dy))) { walkable = beyond.above(dy); break; }
+                        if (dy > 0 && RealisticMovement.isWalkable(sl, beyond.below(dy))) { walkable = beyond.below(dy); break; }
+                    }
+                }
 
                 // Update the doorPos to be the target beyond the door
                 doorPos = walkable;
                 doorPhase = 2; // Move to phase 2: pass through
                 System.out.println("[AMB-DOOR] " + getName().getString()
                     + " traversal: door=" + originalDoorPos + " facing=" + facing
-                    + " botDot=" + String.format("%.2f", dotWithFacing)
                     + " travelDir=" + travelDir + " target=" + walkable);
             }
         }
 
-        // Phase 2: Pass through the door
+        // Phase 2: Pass through the door with lateral alignment correction
         if (doorPhase == 2) {
-            // Bug 2: force both door halves open every tick so collision doesn't block movement
+            // Force both door halves open every tick so collision doesn't block movement
             if (level() instanceof ServerLevel sl) {
                 forceDoorOpen(sl, originalDoorPos);
                 forceDoorOpen(sl, originalDoorPos.above());
             }
 
-            // Bug 2: apply direct forward movement toward exit target (bypasses collision with door)
-            Vec3 toTarget = Vec3.atBottomCenterOf(doorPos).subtract(position());
-            double hDist = Math.sqrt(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
-            if (hDist > 0.01) {
-                float yaw = (float)(Math.atan2(toTarget.z, toTarget.x) * 180.0 / Math.PI) - 90.0f;
-                setYRot(yaw);
-                setYHeadRot(yaw);
-                yBodyRot = yaw;
-                setXRot(0.0f);
-                float spd = 0.13f;
-                Vec3 movement = new Vec3((toTarget.x / hDist) * spd, getDeltaMovement().y, (toTarget.z / hDist) * spd);
-                move(MoverType.SELF, movement);
-                setDeltaMovement(0, getDeltaMovement().y * 0.98, 0);
+            // Move forward in doorTravelDir while correcting lateral drift toward door center.
+            // Naive direct-to-target movement is diagonal and collides with the wall beside the door.
+            // Instead: pure forward component + small perpendicular snap to door center XZ.
+            float spd = 0.13f;
+            double fwdX = doorTravelDir.getStepX() * spd;
+            double fwdZ = doorTravelDir.getStepZ() * spd;
+
+            // Perpendicular correction: snap bot to door center on the axis orthogonal to travel
+            Vec3 doorCenterVec = Vec3.atCenterOf(originalDoorPos);
+            double perpCorrection;
+            double latX = 0, latZ = 0;
+            if (doorTravelDir.getAxis() == Direction.Axis.X) {
+                // Traveling East/West — correct Z toward door center Z
+                perpCorrection = (doorCenterVec.z - getZ()) * 0.5;
+                perpCorrection = Math.max(-0.12, Math.min(0.12, perpCorrection));
+                latZ = perpCorrection;
+            } else {
+                // Traveling North/South — correct X toward door center X
+                perpCorrection = (doorCenterVec.x - getX()) * 0.5;
+                perpCorrection = Math.max(-0.12, Math.min(0.12, perpCorrection));
+                latX = perpCorrection;
             }
+
+            float yaw = (float)(Math.atan2(fwdZ, fwdX) * 180.0 / Math.PI) - 90.0f;
+            setYRot(yaw);
+            setYHeadRot(yaw);
+            yBodyRot = yaw;
+            setXRot(0.0f);
+
+            Vec3 movement = new Vec3(fwdX + latX, getDeltaMovement().y, fwdZ + latZ);
+            move(MoverType.SELF, movement);
+            setDeltaMovement(0, getDeltaMovement().y * 0.98, 0);
 
             // Check if we've reached the position beyond the door
             if (this.position().distanceToSqr(Vec3.atBottomCenterOf(doorPos)) < 2.5 * 2.5) {
-                // Move to phase 3: verify passage
                 doorPhase = 3;
                 System.out.println("[AMB-DOOR] " + getName().getString() + " reached beyond door, verifying passage");
             }
