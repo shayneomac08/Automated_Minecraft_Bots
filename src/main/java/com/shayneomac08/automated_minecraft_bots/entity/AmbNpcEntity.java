@@ -909,43 +909,28 @@ public class AmbNpcEntity extends FakePlayer {
         }
         if (messageCooldown > 0) messageCooldown--;
 
-        // REAL PICKUP (auto-collect nearby item drops like a player)
-        if (tickCount % 5 == 0) {
-            for (ItemEntity item : level().getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(2.5))) {
-                if (!item.isRemoved() && !item.getItem().isEmpty()) {
-                    ItemStack stack = item.getItem();
-                    Item dropped = stack.getItem();
-                    int before = countItemInInventory(dropped);
-                    int itemId = item.getId();
-
-                    // Manually transfer items into bot inventory (avoid default playerTouch animation)
-                    ItemStack toAdd = stack.copy();
-                    addToInventory(toAdd);
-                    int after = countItemInInventory(dropped);
-                    int grabbed = Math.max(0, after - before);
-                    if (grabbed > 0) {
-                        // Reduce or discard ground stack accordingly
-                        int remaining = stack.getCount() - grabbed;
-                        if (remaining <= 0) {
-                            item.discard();
-                        } else {
-                            stack.shrink(grabbed);
-                            item.setItem(stack);
-                        }
-
-                        broadcastGroupChat("Picked up " + grabbed + " " + dropped.getDescriptionId());
-
-                        // Unlock recipes associated with newly obtained item, like a real player
-                        unlockRecipesForItem(dropped);
-
-                        // Send pickup animation towards the visual entity
-                        int collectorId = (visualEntity != null) ? visualEntity.getId() : this.getId();
-                        if (!level().isClientSide()) {
-                            ClientboundTakeItemEntityPacket pkt = new ClientboundTakeItemEntityPacket(itemId, collectorId, grabbed);
-                            for (ServerPlayer sp : ((ServerLevel) level()).players()) {
-                                sp.connection.send(pkt);
-                            }
-                        }
+        // ITEM PICKUP — every tick, guarded by hasPickUpDelay() (same as vanilla players).
+        // Uses getInventory().add() which modifies the stack in-place, handling partial stacks
+        // correctly without needing a before/after count comparison.
+        if (!level().isClientSide()) {
+            for (ItemEntity itemEntity : level().getEntitiesOfClass(ItemEntity.class,
+                    getBoundingBox().inflate(3.0, 3.0, 3.0))) {
+                if (itemEntity.isRemoved() || itemEntity.getItem().isEmpty() || itemEntity.hasPickUpDelay()) continue;
+                ItemStack stack = itemEntity.getItem();
+                int countBefore = stack.getCount();
+                if (getInventory().add(stack)) {
+                    int grabbed = countBefore - stack.getCount();
+                    // Unlock crafting recipes for newly collected item types
+                    unlockRecipesForItem(stack.getItem());
+                    // Send pickup animation — routed to the visual entity so players see the right mob pick it up
+                    int collectorId = (visualEntity != null) ? visualEntity.getId() : getId();
+                    ClientboundTakeItemEntityPacket pkt = new ClientboundTakeItemEntityPacket(
+                            itemEntity.getId(), collectorId, grabbed);
+                    for (ServerPlayer sp : ((ServerLevel) level()).players()) {
+                        sp.connection.send(pkt);
+                    }
+                    if (stack.isEmpty()) {
+                        itemEntity.discard();
                     }
                 }
             }
@@ -1422,7 +1407,9 @@ public class AmbNpcEntity extends FakePlayer {
     /**
      * Returns true if the block can serve as a walkable floor (bot can stand on top of it).
      * canOcclude() is false for stairs/slabs/etc. but they are perfectly walkable surfaces.
+     * isSolid() is deprecated in 1.21 but has no single-argument replacement; suppress the warning.
      */
+    @SuppressWarnings("deprecation")
     private boolean isWalkableFloor(BlockState state) {
         if (state.isAir()) return false;
         if (state.getBlock() instanceof DoorBlock) return false;

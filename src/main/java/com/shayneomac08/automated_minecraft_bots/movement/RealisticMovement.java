@@ -318,7 +318,9 @@ public class RealisticMovement {
     /**
      * Returns true if the block state can serve as a walkable floor.
      * canOcclude() is false for stairs/slabs but they fully support standing.
+     * isSolid() is deprecated in 1.21 but has no single-argument replacement; suppress the warning.
      */
+    @SuppressWarnings("deprecation")
     private static boolean isWalkableFloor(BlockState state) {
         if (state.isAir()) return false;
         if (state.getBlock() instanceof DoorBlock) return false;
