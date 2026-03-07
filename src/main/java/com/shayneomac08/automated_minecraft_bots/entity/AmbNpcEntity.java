@@ -113,6 +113,8 @@ public class AmbNpcEntity extends FakePlayer {
     private BlockPos currentGoal = BlockPos.ZERO;
     private int goalLockTimer = 0;
     private int pathRetryTimer = 0; // Ticks to wait before retrying a failed A* computation
+    private int aStarFailCount = 0;  // Consecutive A* failures — abandon goal after threshold
+    private BlockPos lastAStarGoal = BlockPos.ZERO; // Track goal changes to reset fail counter
     private BlockPos currentBreakingBlock = BlockPos.ZERO;
     private int messageCooldown = 0;
     private int spawnIdleTimer = 100;
@@ -448,12 +450,32 @@ public class AmbNpcEntity extends FakePlayer {
             boolean needNewPath = (currentPath.isEmpty() && pathRetryTimer == 0)
                     || (!currentPath.isEmpty() && pathIndex >= currentPath.size())
                     || stuckTimer > 20;
+            // Reset fail counter when goal changes externally (interior exit, task switch, etc.)
+            if (!currentGoal.equals(lastAStarGoal)) {
+                aStarFailCount = 0;
+                lastAStarGoal = currentGoal;
+            }
+
             if (needNewPath) {
                 currentPath = computeAStarPath(blockPosition(), currentGoal);
                 pathIndex = 0;
-                // On failure, wait 3 seconds (60 ticks) before trying again
-                pathRetryTimer = currentPath.isEmpty() ? 60 : 0;
-                if (tickCount % 40 == 0 || needNewPath) {
+                if (currentPath.isEmpty()) {
+                    // On failure, wait 3 seconds before retrying
+                    pathRetryTimer = 60;
+                    aStarFailCount++;
+                    System.out.println("[AMB-DEBUG] " + getName().getString() + " A* failed (attempt " + aStarFailCount + ") for goal " + currentGoal);
+                    if (aStarFailCount >= 5) {
+                        // Goal is genuinely unreachable — abandon it and pick a new one
+                        System.out.println("[AMB-NAV] " + getName().getString() + " abandoning unreachable goal " + currentGoal + " after " + aStarFailCount + " A* failures");
+                        currentGoal = BlockPos.ZERO;
+                        currentPath.clear();
+                        aStarFailCount = 0;
+                        executeCurrentTask();
+                        return;
+                    }
+                } else {
+                    pathRetryTimer = 0;
+                    aStarFailCount = 0;
                     System.out.println("[AMB-DEBUG] " + getName().getString() + " computed A* path with " + currentPath.size() + " waypoints");
                 }
             }
@@ -558,7 +580,9 @@ public class AmbNpcEntity extends FakePlayer {
             boolean shouldJump = false;
 
             // Condition B: pressed against a wall for 2+ ticks (horizontalCollision on ground)
-            if (hCollTicks >= 2) {
+            // Only act when we have an actual path — with an empty path, wpDY=0 is a
+            // meaningless default (bot is just pressing against a wall waiting for A*).
+            if (hCollTicks >= 2 && !currentPath.isEmpty()) {
                 if (wpDY <= 1) {
                     // Obstacle is at most 1 block high — a jump will clear it
                     shouldJump = true;
@@ -567,10 +591,13 @@ public class AmbNpcEntity extends FakePlayer {
                     tryBreakPathBlock(wpDY);
                 }
                 hCollTicks = 0;
+            } else if (hCollTicks >= 2) {
+                // Path is empty (A* failed); don't jump — just reset the counter
+                hCollTicks = 0;
             }
             // Condition C: no-progress fallback (wall without collision flag, e.g. fence post)
             // Only jump if the waypoint is reachable by a single jump (≤1 block above).
-            if (noProgressTicks >= 5) {
+            if (noProgressTicks >= 5 && !currentPath.isEmpty()) {
                 if (wpDY >= 0 && wpDY <= 1) {
                     shouldJump = true;
                 } else if (wpDY > 1) {
@@ -578,6 +605,8 @@ public class AmbNpcEntity extends FakePlayer {
                     tryBreakPathBlock(wpDY);
                 }
                 noProgressTicks = 0;
+            } else if (noProgressTicks >= 5) {
+                noProgressTicks = 0; // Reset even with empty path to prevent stale counter
             }
 
             if (shouldJump && jumpCooldown == 0) {
@@ -877,13 +906,8 @@ public class AmbNpcEntity extends FakePlayer {
             return false; // Don't check interior while on cooldown
         }
 
-        // IMPROVED: Only check for interior if we have a task that requires being outside
-        // Don't constantly try to exit if we're supposed to be inside
-        boolean shouldCheckInterior = currentTask != null &&
-            (currentTask.equals("gather_wood") || currentTask.equals("mine_stone") ||
-             currentTask.equals("mine_ore") || currentTask.equals("explore"));
-
-        if (!shouldCheckInterior) {
+        // Only check for interior when we have an active goal to reach
+        if (currentTask == null || currentGoal.equals(BlockPos.ZERO)) {
             exitingInterior = false;
             exitDoorCenter = BlockPos.ZERO;
             exitBeyond = BlockPos.ZERO;
@@ -910,12 +934,21 @@ public class AmbNpcEntity extends FakePlayer {
 
         // IMPROVED: Only start exit plan if we have a goal that's outside AND reachable
         if (!exitingInterior && !currentGoal.equals(BlockPos.ZERO)) {
-            // Check if our goal is outside
+            // Check if our goal is outside — check up to 12 blocks above and 2 blocks to each
+            // side (tree logs under leaf canopy may block skylight at the log block itself)
             boolean goalIsOutside = false;
-            for (int i = 0; i < 5; i++) {
-                if (level().canSeeSky(currentGoal.above(i))) {
-                    goalIsOutside = true;
-                    break;
+            for (int dy = 0; dy <= 12; dy++) {
+                if (level().canSeeSky(currentGoal.above(dy))) { goalIsOutside = true; break; }
+            }
+            if (!goalIsOutside) {
+                int[] ddx = {2, -2, 0, 0};
+                int[] ddz = {0, 0, 2, -2};
+                outer2:
+                for (int d = 0; d < 4; d++) {
+                    BlockPos side = currentGoal.offset(ddx[d], 0, ddz[d]);
+                    for (int dy = 0; dy <= 5; dy++) {
+                        if (level().canSeeSky(side.above(dy))) { goalIsOutside = true; break outer2; }
+                    }
                 }
             }
 
@@ -937,11 +970,23 @@ public class AmbNpcEntity extends FakePlayer {
             if (door != null) {
                 Direction facing = level().getBlockState(door).getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).orElse(Direction.NORTH);
                 exitDoorCenter = door;
-                // IMPROVED: Move much further beyond the door to ensure we're fully outside and don't walk back in
-                exitBeyond = door.relative(facing, 8); // Increased from 3 to 8 blocks
+                exitBeyond = door.relative(facing, 8);
                 exitingInterior = true;
                 exitTimer = 300; // 15 seconds budget
                 System.out.println("[AMB] " + getName().getString() + " INTERIOR DETECTED! Goal is outside. Found door at " + door + ", planning exit to " + exitBeyond);
+            } else {
+                // No door block found — find nearest outdoor position (open sky) and walk there
+                BlockPos outdoorExit = findNearestOutdoorPos(20);
+                if (outdoorExit != null) {
+                    exitDoorCenter = outdoorExit;
+                    exitBeyond = outdoorExit;
+                    exitingInterior = true;
+                    exitTimer = 600; // 30 second budget (no door to guide us)
+                    System.out.println("[AMB] " + getName().getString() + " INTERIOR DETECTED! No door found, navigating toward nearest outdoor pos " + outdoorExit);
+                } else {
+                    // Truly enclosed with no exit — just let A* keep trying (or abandon via fail counter)
+                    System.out.println("[AMB] " + getName().getString() + " INTERIOR DETECTED but no exit found within 20 blocks");
+                }
             }
         }
 
@@ -1023,6 +1068,32 @@ public class AmbNpcEntity extends FakePlayer {
                         double d2 = p.distSqr(c);
                         if (d2 < bestD2) { bestD2 = d2; best = p; }
                     }
+                }
+            }
+        }
+        return best;
+    }
+
+    /**
+     * Find the nearest walkable position that has open sky above it.
+     * Used when no door block exists but the bot needs to reach the outside.
+     */
+    private BlockPos findNearestOutdoorPos(int radius) {
+        BlockPos best = null;
+        double bestD2 = Double.MAX_VALUE;
+        BlockPos c = blockPosition();
+        if (!(level() instanceof ServerLevel sl)) return null;
+
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                int x = c.getX() + dx;
+                int z = c.getZ() + dz;
+                int y = sl.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+                BlockPos p = new BlockPos(x, y, z);
+                // Must be walkable (solid ground, 2-block clearance) and have open sky
+                if (RealisticMovement.isWalkable(sl, p) && sl.canSeeSky(p)) {
+                    double d2 = (double)(dx * dx + dz * dz);
+                    if (d2 < bestD2) { bestD2 = d2; best = p; }
                 }
             }
         }
