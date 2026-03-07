@@ -40,9 +40,12 @@ public class RealisticMovement {
         // Use normal threshold - door handling will set goal beyond the door
         double reachedThreshold = 1.5;
 
-        // Reached destination
+        // Reached destination horizontally — still apply vertical physics so bot falls if airborne
         if (horizontalDist < reachedThreshold) {
-            entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
+            double dy = entity.getDeltaMovement().y;
+            entity.move(MoverType.SELF, new Vec3(0.0, dy, 0.0));
+            double nextDY = entity.onGround() ? -0.08 : Math.max(entity.getDeltaMovement().y - 0.08, -3.5);
+            entity.setDeltaMovement(0, nextDY, 0);
             return false;
         }
 
