@@ -247,6 +247,28 @@ public class AmbNpcEntity extends FakePlayer {
         this.setItemSlot(EquipmentSlot.MAINHAND, stack.copy());
     }
 
+    /**
+     * Equip the default tool for the current task so observers always see the bot
+     * holding something appropriate. Called every 100 ticks and on task change.
+     */
+    public void updateTaskTool() {
+        // Don't override if actively mining (equipBestTool will handle that)
+        net.minecraft.world.item.Item tool = switch (currentTask == null ? "" : currentTask) {
+            case "gather_wood", "chop_trees", "gather_logs" -> Items.WOODEN_AXE;
+            case "mine_stone", "mine_ores", "gather_stone"  -> Items.WOODEN_PICKAXE;
+            case "till_soil", "plant", "farm", "gather_food" -> Items.WOODEN_SHOVEL;
+            case "build", "construct"                        -> Items.OAK_PLANKS;
+            case "craft"                                     -> Items.CRAFTING_TABLE.asItem();
+            case "cook", "smelt"                             -> Items.COAL.asItem();
+            case "explore", "scout"                          -> Items.COMPASS.asItem();
+            default                                          -> Items.OAK_LOG;
+        };
+        // Only set if hand is currently empty — don't override an actively equipped mining tool
+        if (getMainHandItem().isEmpty()) {
+            equipToolInHand(tool);
+        }
+    }
+
     public void removeItemFromInventory(net.minecraft.world.item.Item item, int count) {
         for (int i = 0; i < getInventory().getContainerSize(); i++) {
             ItemStack stack = getInventory().getItem(i);
@@ -403,6 +425,11 @@ public class AmbNpcEntity extends FakePlayer {
             System.out.println("[AMB-DEBUG] " + getName().getString() + " AT START OF TICK: exitingNow=" + exitingNow + ", currentGoal=" + currentGoal + ", currentTask=" + currentTask);
         }
 
+        // Keep the bot's hand visually populated with the task-appropriate tool
+        if (tickCount % 100 == 0) {
+            updateTaskTool();
+        }
+
         // CRITICAL SURVIVAL - Eat if hungry
         if (RealisticActions.shouldEat(this)) {
             RealisticActions.eatFood(this);
@@ -557,6 +584,7 @@ public class AmbNpcEntity extends FakePlayer {
 
             // ── Block 2: jump cooldown + horizontal-progress tracking ────────────────
             if (jumpCooldown > 0) jumpCooldown--;
+            if (navBreakCooldown > 0) navBreakCooldown--;
 
             Vec3 nowPos = position();
             if (!lastExactMovingPos.equals(Vec3.ZERO)) {
@@ -764,12 +792,16 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
 
-            // Advance waypoint: 2D horizontal distance AND vertical within 2 blocks.
-            // The Y-guard prevents skipping elevated waypoints the bot hasn't physically climbed to.
+            // Advance waypoint: 2D horizontal distance AND vertical within range.
+            // wpDy = botY - waypointY. Positive = bot above waypoint (ok). Negative = bot below.
+            // Allow at most 0.5 blocks BELOW the waypoint — this prevents prematurely skipping
+            // uphill waypoints the bot hasn't physically climbed to yet.  The old limit of -2.0
+            // caused chain-skipping (e.g. Y=72 skipped while bot was still at Y=71) which left
+            // the bot facing a waypoint 3+ blocks up and triggering block-breaking / head-bobbing.
             double wpDx = this.getX() - (waypoint.getX() + 0.5);
             double wpDz = this.getZ() - (waypoint.getZ() + 0.5);
             double wpDy = this.getY() - waypoint.getY();
-            if (wpDx * wpDx + wpDz * wpDz < 1.5 * 1.5 && Math.abs(wpDy) < 2.0
+            if (wpDx * wpDx + wpDz * wpDz < 1.5 * 1.5 && wpDy > -0.5 && wpDy < 2.0
                     && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
                 pathIndex++;
                 waypointStuckTicks = 0;
@@ -796,12 +828,13 @@ public class AmbNpcEntity extends FakePlayer {
                 waypointStuckTicks = 0;
             }
 
-            // Reached goal - only trigger when PHYSICALLY close (≤2.5 blocks).
-            // Never trigger on an empty path alone — that just means A* hasn't found a
-            // route yet, not that the bot has arrived.
+            // Reached goal - trigger whenever bot is physically within 2.5 blocks.
+            // Previously required pathExhausted OR distToGoal<1.5 — that missed the case where
+            // A* returned an empty path because getWalkableGoal(log) == bot position (bot already
+            // adjacent to the target block). Checking distToGoal<2.5 unconditionally handles all
+            // cases: path exhausted, path empty (already there), and direct proximity.
             double distToGoal = position().distanceTo(Vec3.atCenterOf(currentGoal));
-            boolean pathExhausted = !currentPath.isEmpty() && pathIndex >= currentPath.size();
-            if (distToGoal < 2.5 && (pathExhausted || distToGoal < 1.5)) {
+            if (distToGoal < 2.5) {
                 // Check if we should mine the block at goal
                 BlockState targetState = level().getBlockState(currentGoal);
                 if (shouldMineBlock(targetState)) {
@@ -1316,7 +1349,7 @@ public class AmbNpcEntity extends FakePlayer {
             BlockPos n = pos.offset(DIAGONAL_X[i], 0, DIAGONAL_Z[i]);
             BlockPos up = n.above();
             if (isPassable(up) && canJumpTo(pos, up)
-                    && level().getBlockState(n).canOcclude()) { // step surface must be solid
+                    && isWalkableFloor(level().getBlockState(n))) { // stairs/slabs are climbable too
                 out.add(up);
             }
         }
@@ -1380,6 +1413,23 @@ public class AmbNpcEntity extends FakePlayer {
         return height <= 1;
     }
 
+    /**
+     * Returns true if the block can serve as a walkable floor (bot can stand on top of it).
+     * canOcclude() is false for stairs/slabs/etc. but they are perfectly walkable surfaces.
+     */
+    private boolean isWalkableFloor(BlockState state) {
+        if (state.isAir()) return false;
+        if (state.getBlock() instanceof DoorBlock) return false;
+        if (state.getBlock() instanceof FenceGateBlock) return false;
+        if (state.is(Blocks.WATER)) return true;
+        // Full opaque blocks
+        if (state.canOcclude()) return true;
+        // Partial-solid surfaces the player can stand on
+        return state.getBlock() instanceof StairBlock
+            || state.getBlock() instanceof SlabBlock
+            || state.isSolid();
+    }
+
     private boolean isPassable(BlockPos p) {
         BlockState feet = level().getBlockState(p);
         BlockState head = level().getBlockState(p.above());
@@ -1397,10 +1447,8 @@ public class AmbNpcEntity extends FakePlayer {
         boolean feetClear = !feet.canOcclude() || feetIsDoor;
         boolean headClear = !head.canOcclude() || headIsDoor;
 
-        // Must have solid ground or water below (not a door or non-solid block)
-        boolean solidGround = (below.canOcclude() || below.is(Blocks.WATER)) &&
-                              !(below.getBlock() instanceof DoorBlock) &&
-                              !(below.getBlock() instanceof FenceGateBlock);
+        // Must have walkable floor below — includes stairs, slabs, and other partial surfaces
+        boolean solidGround = isWalkableFloor(below);
 
         return feetClear && headClear && solidGround;
     }
@@ -2067,21 +2115,42 @@ public class AmbNpcEntity extends FakePlayer {
      *   With those cleared the bot can jump, the step-up mechanism (~0.6 block) lands it
      *   on the solid dy=0 block, advancing one level.  Subsequent calls climb the column.
      */
+    // Break cooldown: allow at most one block break every N ticks to emulate survival mining speed
+    private int navBreakCooldown = 0;
+
     private void tryBreakPathBlock(int wpDY) {
         if (!(level() instanceof ServerLevel sl)) return;
+        if (navBreakCooldown > 0) return; // wait for previous break to "complete"
         BlockPos ahead = blockPosition().relative(getDirection());
-        int dyStart = (wpDY > 1) ? 1 : 0; // upward: skip dy=0 (keep as step), horizontal: start at dy=0
+        int dyStart = (wpDY > 1) ? 1 : 0;
         int dyEnd   = (wpDY > 1) ? 2 : 1;
         for (int dy = dyStart; dy <= dyEnd; dy++) {
             BlockPos breakPos = ahead.above(dy);
             BlockState bs = sl.getBlockState(breakPos);
-            if (bs.canOcclude() && !bs.is(Blocks.BEDROCK)) {
-                RealisticActions.equipBestTool(this, bs);
-                sl.destroyBlock(breakPos, true, this);
-                System.out.printf("[AMB-BREAK] %s clearing %s path block at %s%n",
-                    getName().getString(), wpDY > 1 ? "upward" : "horizontal", breakPos);
+            if (!bs.canOcclude() || bs.is(Blocks.BEDROCK)) continue;
+
+            // NEVER break blocks that can simply be climbed — stairs, slabs, walls, fences.
+            // These should be handled by the step-up / jump system instead.
+            if (bs.getBlock() instanceof StairBlock || bs.getBlock() instanceof SlabBlock
+                    || bs.is(BlockTags.FENCES) || bs.is(BlockTags.WALLS)) {
+                // Force a jump attempt instead of breaking
+                if (onGround() && jumpCooldown == 0) {
+                    jumpFromGround();
+                    jumpCooldown = 15;
+                }
                 return;
             }
+
+            // Equip appropriate tool and use survival-mode gameMode.destroyBlock()
+            // (respects block hardness and game mode — no instant creative breaking)
+            RealisticActions.equipBestTool(this, bs);
+            float hardness = bs.getDestroySpeed(sl, breakPos);
+            // Emulate survival mining time: harder blocks take longer (min 5 ticks, max 120 ticks)
+            navBreakCooldown = Math.min(120, Math.max(5, (int)(hardness * 10)));
+            this.gameMode.destroyBlock(breakPos);
+            System.out.printf("[AMB-BREAK] %s clearing %s path block at %s (hardness=%.1f, cooldown=%d)%n",
+                getName().getString(), wpDY > 1 ? "upward" : "horizontal", breakPos, hardness, navBreakCooldown);
+            return;
         }
     }
 
@@ -2582,7 +2651,7 @@ public class AmbNpcEntity extends FakePlayer {
         double nearestDist = Double.MAX_VALUE;
 
         for (int dx = -radius; dx <= radius; dx++) {
-            for (int dy = -2; dy <= 2; dy++) {
+            for (int dy = -2; dy <= 8; dy++) { // +8 to reach top of tallest trees (logs at center+7)
                 for (int dz = -radius; dz <= radius; dz++) {
                     BlockPos check = center.offset(dx, dy, dz);
                     BlockState state = level().getBlockState(check);

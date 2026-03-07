@@ -6,6 +6,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -312,6 +316,20 @@ public class RealisticMovement {
     }
 
     /**
+     * Returns true if the block state can serve as a walkable floor.
+     * canOcclude() is false for stairs/slabs but they fully support standing.
+     */
+    private static boolean isWalkableFloor(BlockState state) {
+        if (state.isAir()) return false;
+        if (state.getBlock() instanceof DoorBlock) return false;
+        if (state.getBlock() instanceof FenceGateBlock) return false;
+        if (state.canOcclude()) return true;
+        return state.getBlock() instanceof StairBlock
+            || state.getBlock() instanceof SlabBlock
+            || state.isSolid();
+    }
+
+    /**
      * Check if a position is safe to walk on
      */
     public static boolean isWalkable(ServerLevel level, BlockPos pos) {
@@ -323,8 +341,8 @@ public class RealisticMovement {
         BlockState feetState = level.getBlockState(feet);
         BlockState headState = level.getBlockState(head);
 
-        // Must have solid ground
-        if (!belowState.canOcclude()) return false;
+        // Must have walkable floor — includes stairs, slabs, and other partial surfaces
+        if (!isWalkableFloor(belowState)) return false;
 
         // Must have space for body
         if (feetState.canOcclude() || headState.canOcclude()) return false;
