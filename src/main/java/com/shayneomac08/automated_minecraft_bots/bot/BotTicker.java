@@ -1,5 +1,6 @@
 package com.shayneomac08.automated_minecraft_bots.bot;
 
+import com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +21,35 @@ public final class BotTicker {
 
         // Handle bot chat messages
         com.shayneomac08.automated_minecraft_bots.event.ChatEventHandler.tickBotChat(server);
+
+        // Process bot respawn queue
+        AmbNpcEntity.RESPAWN_QUEUE.removeIf(req -> {
+            req.remainingTicks--;
+            if (req.remainingTicks > 0) return false;
+            // Time to respawn — find the right level and spawn location
+            ServerLevel spawnLevel = server.overworld();
+            BlockPos spawnPos;
+            if (!req.bedPos.equals(BlockPos.ZERO)) {
+                spawnPos = req.bedPos;
+            } else {
+                int sx = req.deathPos.getX(), sz = req.deathPos.getZ();
+                int sy = spawnLevel.getHeight(
+                    net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sx, sz);
+                spawnPos = new BlockPos(sx, sy, sz);
+            }
+            AmbNpcEntity newBot = AvatarFactory.spawn(
+                spawnLevel, req.name, spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5);
+            newBot.llmGroup = req.llmGroup;
+            newBot.setTask(req.task);
+            newBot.setBrainEnabled(true);
+            BotBrain.setAutonomous(req.name, true);
+            BotRegistry.put(req.name, new BotPair(newBot, newBot));
+            System.out.println("[AMB-RESPAWN] " + req.name + " respawned at " + spawnPos.toShortString());
+            server.getPlayerList().broadcastSystemMessage(
+                net.minecraft.network.chat.Component.literal("[AMB] " + req.name + " respawned at " + spawnPos.toShortString()),
+                false);
+            return true;
+        });
 
         for (BotPair pair : BotRegistry.all()) {
             if (pair == null) continue;

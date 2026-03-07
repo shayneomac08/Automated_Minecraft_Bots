@@ -52,6 +52,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Random;
 import java.util.UUID;
 import java.util.List;
@@ -67,6 +69,31 @@ import java.util.HashMap;
  * Clean FakePlayer-based bot implementation (FakePlayer handles connection automatically)
  */
 public class AmbNpcEntity extends FakePlayer {
+
+    // ==================== RESPAWN SYSTEM ====================
+    /** Global queue of bots waiting to respawn. Survives entity removal. */
+    public static final Queue<RespawnRequest> RESPAWN_QUEUE = new ConcurrentLinkedQueue<>();
+
+    public static class RespawnRequest {
+        public final String name;
+        public final String llmGroup;
+        public final String task;
+        public final BlockPos deathPos;
+        public final BlockPos bedPos;
+        public int remainingTicks;
+
+        public RespawnRequest(String name, String llmGroup, String task, BlockPos deathPos, BlockPos bedPos) {
+            this.name = name;
+            this.llmGroup = llmGroup != null ? llmGroup : "grok";
+            this.task = task;
+            this.deathPos = deathPos;
+            this.bedPos = bedPos != null ? bedPos : BlockPos.ZERO;
+            this.remainingTicks = 200; // 10 seconds at 20 TPS
+        }
+    }
+
+    // LLM group used when spawned (needed to restore after respawn)
+    public String llmGroup = "grok";
 
     // Bot roles
     public enum BotRole { LEADER, BUILDER, MINER, GATHERER, EXPLORER }
@@ -118,6 +145,15 @@ public class AmbNpcEntity extends FakePlayer {
     // Human-like movement system
     private final HumanlikeMovement.MovementState movementState = new HumanlikeMovement.MovementState();
     private int ticksMoving = 0;
+
+    // ── Pillar climb system ───────────────────────────────────────────────────
+    private enum PillarPhase { IDLE, BUILDING, MINING, TEARDOWN }
+    private PillarPhase pillarPhase = PillarPhase.IDLE;
+    private int         pillarBaseY = 0;              // bot Y when pillar started
+    private BlockPos    pillarTarget = BlockPos.ZERO; // block being harvested from height
+    private final List<BlockPos> placedPillarBlocks = new ArrayList<>();
+    private int  pillarCooldown     = 0;
+    private boolean pillarWasAirborne = false;
 
     // Jump + progress tracking (Block 2)
     private int jumpCooldown = 0;
@@ -292,6 +328,7 @@ public class AmbNpcEntity extends FakePlayer {
 
         // Create the FakePlayer bot (server-side logic)
         AmbNpcEntity bot = new AmbNpcEntity(level, name);
+        bot.llmGroup = llmType != null ? llmType : "grok";
         bot.setPos(x, y, z);
         bot.setCustomName(net.minecraft.network.chat.Component.literal(name));
         bot.setCustomNameVisible(true);
@@ -378,6 +415,17 @@ public class AmbNpcEntity extends FakePlayer {
             return; // Don't do anything else, just recover
         }
 
+        // PILLAR CLIMBING SYSTEM — overrides normal navigation when active
+        if (pillarPhase != PillarPhase.IDLE) {
+            tickPillarSystem();
+            // Mining continuation while pillaring (handled separately from normal goal mining)
+            if (pillarPhase == PillarPhase.MINING && miningState.isMining && !exitingNow) {
+                boolean blockBroken = RealisticActions.continueMining(this, miningState);
+                if (blockBroken) miningState.isMining = false; // pillar tick will find next block
+            }
+            return;
+        }
+
         // REALISTIC MOVEMENT SYSTEM + A* WAYPOINTS
         if (!currentGoal.equals(BlockPos.ZERO)) {
             // DEBUG: Log when entering movement system
@@ -407,6 +455,18 @@ public class AmbNpcEntity extends FakePlayer {
                 pathRetryTimer = currentPath.isEmpty() ? 60 : 0;
                 if (tickCount % 40 == 0 || needNewPath) {
                     System.out.println("[AMB-DEBUG] " + getName().getString() + " computed A* path with " + currentPath.size() + " waypoints");
+                }
+            }
+
+            // Check if pillar mode should activate: bot is XZ-close to goal but goal is too high to walk to.
+            // Trigger before choosing a waypoint so we never enter the jump-loop.
+            if (shouldMineBlock(level().getBlockState(currentGoal))) {
+                int heightAbove = currentGoal.getY() - blockPosition().getY();
+                double hDistXZ = Math.sqrt(Math.pow(currentGoal.getX() + 0.5 - getX(), 2)
+                                         + Math.pow(currentGoal.getZ() + 0.5 - getZ(), 2));
+                if (heightAbove > 1 && hDistXZ < 2.5) {
+                    enterPillarMode(currentGoal);
+                    return; // pillar system takes over next tick
                 }
             }
 
@@ -490,43 +550,48 @@ public class AmbNpcEntity extends FakePlayer {
                 hCollTicks = 0;
             }
 
+            // Pre-calculate waypoint height difference for jump decisions.
+            // wpDY > 1 means the obstacle is too tall to clear with a single jump.
+            int wpDY = (!currentPath.isEmpty() && pathIndex < currentPath.size())
+                ? currentPath.get(pathIndex).getY() - blockPosition().getY() : 0;
+
             boolean shouldJump = false;
-            // Condition A removed: jumping preemptively when nextWp.Y > bot.Y caused the bot to
-            // jump at every terrain step and bypass the vanilla step-up mechanism (maxUpStep=0.6).
-            // With proper gravity now applied, Conditions B and C handle all legitimate jumps.
 
             // Condition B: pressed against a wall for 2+ ticks (horizontalCollision on ground)
             if (hCollTicks >= 2) {
-                shouldJump = true;
+                if (wpDY <= 1) {
+                    // Obstacle is at most 1 block high — a jump will clear it
+                    shouldJump = true;
+                } else {
+                    // Too tall to jump: break the blocking blocks to create a path
+                    tryBreakPathBlock(wpDY);
+                }
                 hCollTicks = 0;
             }
-            // Condition C: general no-progress fallback (wall without collision flag, e.g. fence post)
-            // Only jump if the next waypoint is at or above current Y — never jump toward a lower waypoint.
+            // Condition C: no-progress fallback (wall without collision flag, e.g. fence post)
+            // Only jump if the waypoint is reachable by a single jump (≤1 block above).
             if (noProgressTicks >= 5) {
-                boolean nextWpIsAboveOrLevel = currentPath.isEmpty() || pathIndex >= currentPath.size()
-                    || currentPath.get(pathIndex).getY() >= blockPosition().getY();
-                if (nextWpIsAboveOrLevel) {
+                if (wpDY >= 0 && wpDY <= 1) {
                     shouldJump = true;
+                } else if (wpDY > 1) {
+                    // Waypoint is multiple blocks above — break path blocks to climb
+                    tryBreakPathBlock(wpDY);
                 }
                 noProgressTicks = 0;
             }
 
             if (shouldJump && jumpCooldown == 0) {
                 // Gather context for log
-                int waypointDY = 0;
                 double horizDist = 0;
                 if (!currentPath.isEmpty() && pathIndex < currentPath.size()) {
                     BlockPos wp = currentPath.get(pathIndex);
-                    waypointDY = wp.getY() - blockPosition().getY();
                     horizDist = Math.sqrt(Math.pow(getX() - (wp.getX() + 0.5), 2)
                                         + Math.pow(getZ() - (wp.getZ() + 0.5), 2));
                 }
-                // Trust jumpFromGround() to handle its own preconditions.
-                // hCollTicks only accumulates when onGround(), so this is already gated.
                 jumpFromGround();
                 jumpCooldown = 15;
                 System.out.printf("[AMB-JUMP] %s jump: hColl=%s waypointDY=%d horizDist=%.2f%n",
-                    getName().getString(), horizontalCollision, waypointDY, horizDist);
+                    getName().getString(), horizontalCollision, wpDY, horizDist);
             }
             // ─────────────────────────────────────────────────────────────────────────
 
@@ -721,9 +786,14 @@ public class AmbNpcEntity extends FakePlayer {
         if (miningState.isMining && !exitingNow) {
             boolean blockBroken = RealisticActions.continueMining(this, miningState);
             if (blockBroken) {
-                // Block broken - find next goal
-                currentGoal = BlockPos.ZERO;
-                executeCurrentTask();
+                if (pillarPhase == PillarPhase.MINING) {
+                    // Pillar system will detect block gone next tick and find the next one
+                    miningState.isMining = false;
+                } else {
+                    // Normal mining complete - find next goal
+                    currentGoal = BlockPos.ZERO;
+                    executeCurrentTask();
+                }
             }
         }
 
@@ -1692,6 +1762,239 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     // ============ Door handling and local avoidance ============
+    // ==================== PILLAR CLIMB SYSTEM ====================
+
+    /** Enter pillar mode: build up, harvest, then tear down. */
+    private void enterPillarMode(BlockPos target) {
+        pillarPhase = PillarPhase.BUILDING;
+        pillarBaseY = blockPosition().getY();
+        pillarTarget = target;
+        placedPillarBlocks.clear();
+        pillarWasAirborne = false;
+        pillarCooldown = 0;
+        System.out.printf("[AMB-PILLAR] %s entering pillar mode target=%s baseY=%d%n",
+            getName().getString(), target, pillarBaseY);
+    }
+
+    /** Reset all pillar state and optionally trigger a new goal search. */
+    private void exitPillarMode(boolean findNewGoal) {
+        pillarPhase = PillarPhase.IDLE;
+        placedPillarBlocks.clear();
+        pillarTarget = BlockPos.ZERO;
+        if (miningState.isMining) miningState.isMining = false;
+        if (findNewGoal) {
+            currentGoal = BlockPos.ZERO;
+            System.out.println("[AMB-PILLAR] " + getName().getString() + " pillar complete, seeking next goal");
+        }
+    }
+
+    /**
+     * Tick the pillar system every tick while pillarPhase != IDLE.
+     * Handles vertical physics, block placement on jump apex, mining, and teardown.
+     */
+    private void tickPillarSystem() {
+        if (pillarCooldown > 0) {
+            pillarCooldown--;
+            applyVerticalPhysicsOnly(); // keep physics running during cooldown
+            return;
+        }
+
+        switch (pillarPhase) {
+            case BUILDING -> {
+                int heightDiff = pillarTarget.getY() - blockPosition().getY();
+                if (heightDiff <= 1) {
+                    // Close enough — switch to mining
+                    pillarPhase = PillarPhase.MINING;
+                    System.out.println("[AMB-PILLAR] " + getName().getString() + " reached height, mining " + pillarTarget);
+                    return;
+                }
+
+                // Find a block item to place
+                int buildSlot = findBuildingBlockSlot();
+                if (buildSlot < 0) {
+                    System.out.println("[AMB-PILLAR] " + getName().getString() + " no building blocks, aborting pillar");
+                    exitPillarMode(true);
+                    return;
+                }
+
+                // Apply vertical physics (keeps gravity correct between jumps)
+                applyVerticalPhysicsOnly();
+
+                if (onGround() && jumpCooldown == 0) {
+                    jumpFromGround();
+                    jumpCooldown = 20;
+                    pillarWasAirborne = false;
+                } else if (!onGround() && getDeltaMovement().y > 0.05) {
+                    pillarWasAirborne = true; // mark that we've left the ground rising
+                } else if (pillarWasAirborne && !onGround() && getDeltaMovement().y <= 0.05) {
+                    // At or near the jump apex — place block in the air below us
+                    BlockPos placePos = new BlockPos(blockPosition().getX(),
+                                                     blockPosition().getY() - 1,
+                                                     blockPosition().getZ());
+                    if (level() instanceof ServerLevel sl && !sl.getBlockState(placePos).canOcclude()) {
+                        ItemStack stack = getInventory().getItem(buildSlot);
+                        if (!stack.isEmpty() && stack.getItem() instanceof net.minecraft.world.item.BlockItem bi) {
+                            sl.setBlock(placePos, bi.getBlock().defaultBlockState(), 3);
+                            stack.shrink(1);
+                            placedPillarBlocks.add(placePos);
+                            pillarWasAirborne = false;
+                            pillarCooldown = 8;
+                            System.out.println("[AMB-PILLAR] " + getName().getString()
+                                + " placed block at " + placePos + " (height " + placedPillarBlocks.size() + ")");
+                        }
+                    }
+                }
+            }
+
+            case MINING -> {
+                applyVerticalPhysicsOnly();
+                BlockState bs = level().getBlockState(pillarTarget);
+                if (bs.isAir() || !shouldMineBlock(bs)) {
+                    // Block gone — look for more above in this column
+                    BlockPos next = findNextMineableAbove(pillarTarget);
+                    if (next != null) {
+                        pillarTarget = next;
+                        int newHeightDiff = next.getY() - blockPosition().getY();
+                        if (newHeightDiff > 1) {
+                            pillarPhase = PillarPhase.BUILDING; // need to go higher
+                        }
+                        // else stay in MINING — can reach from current height
+                    } else {
+                        pillarPhase = PillarPhase.TEARDOWN;
+                        if (miningState.isMining) miningState.isMining = false;
+                        System.out.println("[AMB-PILLAR] " + getName().getString() + " column mined, tearing down");
+                    }
+                    return;
+                }
+                // Look at the target and start mining if not already
+                RealisticMovement.lookAt(this, Vec3.atCenterOf(pillarTarget));
+                if (!miningState.isMining) {
+                    RealisticActions.equipBestTool(this, bs);
+                    RealisticActions.startMining(this, pillarTarget, miningState);
+                }
+            }
+
+            case TEARDOWN -> {
+                if (placedPillarBlocks.isEmpty()) {
+                    exitPillarMode(true);
+                    return;
+                }
+                if (!onGround()) {
+                    applyVerticalPhysicsOnly();
+                    return;
+                }
+                // The topmost placed block should be directly below our feet
+                BlockPos blockBelowFeet = blockPosition().below();
+                BlockPos topPlaced = placedPillarBlocks.get(placedPillarBlocks.size() - 1);
+                if (blockBelowFeet.equals(topPlaced)) {
+                    setXRot(89.0f); // look straight down
+                    if (level() instanceof ServerLevel sl) {
+                        sl.destroyBlock(topPlaced, true, this);
+                        placedPillarBlocks.remove(placedPillarBlocks.size() - 1);
+                        pillarCooldown = 12; // wait for bot to fall before next break
+                        System.out.println("[AMB-PILLAR] " + getName().getString() + " removed pillar block at " + topPlaced);
+                    }
+                } else if (blockPosition().getY() <= pillarBaseY) {
+                    // Back at base even if list isn't empty (blocks already broken by world events)
+                    exitPillarMode(true);
+                } else {
+                    // Not standing on a placed block — might have been pushed off; just fall
+                    applyVerticalPhysicsOnly();
+                }
+            }
+
+            default -> pillarPhase = PillarPhase.IDLE;
+        }
+    }
+
+    /** Apply gravity/landing physics with no horizontal movement (used during pillar operation). */
+    private void applyVerticalPhysicsOnly() {
+        double dy = getDeltaMovement().y;
+        move(MoverType.SELF, new Vec3(0.0, dy, 0.0));
+        double nextDY = onGround() ? -0.08 : Math.max(getDeltaMovement().y - 0.08, -3.5);
+        setDeltaMovement(0, nextDY, 0);
+    }
+
+    /**
+     * Find the first inventory slot containing a solid BlockItem the bot can place.
+     * Prefers dirt/sand/gravel/stone; falls back to any solid BlockItem (including logs).
+     */
+    private int findBuildingBlockSlot() {
+        int fallbackSlot = -1;
+        for (int i = 0; i < getInventory().getContainerSize(); i++) {
+            ItemStack stack = getInventory().getItem(i);
+            if (stack.isEmpty()) continue;
+            if (!(stack.getItem() instanceof net.minecraft.world.item.BlockItem bi)) continue;
+            if (!bi.getBlock().defaultBlockState().canOcclude()) continue; // must be a solid, full block
+            // Prefer common building materials
+            if (stack.is(Items.DIRT) || stack.is(Items.SAND) || stack.is(Items.GRAVEL)
+                    || stack.is(Items.COBBLESTONE) || stack.is(Items.STONE)
+                    || stack.is(Items.GRAVEL)) {
+                return i;
+            }
+            if (fallbackSlot < 0) fallbackSlot = i; // first solid block found (e.g. oak_log)
+        }
+        return fallbackSlot; // -1 if no blocks at all
+    }
+
+    /**
+     * Search directly above `from` for more blocks this task wants to mine (e.g. higher logs in a tree).
+     */
+    private BlockPos findNextMineableAbove(BlockPos from) {
+        for (int dy = 1; dy <= 12; dy++) {
+            BlockPos check = from.above(dy);
+            BlockState bs = level().getBlockState(check);
+            if (shouldMineBlock(bs)) return check;
+            if (!bs.isAir() && bs.canOcclude()) break; // solid non-target stops the search
+        }
+        return null;
+    }
+
+    /**
+     * Break blocks to clear a path ahead, accounting for whether the bot needs to go UP.
+     *
+     * Horizontal obstacle (wpDY ≤ 1):
+     *   Break dy=0 (feet) and dy=1 (head) — opens a passage at the current level.
+     *
+     * Upward obstacle (wpDY > 1):
+     *   Leave dy=0 SOLID — it becomes the step-platform the bot lands on after jumping.
+     *   Break dy=1 (future feet at next level) and dy=2 (future head at next level).
+     *   With those cleared the bot can jump, the step-up mechanism (~0.6 block) lands it
+     *   on the solid dy=0 block, advancing one level.  Subsequent calls climb the column.
+     */
+    private void tryBreakPathBlock(int wpDY) {
+        if (!(level() instanceof ServerLevel sl)) return;
+        BlockPos ahead = blockPosition().relative(getDirection());
+        int dyStart = (wpDY > 1) ? 1 : 0; // upward: skip dy=0 (keep as step), horizontal: start at dy=0
+        int dyEnd   = (wpDY > 1) ? 2 : 1;
+        for (int dy = dyStart; dy <= dyEnd; dy++) {
+            BlockPos breakPos = ahead.above(dy);
+            BlockState bs = sl.getBlockState(breakPos);
+            if (bs.canOcclude() && !bs.is(Blocks.BEDROCK)) {
+                RealisticActions.equipBestTool(this, bs);
+                sl.destroyBlock(breakPos, true, this);
+                System.out.printf("[AMB-BREAK] %s clearing %s path block at %s%n",
+                    getName().getString(), wpDY > 1 ? "upward" : "horizontal", breakPos);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Queue this bot for respawn after death.
+     * The respawn is processed by bot.BotTicker after a 10-second delay.
+     */
+    @Override
+    public void die(net.minecraft.world.damagesource.DamageSource cause) {
+        BlockPos dPos = blockPosition();
+        BlockPos bedPos = !baseLocation.equals(BlockPos.ZERO) ? baseLocation : BlockPos.ZERO;
+        String botName = getName().getString();
+        RESPAWN_QUEUE.add(new RespawnRequest(botName, llmGroup, currentTask, dPos, bedPos));
+        System.out.println("[AMB-DEATH] " + botName + " died at " + dPos + " — queued respawn in 10s");
+        broadcastGroupChat("I died... I'll be back soon.");
+        super.die(cause);
+    }
+
     private boolean isStuckInNonSolidBlock() {
         BlockPos pos = blockPosition();
         BlockState feet = level().getBlockState(pos);

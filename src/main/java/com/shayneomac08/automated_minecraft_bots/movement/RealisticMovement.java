@@ -42,10 +42,17 @@ public class RealisticMovement {
 
         // Reached destination horizontally — still apply vertical physics so bot falls if airborne
         if (horizontalDist < reachedThreshold) {
-            double dy = entity.getDeltaMovement().y;
-            entity.move(MoverType.SELF, new Vec3(0.0, dy, 0.0));
-            double nextDY = entity.onGround() ? -0.08 : Math.max(entity.getDeltaMovement().y - 0.08, -3.5);
-            entity.setDeltaMovement(0, nextDY, 0);
+            if (entity.isInWater()) {
+                // In water at destination: swim up to surface, don't sink
+                double swimDY = entity.isUnderWater() ? 0.06 : 0.0;
+                entity.move(MoverType.SELF, new Vec3(0.0, swimDY, 0.0));
+                entity.setDeltaMovement(entity.getDeltaMovement().multiply(0.8, 0.8, 0.8));
+            } else {
+                double dy = entity.getDeltaMovement().y;
+                entity.move(MoverType.SELF, new Vec3(0.0, dy, 0.0));
+                double nextDY = entity.onGround() ? -0.08 : Math.max(entity.getDeltaMovement().y - 0.08, -3.5);
+                entity.setDeltaMovement(0, nextDY, 0);
+            }
             return false;
         }
 
@@ -57,11 +64,13 @@ public class RealisticMovement {
         double dirZ = dz / horizontalDist;
 
         // If in water, use swimming movement rather than walking logic
+        // FakePlayer does not auto-apply deltaMovement, so we must call entity.move() directly.
         if (entity.isInWater()) {
-            // Swim toward target with upward bias if underwater
-            Vec3 swimDir = new Vec3(dirX, 0, dirZ);
-            swim(entity, swimDir);
-            // Face direction
+            double swimSpeed = 0.1;
+            double swimDY = entity.isUnderWater() ? 0.06 : 0.0;
+            Vec3 swimMove = new Vec3(dirX * swimSpeed, swimDY, dirZ * swimSpeed);
+            entity.move(MoverType.SELF, swimMove);
+            entity.setDeltaMovement(entity.getDeltaMovement().multiply(0.8, 0.8, 0.8));
             float wyaw = (float) (Math.atan2(dirZ, dirX) * 180 / Math.PI) - 90;
             entity.setYRot(wyaw);
             entity.setYHeadRot(wyaw);
