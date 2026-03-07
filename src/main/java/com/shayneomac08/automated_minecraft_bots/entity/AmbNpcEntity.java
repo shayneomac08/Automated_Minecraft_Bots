@@ -639,12 +639,13 @@ public class AmbNpcEntity extends FakePlayer {
             // Only act when we have an actual path — with an empty path, wpDY=0 is a
             // meaningless default (bot is just pressing against a wall waiting for A*).
             if (hCollTicks >= 2 && !currentPath.isEmpty()) {
-                if (wpDY <= 2) {
-                    // Obstacle is at most 2 blocks high — a jump + step-up will clear it.
+                if (wpDY >= 1 && wpDY <= 2) {
+                    // Obstacle is 1-2 blocks high — a jump + step-up will clear it.
                     // wpDY=2 is common on stairs; always try jumping before breaking anything.
                     shouldJump = true;
                 } else {
-                    // 3+ blocks above: a jump won't reach — break the blocking block
+                    // wpDY=0: horizontal block at same level — break it (jumping won't help).
+                    // wpDY>=3: too tall to jump — break the blocking block.
                     tryBreakPathBlock(wpDY);
                 }
                 hCollTicks = 0;
@@ -1673,10 +1674,16 @@ public class AmbNpcEntity extends FakePlayer {
         // CRITICAL: Never overwrite an active navigation goal with station goals.
         // Station management only redirects the bot when it has no current goal.
         boolean hasActiveGoal = !currentGoal.equals(BlockPos.ZERO);
+        // Track whether the table was already known before ensureCraftingTableAvailable runs.
+        // If the table is placed THIS call, the bot hasn't navigated to it yet — skip crafting.
+        boolean tablePreviouslyKnown = !knownCraftingTable.equals(BlockPos.ZERO);
 
         ensureCraftingTableAvailable(hasActiveGoal);
-        // Simple starter tool progression at table (wood tier)
-        if (!knownCraftingTable.equals(BlockPos.ZERO) && this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
+        boolean tableJustPlaced = !tablePreviouslyKnown && !knownCraftingTable.equals(BlockPos.ZERO);
+        // Simple starter tool progression at table (wood tier).
+        // Guard: skip if table was just placed this tick (bot hasn't walked there yet).
+        if (!knownCraftingTable.equals(BlockPos.ZERO) && !tableJustPlaced
+                && this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
             craftStarterToolsAtTable();
             // If we self-placed this table and have no established base, pick it back up.
             // A real player wouldn't leave a crafting table in the middle of a field.
@@ -2160,6 +2167,15 @@ public class AmbNpcEntity extends FakePlayer {
                 return;
             }
 
+            // For logs during gather_wood: use animated mining (proper drops + visible stages)
+            if ("gather_wood".equals(currentTask) && bs.is(BlockTags.LOGS)) {
+                RealisticActions.equipBestTool(this, bs);
+                RealisticActions.startMining(this, breakPos, miningState);
+                System.out.printf("[AMB-BREAK] %s mining log at %s via path clearing%n",
+                    getName().getString(), breakPos);
+                return;
+            }
+
             // Equip appropriate tool and use survival-mode gameMode.destroyBlock()
             // (respects block hardness and game mode — no instant creative breaking)
             RealisticActions.equipBestTool(this, bs);
@@ -2587,8 +2603,8 @@ public class AmbNpcEntity extends FakePlayer {
                         double verticalPenalty = Math.abs(dy) * 3.0; // 3x penalty for vertical
                         double score = horizontalDist + verticalPenalty;
 
-                        // Skip if too high (>5 blocks) - unreachable without climbing
-                        if (Math.abs(dy) > 5) {
+                        // Skip if too far vertically (>10 blocks) — trees on hills are 6-10 blocks above
+                        if (Math.abs(dy) > 10) {
                             continue;
                         }
 
