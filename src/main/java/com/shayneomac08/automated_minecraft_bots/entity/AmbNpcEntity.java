@@ -31,8 +31,9 @@ import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -816,13 +817,14 @@ public class AmbNpcEntity extends FakePlayer {
                 waypointStuckTicks = 0;
             }
 
-            // Reached goal - trigger whenever bot is physically within 2.5 blocks.
-            // Previously required pathExhausted OR distToGoal<1.5 — that missed the case where
-            // A* returned an empty path because getWalkableGoal(log) == bot position (bot already
-            // adjacent to the target block). Checking distToGoal<2.5 unconditionally handles all
-            // cases: path exhausted, path empty (already there), and direct proximity.
+            // Reached goal check.
+            // For mineable targets use 4.5 blocks (player reach distance) so logs directly
+            // above or adjacent don't require pillar-climbing — just mine from wherever we stand.
+            // For non-mineable navigation goals use 2.5 blocks (arrival at position).
             double distToGoal = position().distanceTo(Vec3.atCenterOf(currentGoal));
-            if (distToGoal < 2.5) {
+            BlockState _preCheck = level().getBlockState(currentGoal);
+            double arrivalDist = shouldMineBlock(_preCheck) ? 4.5 : 2.5;
+            if (distToGoal < arrivalDist) {
                 // Check if we should mine the block at goal
                 BlockState targetState = level().getBlockState(currentGoal);
                 if (shouldMineBlock(targetState)) {
@@ -922,29 +924,13 @@ public class AmbNpcEntity extends FakePlayer {
         }
         if (messageCooldown > 0) messageCooldown--;
 
-        // ITEM PICKUP — every tick, guarded by hasPickUpDelay() (same as vanilla players).
-        // Uses getInventory().add() which modifies the stack in-place, handling partial stacks
-        // correctly without needing a before/after count comparison.
+        // ITEM PICKUP — vanilla playerTouch handles delay, inventory, discard, and events.
+        // Use a 1.5-block horizontal reach matching vanilla player pickup range.
         if (!level().isClientSide()) {
-            for (ItemEntity itemEntity : level().getEntitiesOfClass(ItemEntity.class,
-                    getBoundingBox().inflate(3.0, 3.0, 3.0))) {
-                if (itemEntity.isRemoved() || itemEntity.getItem().isEmpty() || itemEntity.hasPickUpDelay()) continue;
-                ItemStack stack = itemEntity.getItem();
-                int countBefore = stack.getCount();
-                if (getInventory().add(stack)) {
-                    int grabbed = countBefore - stack.getCount();
-                    // Unlock crafting recipes for newly collected item types
-                    unlockRecipesForItem(stack.getItem());
-                    // Send pickup animation — routed to the visual entity so players see the right mob pick it up
-                    int collectorId = (visualEntity != null) ? visualEntity.getId() : getId();
-                    ClientboundTakeItemEntityPacket pkt = new ClientboundTakeItemEntityPacket(
-                            itemEntity.getId(), collectorId, grabbed);
-                    for (ServerPlayer sp : ((ServerLevel) level()).players()) {
-                        sp.connection.send(pkt);
-                    }
-                    if (stack.isEmpty()) {
-                        itemEntity.discard();
-                    }
+            AABB pickupBox = getBoundingBox().inflate(1.5, 0.5, 1.5);
+            for (ItemEntity itemEntity : level().getEntitiesOfClass(ItemEntity.class, pickupBox)) {
+                if (!itemEntity.isRemoved()) {
+                    itemEntity.playerTouch(this);
                 }
             }
         }
@@ -2185,13 +2171,10 @@ public class AmbNpcEntity extends FakePlayer {
                 return;
             }
 
-            // For logs during gather_wood: use animated mining (proper drops + visible stages)
-            if ("gather_wood".equals(currentTask) && bs.is(BlockTags.LOGS)) {
-                RealisticActions.equipBestTool(this, bs);
-                RealisticActions.startMining(this, breakPos, miningState);
-                System.out.printf("[AMB-BREAK] %s mining log at %s via path clearing%n",
-                    getName().getString(), breakPos);
-                return;
+            // Never mine logs as navigation obstacles — they belong to structures or other trees.
+            // The gather_wood goal-arrival check handles mining the actual target log.
+            if (bs.is(BlockTags.LOGS)) {
+                return; // go around or find another path
             }
 
             // Equip appropriate tool and use survival-mode gameMode.destroyBlock()
@@ -2453,22 +2436,21 @@ public class AmbNpcEntity extends FakePlayer {
 
         switch (currentTask) {
             case "gather_wood" -> {
-                // Simple: set goal directly to the nearest log. getWalkableGoal() handles
-                // navigation to an adjacent walkable tile; shouldMineBlock(log)=true triggers
-                // mining when we arrive within 2.5 blocks.
-                BlockPos log = findNearestBlock(BlockTags.LOGS, 32);
+                // Only target logs that are part of a natural tree (have leaves nearby).
+                // This prevents mining logs in player structures.
+                BlockPos log = findNearestTreeLog(32);
                 if (log != null) {
                     currentGoal = log;
                     doorPhase = 0; doorPos = BlockPos.ZERO; originalDoorPos = BlockPos.ZERO; doorTimer = 0; avoidTicks = 0;
                     currentPath.clear();
                     pathIndex = 0;
                     pathRetryTimer = 0;
-                    System.out.println("[AMB] " + getName().getString() + " gather_wood: heading for log at " + log);
+                    System.out.println("[AMB] " + getName().getString() + " gather_wood: heading for tree log at " + log);
                 } else {
-                    // No tree found — wander to find one
+                    // No natural tree found — wander to find one
                     currentGoal = blockPosition().offset(
                         random.nextInt(40) - 20, 0, random.nextInt(40) - 20);
-                    System.out.println("[AMB] " + getName().getString() + " no trees in range, wandering");
+                    System.out.println("[AMB] " + getName().getString() + " no natural trees in range, wandering");
                 }
             }
             case "mine_stone" -> {
@@ -2809,8 +2791,47 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * Find the base (lowest log) of a tree starting from any log position
+     * Find the nearest log that is part of a natural tree (has at least one leaf within 6 blocks).
+     * Avoids mining logs in player structures which have no leaves nearby.
      */
+    private BlockPos findNearestTreeLog(int radius) {
+        BlockPos myPos = blockPosition();
+        BlockPos nearest = null;
+        double nearestScore = Double.MAX_VALUE;
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -10; y <= 10; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    BlockPos check = myPos.offset(x, y, z);
+                    if (!level().getBlockState(check).is(BlockTags.LOGS)) continue;
+                    if (Math.abs(y) > 10) continue;
+
+                    // Verify this log has leaves nearby — natural tree indicator
+                    if (!hasLeavesNearby(check, 6)) continue;
+
+                    double horiz = Math.sqrt((double)(x * x + z * z));
+                    double score = horiz + Math.abs(y) * 3.0;
+                    if (score < nearestScore) {
+                        nearestScore = score;
+                        nearest = check;
+                    }
+                }
+            }
+        }
+        return nearest;
+    }
+
+    /** Returns true if there is at least one leaf block within the given radius of pos. */
+    private boolean hasLeavesNearby(BlockPos pos, int radius) {
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -2; dy <= radius; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (level().getBlockState(pos.offset(dx, dy, dz)).is(BlockTags.LEAVES)) return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Find mineable blocks nearby for the current task
