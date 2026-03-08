@@ -473,6 +473,27 @@ public class AmbNpcEntity extends FakePlayer {
             return;
         }
 
+        // OPPORTUNISTIC ITEM PICKUP — check for nearby items every second even during active tasks.
+        // Auto-pickup handles collection at 4 blocks; this navigates the bot toward items within 6 blocks.
+        if (!exitingNow && !miningState.isMining && tickCount % 20 == 0) {
+            if (seekingItem != null && seekingItem.isRemoved()) seekingItem = null;
+            if (seekingItem == null) seekingItem = findNearestItem(6.0);
+            if (seekingItem != null) {
+                double itemDist = distanceTo(seekingItem);
+                // Only divert from current task if item is very close (≤6 blocks) and not already at goal
+                if (itemDist <= 6.0) {
+                    BlockPos itemPos = seekingItem.blockPosition();
+                    if (!currentGoal.equals(itemPos)) {
+                        currentGoal = itemPos;
+                        currentPath.clear();
+                        pathIndex = 0;
+                    }
+                } else {
+                    seekingItem = null; // too far — don't divert
+                }
+            }
+        }
+
         // REALISTIC MOVEMENT SYSTEM + A* WAYPOINTS
         if (!currentGoal.equals(BlockPos.ZERO)) {
 
@@ -883,22 +904,15 @@ public class AmbNpcEntity extends FakePlayer {
         } else {
             // No goal — seek nearby items first, then run task logic.
             if (!exitingNow) {
-                // Update seekingItem tracking every 10 ticks
-                if (tickCount % 10 == 0) {
-                    if (seekingItem != null && seekingItem.isRemoved()) {
-                        seekingItem = null; // picked up or despawned
-                    }
-                    if (seekingItem == null) {
-                        seekingItem = findNearestItem(10.0);
-                    }
-                }
-                if (seekingItem != null && !seekingItem.isRemoved()) {
-                    // Move toward the item
+                // Clear stale seekingItem immediately
+                if (seekingItem != null && seekingItem.isRemoved()) seekingItem = null;
+
+                if (seekingItem != null) {
+                    // Still seeking — keep navigating to the item
                     currentGoal = seekingItem.blockPosition();
                     currentPath.clear();
                     pathIndex = 0;
                 } else if (tickCount % 40 == 0) {
-                    seekingItem = null;
                     executeCurrentTask();
                 }
             }
@@ -995,7 +1009,7 @@ public class AmbNpcEntity extends FakePlayer {
         // We send ClientboundTakeItemEntityPacket to all real players so the animation aims
         // at the bot entity, not the player.
         if (!level().isClientSide() && level() instanceof ServerLevel sl) {
-            AABB pickupBox = getBoundingBox().inflate(2.5, 1.0, 2.5);
+            AABB pickupBox = getBoundingBox().inflate(4.0, 1.0, 4.0);
             for (ItemEntity itemEntity : sl.getEntitiesOfClass(ItemEntity.class, pickupBox)) {
                 if (itemEntity.isRemoved() || itemEntity.hasPickUpDelay()) continue;
                 ItemStack stack = itemEntity.getItem();
@@ -1835,9 +1849,9 @@ public class AmbNpcEntity extends FakePlayer {
             }
 
             if (getInventory().countItem(Blocks.CRAFTING_TABLE.asItem()) > 0) {
-                // Place table 5-10 blocks away so the bot must visibly walk to it before crafting.
-                BlockPos place = findPlacementAway(5, 10);
-                if (place == null) place = findPlacementNear(blockPosition(), 4); // fallback: closer if terrain is cramped
+                // Place table 3-5 blocks away so the bot must visibly walk to it before crafting.
+                BlockPos place = findPlacementAway(3, 5);
+                if (place == null) place = findPlacementNear(blockPosition(), 3); // fallback: closer if terrain is cramped
                 if (place != null) {
                     if (removeItems(Blocks.CRAFTING_TABLE.asItem(), 1) == 1) {
                         level().setBlock(place, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
@@ -2928,22 +2942,21 @@ public class AmbNpcEntity extends FakePlayer {
     private BlockPos findNearestTreeLog(int radius) {
         BlockPos myPos = blockPosition();
         BlockPos nearest = null;
-        double nearestScore = Double.MAX_VALUE;
+        double nearestDist = Double.MAX_VALUE;
 
         for (int x = -radius; x <= radius; x++) {
-            for (int y = -10; y <= 10; y++) {
+            for (int y = -5; y <= 20; y++) {
                 for (int z = -radius; z <= radius; z++) {
                     BlockPos check = myPos.offset(x, y, z);
                     if (!level().getBlockState(check).is(BlockTags.LOGS)) continue;
-                    if (Math.abs(y) > 10) continue;
 
-                    // Verify this log has leaves nearby — natural tree indicator
-                    if (!hasLeavesNearby(check, 6)) continue;
+                    // Verify this log has leaves nearby (radius=10 catches tall trees)
+                    if (!hasLeavesNearby(check, 10)) continue;
 
-                    double horiz = Math.sqrt((double)(x * x + z * z));
-                    double score = horiz + Math.abs(y) * 3.0;
-                    if (score < nearestScore) {
-                        nearestScore = score;
+                    // Pure 3D distance: prefers literally closest log regardless of direction
+                    double dist = Math.sqrt((double)(x * x + y * y + z * z));
+                    if (dist < nearestDist) {
+                        nearestDist = dist;
                         nearest = check;
                     }
                 }
