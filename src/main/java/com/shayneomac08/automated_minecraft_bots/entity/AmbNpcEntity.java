@@ -6,7 +6,7 @@ import com.shayneomac08.automated_minecraft_bots.movement.RealisticMovement;
 import com.shayneomac08.automated_minecraft_bots.movement.StuckDetection;
 import com.shayneomac08.automated_minecraft_bots.movement.VerticalNavigation;
 import com.shayneomac08.automated_minecraft_bots.movement.HumanlikeMovement;
-import com.shayneomac08.automated_minecraft_bots.movement.TaskValidation;
+
 import com.shayneomac08.automated_minecraft_bots.movement.BotTicker;
 import com.shayneomac08.automated_minecraft_bots.movement.BotEscapeHelper;
 import com.shayneomac08.automated_minecraft_bots.movement.BotNavigationHelper;
@@ -437,11 +437,6 @@ public class AmbNpcEntity extends FakePlayer {
             exitingNow = escapeHelper.tick(tickCount, currentGoal);
         }
 
-        // DEBUG: Log exitingNow state every 2 seconds
-        if (tickCount % 40 == 0) {
-            System.out.println("[AMB-DEBUG] " + getName().getString() + " AT START OF TICK: exitingNow=" + exitingNow + ", currentGoal=" + currentGoal + ", currentTask=" + currentTask);
-        }
-
         // Keep the bot's hand visually populated with the task-appropriate tool
         if (tickCount % 100 == 0) {
             updateTaskTool();
@@ -475,18 +470,6 @@ public class AmbNpcEntity extends FakePlayer {
 
         // REALISTIC MOVEMENT SYSTEM + A* WAYPOINTS
         if (!currentGoal.equals(BlockPos.ZERO)) {
-            // DEBUG: Log when entering movement system
-            if (tickCount % 40 == 0) {
-                System.out.println("[AMB-DEBUG] " + getName().getString() + " in movement system, goal=" + currentGoal + ", pathSize=" + currentPath.size() + ", pathIndex=" + pathIndex);
-            }
-        } else {
-            // DEBUG: Log why we're not moving
-            if (tickCount % 40 == 0) {
-                System.out.println("[AMB-DEBUG] " + getName().getString() + " NOT in movement system - currentGoal is ZERO!");
-            }
-        }
-
-        if (!currentGoal.equals(BlockPos.ZERO)) {
 
             // Throttle A* retries on failure to avoid re-running 2500 nodes every tick
             if (pathRetryTimer > 0) pathRetryTimer--;
@@ -507,19 +490,15 @@ public class AmbNpcEntity extends FakePlayer {
                 currentPath = computeAStarPath(blockPosition(), currentGoal);
                 pathIndex = 0;
                 if (currentPath.isEmpty()) {
-                    // On failure, wait 3 seconds before retrying
                     pathRetryTimer = 60;
                     aStarFailCount++;
-                    System.out.println("[AMB-DEBUG] " + getName().getString() + " A* failed (attempt " + aStarFailCount + ") for goal " + currentGoal);
-                    // On 2nd failure: immediately try door rescue (wall between bot and goal)
                     if (aStarFailCount == 2 && !doorRescueActive && doorPhase == 0 && doorIgnoreTicks == 0) {
                         if (attemptDoorRescue()) {
                             System.out.println("[AMB-NAV] " + getName().getString() + " A* blocked — door rescue initiated toward " + doorPos);
                         }
                     }
                     if (aStarFailCount >= 5) {
-                        // Goal is genuinely unreachable — abandon it and pick a new one
-                        System.out.println("[AMB-NAV] " + getName().getString() + " abandoning unreachable goal " + currentGoal + " after " + aStarFailCount + " A* failures");
+                        System.out.println("[AMB-NAV] " + getName().getString() + " abandoning unreachable goal " + currentGoal + " after 5 A* failures");
                         currentGoal = BlockPos.ZERO;
                         currentPath.clear();
                         aStarFailCount = 0;
@@ -529,7 +508,6 @@ public class AmbNpcEntity extends FakePlayer {
                 } else {
                     pathRetryTimer = 0;
                     aStarFailCount = 0;
-                    System.out.println("[AMB-DEBUG] " + getName().getString() + " computed A* path with " + currentPath.size() + " waypoints");
                 }
             }
 
@@ -577,23 +555,14 @@ public class AmbNpcEntity extends FakePlayer {
                     stillMoving = RealisticMovement.moveTowards(this, doorPos, speed);
                 }
                 handleDoorPlan();
-                if (tickCount % 40 == 0) {
-                    System.out.println("[AMB-DEBUG] " + getName().getString() + " moving to door at " + doorPos + ", stillMoving=" + stillMoving);
-                }
                 // Don't clear door phase here - let handleDoorPlan() manage the full door passage
             } else if (avoidTicks > 0 && moveTarget != null) {
                 // Perform strafe to get around obstacle
                 avoidTicks--;
                 RealisticMovement.strafeAround(this, moveTarget, avoidDir, speed * 0.85f);
                 stillMoving = true;
-                if (tickCount % 40 == 0) {
-                    System.out.println("[AMB-DEBUG] " + getName().getString() + " strafing around obstacle");
-                }
             } else {
                 stillMoving = RealisticMovement.moveTowards(this, waypoint, speed);
-                if (tickCount % 40 == 0) {
-                    System.out.println("[AMB-DEBUG] " + getName().getString() + " moving to waypoint " + waypoint + ", stillMoving=" + stillMoving + ", speed=" + speed);
-                }
             }
 
             // ENHANCED: Use BotTicker for smooth look direction
@@ -861,9 +830,6 @@ public class AmbNpcEntity extends FakePlayer {
                     if (!miningState.isMining) {
                         RealisticActions.equipBestTool(this, targetState);
                         RealisticActions.startMining(this, currentGoal, miningState);
-                        if (tickCount % 40 == 0) {
-                            System.out.println("[AMB-DEBUG] " + getName().getString() + " reached goal, starting to mine at " + currentGoal);
-                        }
                     }
                 } else {
                     // CRITICAL FIX: Goal reached but nothing to mine - check nearby for mineable blocks
@@ -889,9 +855,7 @@ public class AmbNpcEntity extends FakePlayer {
             // Throttle expensive world-searches to every 40 ticks; the bot starts
             // moving the very next tick once a goal is assigned.
             if (!exitingNow && tickCount % 40 == 0) {
-                System.out.println("[AMB-DEBUG] " + getName().getString() + " executeCurrentTask() called from no-goal branch");
                 executeCurrentTask();
-                System.out.println("[AMB-DEBUG] " + getName().getString() + " AFTER executeCurrentTask(): currentGoal=" + currentGoal);
             }
         }
 
@@ -2473,11 +2437,6 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== TASK EXECUTION ====================
 
     private void executeCurrentTask() {
-        // DEBUG: Log stack trace to see where this is being called from
-        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        String caller = stack.length > 2 ? stack[2].getLineNumber() + "" : "unknown";
-        System.out.println("[AMB-DEBUG] " + getName().getString() + " executeCurrentTask() called from line " + caller);
-
         if (currentTask == null || currentTask.isEmpty()) {
             // No task - just wander
             currentGoal = blockPosition().offset(
@@ -2494,98 +2453,34 @@ public class AmbNpcEntity extends FakePlayer {
 
         switch (currentTask) {
             case "gather_wood" -> {
-                // CRITICAL FIX: Find the BASE of the tree (lowest log), not a random log
-                BlockPos tree = findNearestBlock(BlockTags.LOGS, 32);
-                if (tree != null) {
-                    // Find the lowest log in this tree (the base)
-                    BlockPos baseLog = findTreeBase(tree);
-
-                    // ENHANCED: Validate goal before setting
-                    TaskValidation.ValidationResult validation = TaskValidation.validateGoal(this, baseLog, currentTask);
-
-                    if (!validation.isValid) {
-                        System.out.println("[AMB-TASK] " + getName().getString() + " goal validation failed: " + validation.reason);
-                        // Try to find an alternative tree
-                        tree = findNearestBlock(BlockTags.LOGS, 32);
-                        if (tree == null) {
-                            System.out.println("[AMB-TASK] " + getName().getString() + " no valid trees found");
-                            return;
-                        }
-                        baseLog = findTreeBase(tree);
-                        validation = TaskValidation.validateGoal(this, baseLog, currentTask);
-                        if (!validation.isValid) {
-                            System.out.println("[AMB-TASK] " + getName().getString() + " no reachable trees found");
-                            return;
-                        }
-                    }
-
-                    // Use adjusted goal if validation suggested one
-                    if (!validation.adjustedGoal.equals(BlockPos.ZERO)) {
-                        baseLog = validation.adjustedGoal;
-                        System.out.println("[AMB-TASK] " + getName().getString() + " using adjusted goal: " + baseLog);
-                    }
-
-                    // Check distance to tree base
-                    double distToTree = Math.sqrt(blockPosition().distSqr(baseLog));
-
-                    if (distToTree < 4.0) {
-                        // We're close - find the nearest log at eye height for mining
-                        BlockPos eyeHeightLog = findNearestLogAtEyeHeight(baseLog);
-                        currentGoal = eyeHeightLog;
-                        System.out.println("[AMB-TASK] " + getName().getString() + " near tree, setting goal to eye-height log at " + eyeHeightLog + " for mining");
-                    } else {
-                        // We're far - find a walkable position adjacent to the tree base
-                        ServerLevel sl = (ServerLevel) level();
-                        BlockPos groundPos = baseLog.below();
-                        // Use isWalkable (not canOcclude) - the ground below a log trunk is solid, not walkable
-                        if (!RealisticMovement.isWalkable(sl, groundPos)) {
-                            groundPos = RealisticMovement.findNearestWalkable(sl, baseLog, blockPosition());
-                        }
-                        // Don't set goal to our own position (findNearestWalkable fallback) - that means no path exists
-                        if (groundPos.equals(blockPosition())) {
-                            System.out.println("[AMB-TASK] " + getName().getString() + " no walkable position found near tree at " + baseLog + ", trying another tree");
-                            return;
-                        }
-                        currentGoal = groundPos;
-                        System.out.println("[AMB-TASK] " + getName().getString() + " found tree base at " + baseLog + ", moving to walkable position " + groundPos + " (distance: " + distToTree + ")");
-                    }
-
-                    // Clear any door plan when pursuing resource
+                // Simple: set goal directly to the nearest log. getWalkableGoal() handles
+                // navigation to an adjacent walkable tile; shouldMineBlock(log)=true triggers
+                // mining when we arrive within 2.5 blocks.
+                BlockPos log = findNearestBlock(BlockTags.LOGS, 32);
+                if (log != null) {
+                    currentGoal = log;
                     doorPhase = 0; doorPos = BlockPos.ZERO; originalDoorPos = BlockPos.ZERO; doorTimer = 0; avoidTicks = 0;
-                    goalLockTimer = 400;
-                    // Force immediate path recomputation for the new goal
                     currentPath.clear();
                     pathIndex = 0;
                     pathRetryTimer = 0;
+                    System.out.println("[AMB] " + getName().getString() + " gather_wood: heading for log at " + log);
                 } else {
-                    // No tree found - explore
+                    // No tree found — wander to find one
                     currentGoal = blockPosition().offset(
-                        random.nextInt(40) - 20,
-                        0,
-                        random.nextInt(40) - 20
-                    );
-                    goalLockTimer = 300;
-                    System.out.println("[AMB] " + getName().getString() + " no tree found, exploring to " + currentGoal);
+                        random.nextInt(40) - 20, 0, random.nextInt(40) - 20);
+                    System.out.println("[AMB] " + getName().getString() + " no trees in range, wandering");
                 }
             }
             case "mine_stone" -> {
-                // Find nearest stone
                 BlockPos stone = findNearestBlock(Blocks.STONE, 32);
                 if (stone != null) {
-                    BlockPos approach = RealisticMovement.findNearestWalkable((ServerLevel) level(), stone, blockPosition());
-                    currentGoal = approach;
+                    currentGoal = stone;
                     doorPhase = 0; doorPos = BlockPos.ZERO; originalDoorPos = BlockPos.ZERO; doorTimer = 0; avoidTicks = 0;
-                    goalLockTimer = 400;
-                    System.out.println("[AMB] " + getName().getString() + " found stone at " + stone + ", moving to it");
+                    currentPath.clear(); pathIndex = 0; pathRetryTimer = 0;
+                    System.out.println("[AMB] " + getName().getString() + " mine_stone: heading for stone at " + stone);
                 } else {
-                    // No stone found - explore
-                    currentGoal = blockPosition().offset(
-                        random.nextInt(40) - 20,
-                        0,
-                        random.nextInt(40) - 20
-                    );
-                    goalLockTimer = 300;
-                    System.out.println("[AMB] " + getName().getString() + " no stone found, exploring to " + currentGoal);
+                    currentGoal = blockPosition().offset(random.nextInt(40) - 20, 0, random.nextInt(40) - 20);
+                    System.out.println("[AMB] " + getName().getString() + " no stone in range, wandering");
                 }
             }
             case "explore" -> {
@@ -2916,60 +2811,6 @@ public class AmbNpcEntity extends FakePlayer {
     /**
      * Find the base (lowest log) of a tree starting from any log position
      */
-    private BlockPos findTreeBase(BlockPos startLog) {
-        BlockPos lowest = startLog;
-
-        // Search downward for the lowest log
-        for (int dy = 0; dy >= -10; dy--) {
-            BlockPos check = startLog.offset(0, dy, 0);
-            BlockState state = level().getBlockState(check);
-
-            if (state.is(BlockTags.LOGS)) {
-                lowest = check;
-            } else {
-                // Hit non-log block, stop searching
-                break;
-            }
-        }
-
-        return lowest;
-    }
-
-    /**
-     * Find the nearest log at eye height (1-2 blocks above ground) for mining
-     */
-    private BlockPos findNearestLogAtEyeHeight(BlockPos baseLog) {
-        BlockPos myPos = blockPosition();
-        int myEyeY = myPos.getY() + 1; // Eye height is 1 block above feet
-
-        // Search in a 5x5 area around the base log at eye height
-        BlockPos nearest = baseLog;
-        double nearestDist = Double.MAX_VALUE;
-
-        for (int dx = -2; dx <= 2; dx++) {
-            for (int dz = -2; dz <= 2; dz++) {
-                for (int dy = 0; dy <= 5; dy++) { // Check up to 5 blocks high
-                    BlockPos check = baseLog.offset(dx, dy, dz);
-
-                    // Prefer logs at eye height (within 1 block of eye level)
-                    if (level().getBlockState(check).is(BlockTags.LOGS)) {
-                        double dist = myPos.distSqr(check);
-                        int heightDiff = Math.abs(check.getY() - myEyeY);
-
-                        // Penalize logs that aren't at eye height
-                        double score = dist + (heightDiff * 2.0);
-
-                        if (score < nearestDist) {
-                            nearestDist = score;
-                            nearest = check;
-                        }
-                    }
-                }
-            }
-        }
-
-        return nearest;
-    }
 
     /**
      * Find mineable blocks nearby for the current task
