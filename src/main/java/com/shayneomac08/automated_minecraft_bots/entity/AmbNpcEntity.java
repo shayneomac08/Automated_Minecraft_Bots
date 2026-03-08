@@ -1049,11 +1049,22 @@ public class AmbNpcEntity extends FakePlayer {
             return false;
         }
 
-        // Detect if indoors (no sky above within a few blocks)
-        boolean indoors = true;
+        // Detect if truly indoors — must have BOTH no sky above AND solid walls around us.
+        // A simple canSeeSky check gives false positives under leaf canopies (outdoors under a tree).
+        // We only consider it "indoors" if there are solid (structure) blocks in 3+ cardinal directions.
+        boolean noSkyAbove = true;
         for (int i = 0; i < 5; i++) {
-            if (level().canSeeSky(blockPosition().above(i))) { indoors = false; break; }
+            if (level().canSeeSky(blockPosition().above(i))) { noSkyAbove = false; break; }
         }
+        // Count solid walls within 3 blocks in cardinal directions (leaves/logs don't count — only opaque non-natural blocks)
+        int wallCount = 0;
+        for (Direction d : new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST}) {
+            for (int dist = 1; dist <= 3; dist++) {
+                BlockState bs = level().getBlockState(blockPosition().relative(d, dist));
+                if (bs.canOcclude() && !isNaturalTerrainBlock(bs)) { wallCount++; break; }
+            }
+        }
+        boolean indoors = noSkyAbove && wallCount >= 2;
 
         // FIXED: If we're outside, clear exit state and don't re-trigger
         if (!indoors) {
@@ -1147,7 +1158,10 @@ public class AmbNpcEntity extends FakePlayer {
                 exitingInterior = false;
                 exitDoorCenter = BlockPos.ZERO;
                 exitBeyond = BlockPos.ZERO;
-                doorRescueActive = false; // Bug 1: release rescue guard on timeout
+                doorRescueActive = false;
+                exitCooldown = 600; // 30s cooldown so we don't immediately re-trigger
+                aStarFailCount = 0; // Reset fail count so interior detection doesn't instantly re-fire
+                currentGoal = BlockPos.ZERO; // Clear blocked goal so bot picks a fresh one
             }
             return true; // suppress other tasks while exiting
         }

@@ -34,8 +34,8 @@ public class BotConfig {
                 .define("grok_api_url", "https://api.x.ai/v1/chat/completions");
 
         GROK_MODEL = BUILDER
-                .comment("Model for Grok (e.g. grok-beta, grok-2)")
-                .define("grok_model", "grok-beta");
+                .comment("Model for Grok (e.g. grok-3-beta, grok-2-1212)")
+                .define("grok_model", "grok-3-beta");
 
         OPENAI_API_KEY = BUILDER
                 .comment("API key for OpenAI")

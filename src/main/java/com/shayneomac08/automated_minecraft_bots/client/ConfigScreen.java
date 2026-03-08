@@ -10,20 +10,20 @@ import net.minecraft.network.chat.Component;
 public class ConfigScreen extends Screen {
     private final Screen parent;
 
-    // Six input fields: provider selector + one per API provider
     private EditBox providerField;
     private EditBox grokKeyField;
+    private EditBox grokModelField;
     private EditBox openaiKeyField;
     private EditBox geminiKeyField;
     private EditBox claudeKeyField;
     private EditBox ollamaUrlField;
 
     // Layout constants
-    private static final int LABEL_W  = 70;
+    private static final int LABEL_W  = 80;
     private static final int GAP      = 4;
     private static final int FIELD_H  = 20;
-    private static final int SPACING  = 32;
-    private static final int START_Y  = 50;
+    private static final int SPACING  = 28;
+    private static final int START_Y  = 45;
 
     public ConfigScreen(Screen parent) {
         super(Component.literal("Automated Minecraft Bots - Configuration"));
@@ -40,7 +40,7 @@ public class ConfigScreen extends Screen {
         int fieldW  = totalW - LABEL_W - GAP;
 
         // ── Label buttons (left side) ─────────────────────────────────────────
-        String[] labels = {"Provider", "Grok", "OpenAI", "Gemini", "Claude", "Ollama"};
+        String[] labels = {"Provider", "Grok Key", "Grok Model", "OpenAI Key", "Gemini Key", "Claude Key", "Ollama URL"};
         for (int i = 0; i < labels.length; i++) {
             final String lbl = labels[i];
             this.addRenderableWidget(
@@ -51,7 +51,7 @@ public class ConfigScreen extends Screen {
         }
 
         // ── Input fields (right side) ──────────────────────────────────────────
-        // Provider selector (grok / openai / gemini / claude / ollama)
+        // Provider selector
         this.providerField = new EditBox(this.font, fieldX, START_Y, fieldW, FIELD_H,
                 Component.literal("Active LLM Provider"));
         this.providerField.setMaxLength(32);
@@ -59,7 +59,7 @@ public class ConfigScreen extends Screen {
         this.providerField.setHint(Component.literal("grok / openai / gemini / claude / ollama"));
         this.addRenderableWidget(this.providerField);
 
-        // Grok
+        // Grok API key
         this.grokKeyField = new EditBox(this.font, fieldX, START_Y + SPACING, fieldW, FIELD_H,
                 Component.literal("Grok API Key"));
         this.grokKeyField.setMaxLength(512);
@@ -67,8 +67,16 @@ public class ConfigScreen extends Screen {
         this.grokKeyField.setHint(Component.literal("xai-..."));
         this.addRenderableWidget(this.grokKeyField);
 
+        // Grok model name
+        this.grokModelField = new EditBox(this.font, fieldX, START_Y + SPACING * 2, fieldW, FIELD_H,
+                Component.literal("Grok Model"));
+        this.grokModelField.setMaxLength(64);
+        this.grokModelField.setValue(BotConfig.GROK_MODEL.get());
+        this.grokModelField.setHint(Component.literal("grok-3-beta / grok-2-1212"));
+        this.addRenderableWidget(this.grokModelField);
+
         // OpenAI
-        this.openaiKeyField = new EditBox(this.font, fieldX, START_Y + SPACING * 2, fieldW, FIELD_H,
+        this.openaiKeyField = new EditBox(this.font, fieldX, START_Y + SPACING * 3, fieldW, FIELD_H,
                 Component.literal("OpenAI API Key"));
         this.openaiKeyField.setMaxLength(512);
         this.openaiKeyField.setValue(BotConfig.OPENAI_API_KEY.get());
@@ -76,7 +84,7 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(this.openaiKeyField);
 
         // Gemini
-        this.geminiKeyField = new EditBox(this.font, fieldX, START_Y + SPACING * 3, fieldW, FIELD_H,
+        this.geminiKeyField = new EditBox(this.font, fieldX, START_Y + SPACING * 4, fieldW, FIELD_H,
                 Component.literal("Gemini API Key"));
         this.geminiKeyField.setMaxLength(512);
         this.geminiKeyField.setValue(BotConfig.GEMINI_API_KEY.get());
@@ -84,7 +92,7 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(this.geminiKeyField);
 
         // Claude
-        this.claudeKeyField = new EditBox(this.font, fieldX, START_Y + SPACING * 4, fieldW, FIELD_H,
+        this.claudeKeyField = new EditBox(this.font, fieldX, START_Y + SPACING * 5, fieldW, FIELD_H,
                 Component.literal("Claude API Key"));
         this.claudeKeyField.setMaxLength(512);
         this.claudeKeyField.setValue(BotConfig.CLAUDE_API_KEY.get());
@@ -92,7 +100,7 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(this.claudeKeyField);
 
         // Ollama
-        this.ollamaUrlField = new EditBox(this.font, fieldX, START_Y + SPACING * 5, fieldW, FIELD_H,
+        this.ollamaUrlField = new EditBox(this.font, fieldX, START_Y + SPACING * 6, fieldW, FIELD_H,
                 Component.literal("Ollama URL"));
         this.ollamaUrlField.setMaxLength(256);
         this.ollamaUrlField.setValue(BotConfig.OLLAMA_URL.get());
@@ -100,7 +108,7 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(this.ollamaUrlField);
 
         // ── Save / Cancel ──────────────────────────────────────────────────────
-        int btnY = START_Y + SPACING * 6 + 10;
+        int btnY = START_Y + SPACING * 7 + 6;
         this.addRenderableWidget(
             Button.builder(Component.literal("Save"), btn -> this.saveAndClose())
                   .bounds(this.width / 2 - 155, btnY, 150, 20).build()
@@ -119,6 +127,7 @@ public class ConfigScreen extends Screen {
     private void saveConfig() {
         BotConfig.LLM_PROVIDER.set(this.providerField.getValue().toLowerCase().trim());
         BotConfig.GROK_API_KEY.set(this.grokKeyField.getValue());
+        BotConfig.GROK_MODEL.set(this.grokModelField.getValue().trim());
         BotConfig.OPENAI_API_KEY.set(this.openaiKeyField.getValue());
         BotConfig.GEMINI_API_KEY.set(this.geminiKeyField.getValue());
         BotConfig.CLAUDE_API_KEY.set(this.claudeKeyField.getValue());
