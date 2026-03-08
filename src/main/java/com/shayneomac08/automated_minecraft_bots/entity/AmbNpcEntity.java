@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -530,13 +531,34 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
 
+            // MINING REACH CHECK — runs before path-empty return so the bot can mine
+            // a block it's already adjacent to even when A* returns an empty path
+            // (happens when getWalkableGoal() == bot's current position).
+            {
+                double distMine = position().distanceTo(Vec3.atCenterOf(currentGoal));
+                BlockState mineCheck = level().getBlockState(currentGoal);
+                if (shouldMineBlock(mineCheck) && distMine < 4.5) {
+                    if (!miningState.isMining) {
+                        RealisticActions.equipBestTool(this, mineCheck);
+                        RealisticActions.startMining(this, currentGoal, miningState);
+                    }
+                    // Apply gravity but don't navigate — let mining run this tick
+                    if (currentPath.isEmpty()) {
+                        double dy = getDeltaMovement().y;
+                        move(MoverType.SELF, new Vec3(0, dy, 0));
+                        double nextDY = onGround() ? -0.08 : Math.max(getDeltaMovement().y - 0.08, -3.5);
+                        setDeltaMovement(0, nextDY, 0);
+                        return;
+                    }
+                }
+            }
+
             // Choose waypoint. When A* returned a partial path, follow it.
             // When path is completely empty (start enclosed, no partial either), do NOT fall
             // back to direct movement toward the goal — that sends the bot into walls.
             // Instead, stay still and wait for pathRetryTimer to expire.
             if (currentPath.isEmpty()) {
                 // Apply gravity only — stay in place until pathRetryTimer fires.
-                // Direct movement toward the goal without a path walks the bot into walls.
                 double dy = getDeltaMovement().y;
                 move(MoverType.SELF, new Vec3(0, dy, 0));
                 double nextDY = onGround() ? -0.08 : Math.max(getDeltaMovement().y - 0.08, -3.5);
@@ -968,13 +990,27 @@ public class AmbNpcEntity extends FakePlayer {
         }
         if (messageCooldown > 0) messageCooldown--;
 
-        // ITEM PICKUP — vanilla playerTouch handles delay, inventory, discard, and events.
-        // 2.5-block reach so items dropped from nearby blocks are collected when bot walks over.
-        if (!level().isClientSide()) {
+        // ITEM PICKUP — manual pickup with explicit animation packet directed at this bot.
+        // playerTouch() sends the animation via FakePlayer's fake connection (goes nowhere).
+        // We send ClientboundTakeItemEntityPacket to all real players so the animation aims
+        // at the bot entity, not the player.
+        if (!level().isClientSide() && level() instanceof ServerLevel sl) {
             AABB pickupBox = getBoundingBox().inflate(2.5, 1.0, 2.5);
-            for (ItemEntity itemEntity : level().getEntitiesOfClass(ItemEntity.class, pickupBox)) {
-                if (!itemEntity.isRemoved()) {
-                    itemEntity.playerTouch(this);
+            for (ItemEntity itemEntity : sl.getEntitiesOfClass(ItemEntity.class, pickupBox)) {
+                if (itemEntity.isRemoved() || itemEntity.hasPickUpDelay()) continue;
+                ItemStack stack = itemEntity.getItem();
+                if (stack.isEmpty()) continue;
+                int countBefore = stack.getCount();
+                getInventory().add(stack);
+                int grabbed = countBefore - stack.getCount();
+                if (grabbed > 0) {
+                    // Broadcast animation: item flies toward this bot's entity ID
+                    ClientboundTakeItemEntityPacket pkt = new ClientboundTakeItemEntityPacket(
+                            itemEntity.getId(), this.getId(), grabbed);
+                    for (net.minecraft.server.level.ServerPlayer sp : sl.players()) {
+                        sp.connection.send(pkt);
+                    }
+                    if (stack.isEmpty()) itemEntity.discard();
                 }
             }
         }
@@ -1621,7 +1657,9 @@ public class AmbNpcEntity extends FakePlayer {
                 + countItemInInventory(Items.MANGROVE_PLANKS) + countItemInInventory(Items.CHERRY_PLANKS)
                 + countItemInInventory(Items.BAMBOO_PLANKS);
         int sticks = countItemInInventory(Items.STICK);
-        if (sticks < 16 && planks >= 2) {
+        // Reserve at least 10 planks for crafting table (4) + tools (3+3).
+        // Only make sticks from surplus planks to avoid depleting the crafting supply.
+        if (sticks < 16 && planks > 10) {
             // Consume any two planks and add 4 sticks
             if (removeAnyPlanks(2) == 2) {
                 addToInventory(new ItemStack(Items.STICK, 4));
@@ -1731,7 +1769,10 @@ public class AmbNpcEntity extends FakePlayer {
         // Simple starter tool progression at table (wood tier).
         // Guard: skip if table was just placed this tick (bot hasn't walked there yet).
         if (!knownCraftingTable.equals(BlockPos.ZERO) && !tableJustPlaced
-                && this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
+                && this.blockPosition().closerThan(knownCraftingTable, 3.5)) {
+            // Look at and "right-click" the table so the interaction is visible to players
+            RealisticMovement.lookAt(this, Vec3.atCenterOf(knownCraftingTable));
+            swing(InteractionHand.MAIN_HAND);
             craftStarterToolsAtTable();
             // If we self-placed this table and have no established base, pick it back up.
             // A real player wouldn't leave a crafting table in the middle of a field.
@@ -1780,7 +1821,9 @@ public class AmbNpcEntity extends FakePlayer {
             }
 
             if (getInventory().countItem(Blocks.CRAFTING_TABLE.asItem()) > 0) {
-                BlockPos place = findPlacementNear(blockPosition(), 3);
+                // Place table 5-10 blocks away so the bot must visibly walk to it before crafting.
+                BlockPos place = findPlacementAway(5, 10);
+                if (place == null) place = findPlacementNear(blockPosition(), 4); // fallback: closer if terrain is cramped
                 if (place != null) {
                     if (removeItems(Blocks.CRAFTING_TABLE.asItem(), 1) == 1) {
                         level().setBlock(place, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
@@ -1817,6 +1860,23 @@ public class AmbNpcEntity extends FakePlayer {
             for (int dx = -r; dx <= r; dx++) {
                 for (int dz = -r; dz <= r; dz++) {
                     BlockPos p = center.offset(dx, 0, dz);
+                    if (level().getBlockState(p).isAir() && level().getBlockState(p.below()).canOcclude()) {
+                        return p;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Find a flat, open spot at least minDist blocks away (up to maxDist) so the bot must walk there. */
+    private BlockPos findPlacementAway(int minDist, int maxDist) {
+        BlockPos c = blockPosition();
+        for (int r = minDist; r <= maxDist; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (Math.abs(dx) < r - 1 && Math.abs(dz) < r - 1) continue; // Only the ring at distance r
+                    BlockPos p = c.offset(dx, 0, dz);
                     if (level().getBlockState(p).isAir() && level().getBlockState(p.below()).canOcclude()) {
                         return p;
                     }
