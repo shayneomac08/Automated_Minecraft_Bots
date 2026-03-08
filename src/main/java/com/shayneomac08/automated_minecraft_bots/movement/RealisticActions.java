@@ -51,14 +51,15 @@ public class RealisticActions {
             return;
         }
 
-        // Calculate mining time based on block hardness and tool
+        // Calculate mining time to match vanilla Minecraft survival formula:
+        //   ticks = ceil(hardness * 30 / speedMultiplier)
+        // where speedMultiplier comes from the tool's effective speed on this block type.
+        // Wrong tool / bare hand returns 1.0 from getDestroySpeed(), giving the slowest time.
+        // Example: log (hardness=2) bare hand → 60 ticks (3s); wooden axe → 30 ticks (1.5s).
         float hardness = blockState.getDestroySpeed(level, target);
         ItemStack tool = player.getMainHandItem();
-        float speedMultiplier = tool.getDestroySpeed(blockState);
-
-        // Calculate ticks required (realistic mining time)
-        int baseTicks = (int) (hardness * 20); // 20 ticks per hardness unit
-        state.requiredTicks = Math.max(1, (int) (baseTicks / Math.max(1, speedMultiplier)));
+        float speedMultiplier = Math.max(1.0f, tool.getDestroySpeed(blockState));
+        state.requiredTicks = Math.max(1, (int) Math.ceil(hardness * 30.0f / speedMultiplier));
 
         state.targetBlock = target;
         state.miningTicks = 0;

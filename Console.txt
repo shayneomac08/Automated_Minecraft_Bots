@@ -1,55 +1,43 @@
-[10:34:32] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[10:34:33] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[10:34:33] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[10:34:33] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[10:34:33] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[10:34:33] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[10:34:33] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[10:34:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
-[10:34:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[10:34:34] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
-[10:34:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
-[10:34:38] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 512 reached during a single frame. New capacity will be 1024.
-[10:34:38] [Render thread/WARN] [minecraft/ClientPacketListener]: Server attempted to add player prior to sending player info (Player id b1d8b768-6856-4a2c-b69e-2a8e19447534)
-[10:34:38] [Render thread/WARN] [minecraft/ClientPacketListener]: Skipping Entity with id entity.minecraft.player
-[AMB] bot task set to: gather_wood for 3 minutes
-[AMB] bot spawned with player mindset: gather_wood (thinking: Need wood for tools and crafting)
-[10:34:38] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned bot (grok) - FakePlayer mode]
+[12:03:02] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned bot (grok) - FakePlayer mode]
 [AMB] Spawned FakePlayer bot: bot (LLM: grok)
-[10:34:38] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned bot (grok) - FakePlayer mode
-[10:34:38] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] I am now the GATHERER of the tribe. Let's begin our journey.
-[10:34:38] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] I am now the GATHERER of the tribe. Let's begin our journey.
-[10:34:42] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 1024 reached during a single frame. New capacity will be 2048.
+[12:03:02] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned bot (grok) - FakePlayer mode
+[12:03:02] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] I am now the LEADER of the tribe. Let's begin our journey.
+[12:03:02] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] I am now the LEADER of the tribe. Let's begin our journey.
 [AMB] bot executing task: gather_wood
 [AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-28, y=63, z=71}?BlockPos{x=-34, y=73, z=79}: 32 nodes, walkable:true, dy:0
-[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-29, y=63, z=70} BlockPos{x=-29, y=63, z=69} BlockPos{x=-30, y=63, z=68} BlockPos{x=-30, y=63, z=67} BlockPos{x=-30, y=63, z=66}
-[AMB-DOOR] bot proactively opened door at BlockPos{x=-30, y=63, z=66}
-[AMB-DIAG] bot pos=(-29.700,63.000,66.564) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB] bot opening door at BlockPos{x=-31, y=63, z=66} due to collision
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.81
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-32.577,62.938,65.565) blockPos=BlockPos{x=-33, y=62, z=65} dist=17.06 pathIdx=9/32 wp=BlockPos{x=-35, y=63, z=65})
-[AMB-DIAG] bot pos=(-32.577,62.938,65.565) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=1.15
-[AMB-DIAG] bot pos=(-37.833,63.357,65.700) delta=(0.0000,0.3400,0.0000) hColl=true onGnd=false sprint=false
-[10:34:47] [Render thread/WARN] [minecraft/SoundEngine]: Unable to play empty soundEvent: minecraft:entity.cod.ambient
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.48
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.454,64.500,67.025) blockPos=BlockPos{x=-39, y=64, z=67} dist=15.07 pathIdx=15/32 wp=BlockPos{x=-39, y=65, z=67})
-[AMB-DIAG] bot pos=(-38.454,64.500,67.025) delta=(0.0752,0.4200,0.1853) hColl=false onGnd=true sprint=true
+[AMB-PATH] A* BlockPos{x=-31, y=63, z=71}?BlockPos{x=-34, y=73, z=79}: 32 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-31, y=63, z=70} BlockPos{x=-31, y=63, z=69} BlockPos{x=-31, y=63, z=68} BlockPos{x=-31, y=63, z=67} BlockPos{x=-31, y=63, z=66}
+[AMB-DOOR] bot proactively opened door at BlockPos{x=-31, y=63, z=66}
+[AMB-DIAG] bot pos=(-30.512,63.000,66.435) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=2.00
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-32.121,62.938,65.577) blockPos=BlockPos{x=-33, y=62, z=65} dist=17.06 pathIdx=8/32 wp=BlockPos{x=-34, y=63, z=65})
+[AMB-DIAG] bot pos=(-32.121,62.938,65.577) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
+[AMB-DIAG] bot pos=(-37.601,62.938,65.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=true
+[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=1.09
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.49
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.449,64.500,67.016) blockPos=BlockPos{x=-39, y=64, z=67} dist=15.07 pathIdx=15/32 wp=BlockPos{x=-39, y=65, z=67})
+[AMB-DIAG] bot pos=(-38.449,64.500,67.016) delta=(0.0751,0.4200,0.1854) hColl=false onGnd=true sprint=true
 [AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.53
-[AMB-DIAG] bot pos=(-38.498,67.700,69.813) delta=(0.0000,0.1000,0.0000) hColl=false onGnd=false sprint=true
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.52
+[AMB-DIAG] bot pos=(-38.497,67.700,69.820) delta=(0.0000,0.1000,0.0000) hColl=false onGnd=false sprint=true
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.53
+[12:03:14] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
 [AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.500,69.620,72.200) blockPos=BlockPos{x=-39, y=69, z=72} dist=8.77 pathIdx=21/32 wp=BlockPos{x=-39, y=71, z=73})
 [AMB-DIAG] bot pos=(-38.500,69.620,72.200) delta=(0.0000,-0.2200,0.0000) hColl=true onGnd=false sprint=false
 [AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.66
-[AMB-DIAG] bot pos=(-38.300,72.000,74.355) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-38.300,72.000,74.350) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
 [AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-36.875,73.000,77.070) blockPos=BlockPos{x=-37, y=73, z=77} dist=3.16 pathIdx=27/32 wp=BlockPos{x=-37, y=73, z=78})
-[AMB-DIAG] bot pos=(-36.875,73.000,77.070) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=79}?BlockPos{x=-34, y=73, z=79}: 3 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 3 waypoints: BlockPos{x=-36, y=73, z=79} BlockPos{x=-35, y=73, z=79} BlockPos{x=-34, y=73, z=79}
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-36.867,73.000,77.065) blockPos=BlockPos{x=-37, y=73, z=77} dist=3.16 pathIdx=27/32 wp=BlockPos{x=-37, y=73, z=78})
+[AMB-DIAG] bot pos=(-36.867,73.000,77.065) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
 [AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.81
-[AMB-DIAG] bot pos=(-36.300,73.000,79.308) delta=(0.0000,0.4200,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,73.000,79.277) delta=(0.0000,0.4200,0.0000) hColl=true onGnd=true sprint=false
+[AMB-PATH] A* BlockPos{x=-37, y=74, z=79}?BlockPos{x=-34, y=73, z=79}: 3 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 3 waypoints: BlockPos{x=-36, y=73, z=79} BlockPos{x=-35, y=73, z=79} BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB] bot moving to goal BlockPos{x=-34, y=74, z=78} (pos=(-34.363,73.000,79.487) blockPos=BlockPos{x=-35, y=73, z=79} dist=1.73 pathIdx=0/1 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-34.363,73.000,79.487) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
 [AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
 [AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
@@ -62,29 +50,32 @@
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
 [AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-JUMP] bot jump: hColl=false waypointDY=0 horizDist=0.65
 [AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=74, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=74, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=74, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=74, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=74, z=79}?BlockPos{x=-34, y=73, z=79}: 1 nodes, walkable:true, dy:-1
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=79}
+[AMB-PATH] A* BlockPos{x=-35, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-34, y=73, z=79} BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-2
 [AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-34, y=73, z=79} BlockPos{x=-34, y=73, z=78}
-[AMB-JUMP] bot jump: hColl=false waypointDY=0 horizDist=0.66
-[AMB-PATH] A* BlockPos{x=-35, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-34, y=73, z=79} BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB] bot moving to goal BlockPos{x=-34, y=75, z=78} (pos=(-33.735,73.160,79.300) blockPos=BlockPos{x=-34, y=73, z=79} dist=2.24 pathIdx=0/1 wp=BlockPos{x=-34, y=73, z=78})
-[AMB-DIAG] bot pos=(-33.735,73.160,79.300) delta=(0.0000,-0.2800,0.0000) hColl=true onGnd=false sprint=false
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-DIAG] bot pos=(-33.733,73.000,79.300) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
@@ -104,7 +95,52 @@
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB] bot moving to goal BlockPos{x=-34, y=75, z=78} (pos=(-33.627,73.000,79.091) blockPos=BlockPos{x=-34, y=73, z=79} dist=2.24 pathIdx=0/1 wp=BlockPos{x=-34, y=73, z=78})
+[AMB-DIAG] bot pos=(-33.627,73.000,79.091) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-JUMP] bot jump: hColl=false waypointDY=0 horizDist=0.60
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
@@ -116,7 +152,6 @@
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-DIAG] bot pos=(-33.628,73.000,79.086) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
@@ -125,10 +160,7 @@
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-DIAG] bot pos=(-33.627,73.000,79.091) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
@@ -146,45 +178,40 @@
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-4
+[AMB-PATH] A* BlockPos{x=-34, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-4
+[AMB-PATH] A* BlockPos{x=-34, y=74, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-4
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-4
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-4
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
+[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
+[AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-3
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PATH] A* BlockPos{x=-34, y=73, z=79}?BlockPos{x=-34, y=73, z=78}: 1 nodes, walkable:true, dy:-4
 [AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-34, y=73, z=78}
 [AMB-PILLAR] bot entering pillar mode target=BlockPos{x=-34, y=77, z=78} baseY=73
-[10:35:08] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[10:35:08] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[10:35:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[10:35:29] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[10:35:50] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: Set the time to 6000]
-[10:35:50] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Set the time to 6000
-[10:36:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[10:36:34] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[10:36:51] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: bot]
+[12:03:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
+[12:03:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
+[12:04:52] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: bot]
 [AMB] Bot removed: bot
-[10:36:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: bot
-[10:37:04] [Server thread/INFO] [minecraft/IntegratedServer]: Saving and pausing game...
-[10:37:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:overworld
-[10:37:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_end
-[10:37:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_nether
-[10:37:05] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Dev lost connection: Disconnected
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: Dev left the game
-[10:37:05] [Server thread/INFO] [minecraft/ServerCommonPacketListenerImpl]: Stopping singleplayer server as player logged out
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:overworld
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_end
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_nether
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (AutoBots): All chunks are saved
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
-[10:37:05] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
-[10:37:06] [Render thread/INFO] [minecraft/Minecraft]: Stopping!
+[12:04:52] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: bot
+[12:04:53] [Server thread/INFO] [minecraft/IntegratedServer]: Saving and pausing game...
+[12:04:53] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:overworld
+[12:04:53] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_end
+[12:04:53] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_nether
+[12:04:54] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Dev lost connection: Disconnected
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: Dev left the game
+[12:04:54] [Server thread/INFO] [minecraft/ServerCommonPacketListenerImpl]: Stopping singleplayer server as player logged out
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:overworld
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_end
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_nether
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (AutoBots): All chunks are saved
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[12:04:54] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved

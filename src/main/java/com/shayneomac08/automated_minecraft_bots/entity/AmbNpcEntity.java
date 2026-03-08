@@ -474,22 +474,25 @@ public class AmbNpcEntity extends FakePlayer {
         }
 
         // OPPORTUNISTIC ITEM PICKUP — check for nearby items every second even during active tasks.
-        // Auto-pickup handles collection at 4 blocks; this navigates the bot toward items within 6 blocks.
-        if (!exitingNow && !miningState.isMining && tickCount % 20 == 0) {
+        // Auto-pickup handles collection at 4 blocks; this navigates the bot toward items within 12 blocks.
+        // Runs even while mining so the bot queues the item — it finishes the current block then detours.
+        if (!exitingNow && tickCount % 20 == 0) {
             if (seekingItem != null && seekingItem.isRemoved()) seekingItem = null;
-            if (seekingItem == null) seekingItem = findNearestItem(6.0);
+            if (seekingItem == null) seekingItem = findNearestItem(12.0);
             if (seekingItem != null) {
                 double itemDist = distanceTo(seekingItem);
-                // Only divert from current task if item is very close (≤6 blocks) and not already at goal
-                if (itemDist <= 6.0) {
-                    BlockPos itemPos = seekingItem.blockPosition();
-                    if (!currentGoal.equals(itemPos)) {
-                        currentGoal = itemPos;
-                        currentPath.clear();
-                        pathIndex = 0;
+                if (itemDist <= 12.0) {
+                    // Only redirect navigation when not actively mid-swing on a block
+                    if (!miningState.isMining) {
+                        BlockPos itemPos = seekingItem.blockPosition();
+                        if (!currentGoal.equals(itemPos)) {
+                            currentGoal = itemPos;
+                            currentPath.clear();
+                            pathIndex = 0;
+                        }
                     }
                 } else {
-                    seekingItem = null; // too far — don't divert
+                    seekingItem = null;
                 }
             }
         }
@@ -920,7 +923,14 @@ public class AmbNpcEntity extends FakePlayer {
 
         // REALISTIC MINING - Continue mining if in progress (skip if exiting interior)
         if (miningState.isMining && !exitingNow) {
+            BlockPos minedPos = miningState.targetBlock; // save before continueMining resets it
             boolean blockBroken = RealisticActions.continueMining(this, miningState);
+            if (blockBroken && !minedPos.equals(BlockPos.ZERO)) {
+                // Immediately collect drops from the mined block before vanilla collision can
+                // give them to a nearby real player. Items have a 10-tick delay for normal
+                // pickup, but we bypass it here since these are our own drops.
+                collectDropsNear(minedPos);
+            }
             if (blockBroken) {
                 if (pillarPhase == PillarPhase.MINING) {
                     // Pillar system will detect block gone next tick and find the next one
@@ -1797,16 +1807,13 @@ public class AmbNpcEntity extends FakePlayer {
         // Simple starter tool progression at table (wood tier).
         // Guard: skip if table was just placed this tick (bot hasn't walked there yet).
         if (!knownCraftingTable.equals(BlockPos.ZERO) && !tableJustPlaced
-                && this.blockPosition().closerThan(knownCraftingTable, 3.5)) {
+                && this.blockPosition().closerThan(knownCraftingTable, 2.0)) {
             // Look at and "right-click" the table so the interaction is visible to players
             RealisticMovement.lookAt(this, Vec3.atCenterOf(knownCraftingTable));
             swing(InteractionHand.MAIN_HAND);
             craftStarterToolsAtTable();
-            // If we self-placed this table and have no established base, pick it back up.
-            // A real player wouldn't leave a crafting table in the middle of a field.
-            if (craftingTableSelfPlaced && baseLocation.equals(BlockPos.ZERO)) {
-                pickUpCraftingTable();
-            }
+            // Do NOT pick up the table immediately after crafting — leave it in place so
+            // the player can see the bot used a physical crafting table.
         }
 
         // Furnace pipeline (basic): ensure, move to, smelt inputs, collect outputs
@@ -1849,8 +1856,9 @@ public class AmbNpcEntity extends FakePlayer {
             }
 
             if (getInventory().countItem(Blocks.CRAFTING_TABLE.asItem()) > 0) {
-                // Place table 3-5 blocks away so the bot must visibly walk to it before crafting.
-                BlockPos place = findPlacementAway(3, 5);
+                // Place table 5-8 blocks away so the bot must visibly walk to it before crafting.
+                // The craft threshold is closerThan(2.0), so 5+ blocks guarantees movement.
+                BlockPos place = findPlacementAway(5, 8);
                 if (place == null) place = findPlacementNear(blockPosition(), 3); // fallback: closer if terrain is cramped
                 if (place != null) {
                     if (removeItems(Blocks.CRAFTING_TABLE.asItem(), 1) == 1) {
@@ -1869,7 +1877,7 @@ public class AmbNpcEntity extends FakePlayer {
             }
         } else {
             // Only move toward table if bot has no active goal and intends to craft
-            if (!hasActiveGoal && !this.blockPosition().closerThan(knownCraftingTable, 4.0)) {
+            if (!hasActiveGoal && !this.blockPosition().closerThan(knownCraftingTable, 1.5)) {
                 this.currentGoal = knownCraftingTable;
             }
         }
@@ -2979,6 +2987,30 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
         return nearest;
+    }
+
+    /**
+     * Immediately collect item drops near a just-mined block, bypassing the pickup delay.
+     * Sends ClientboundTakeItemEntityPacket so the animation targets this bot instead of a
+     * nearby real player.
+     */
+    private void collectDropsNear(BlockPos pos) {
+        if (!(level() instanceof ServerLevel sl)) return;
+        AABB box = new AABB(pos).inflate(2.0, 2.0, 2.0);
+        for (ItemEntity item : sl.getEntitiesOfClass(ItemEntity.class, box)) {
+            if (item.isRemoved()) continue;
+            ItemStack stack = item.getItem();
+            if (stack.isEmpty()) continue;
+            int before = stack.getCount();
+            getInventory().add(stack);
+            int grabbed = before - stack.getCount();
+            if (grabbed > 0) {
+                ClientboundTakeItemEntityPacket pkt = new ClientboundTakeItemEntityPacket(
+                        item.getId(), this.getId(), grabbed);
+                for (ServerPlayer sp : sl.players()) sp.connection.send(pkt);
+                if (stack.isEmpty()) item.discard();
+            }
+        }
     }
 
     /** Returns true if there is at least one leaf block within the given radius of pos. */
