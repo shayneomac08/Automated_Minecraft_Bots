@@ -166,6 +166,9 @@ public class AmbNpcEntity extends FakePlayer {
     private int  pillarCooldown     = 0;
     private boolean pillarWasAirborne = false;
 
+    // Item seeking
+    private ItemEntity seekingItem = null;
+
     // Jump + progress tracking (Block 2)
     private int jumpCooldown = 0;
     private Vec3 lastExactMovingPos = Vec3.ZERO;
@@ -512,15 +515,18 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
 
-            // Check if pillar mode should activate: bot is XZ-close to goal but goal is too high to walk to.
-            // Trigger before choosing a waypoint so we never enter the jump-loop.
+            // Check if pillar mode should activate: bot is XZ-close but goal is above mining reach.
+            // ONLY activate when outside the 4.5-block mining range — if we can reach it, just mine.
             if (shouldMineBlock(level().getBlockState(currentGoal))) {
-                int heightAbove = currentGoal.getY() - blockPosition().getY();
-                double hDistXZ = Math.sqrt(Math.pow(currentGoal.getX() + 0.5 - getX(), 2)
-                                         + Math.pow(currentGoal.getZ() + 0.5 - getZ(), 2));
-                if (heightAbove > 1 && hDistXZ < 2.5) {
-                    enterPillarMode(currentGoal);
-                    return; // pillar system takes over next tick
+                double distToGoalNow = position().distanceTo(Vec3.atCenterOf(currentGoal));
+                if (distToGoalNow >= 4.5) {
+                    int heightAbove = currentGoal.getY() - blockPosition().getY();
+                    double hDistXZ = Math.sqrt(Math.pow(currentGoal.getX() + 0.5 - getX(), 2)
+                                             + Math.pow(currentGoal.getZ() + 0.5 - getZ(), 2));
+                    if (heightAbove > 1 && hDistXZ < 2.5) {
+                        enterPillarMode(currentGoal);
+                        return; // pillar system takes over next tick
+                    }
                 }
             }
 
@@ -853,11 +859,26 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
         } else {
-            // No goal — execute current task to find one (but NOT if exiting interior).
-            // Throttle expensive world-searches to every 40 ticks; the bot starts
-            // moving the very next tick once a goal is assigned.
-            if (!exitingNow && tickCount % 40 == 0) {
-                executeCurrentTask();
+            // No goal — seek nearby items first, then run task logic.
+            if (!exitingNow) {
+                // Update seekingItem tracking every 10 ticks
+                if (tickCount % 10 == 0) {
+                    if (seekingItem != null && seekingItem.isRemoved()) {
+                        seekingItem = null; // picked up or despawned
+                    }
+                    if (seekingItem == null) {
+                        seekingItem = findNearestItem(10.0);
+                    }
+                }
+                if (seekingItem != null && !seekingItem.isRemoved()) {
+                    // Move toward the item
+                    currentGoal = seekingItem.blockPosition();
+                    currentPath.clear();
+                    pathIndex = 0;
+                } else if (tickCount % 40 == 0) {
+                    seekingItem = null;
+                    executeCurrentTask();
+                }
             }
         }
 
@@ -879,9 +900,32 @@ public class AmbNpcEntity extends FakePlayer {
                             broadcastGroupChat("Digging done! Placing supports...");
                         }
                     }
-                    // Normal mining complete - find next goal
-                    currentGoal = BlockPos.ZERO;
-                    executeCurrentTask();
+                    // For gather_wood: continue up the same trunk before searching globally.
+                    // Check 1-5 blocks above the mined log for another log in the same tree.
+                    if ("gather_wood".equals(currentTask)) {
+                        BlockPos nextLog = null;
+                        for (int up = 1; up <= 5; up++) {
+                            BlockPos above = currentGoal.above(up);
+                            if (level().getBlockState(above).is(BlockTags.LOGS)) {
+                                nextLog = above;
+                                break;
+                            }
+                            // Stop searching if we hit a non-log, non-air block (different tree)
+                            if (level().getBlockState(above).canOcclude()) break;
+                        }
+                        if (nextLog != null) {
+                            currentGoal = nextLog;
+                            currentPath.clear();
+                            pathIndex = 0;
+                        } else {
+                            currentGoal = BlockPos.ZERO;
+                            executeCurrentTask();
+                        }
+                    } else {
+                        // Normal mining complete - find next goal
+                        currentGoal = BlockPos.ZERO;
+                        executeCurrentTask();
+                    }
                 }
             }
         }
@@ -925,9 +969,9 @@ public class AmbNpcEntity extends FakePlayer {
         if (messageCooldown > 0) messageCooldown--;
 
         // ITEM PICKUP — vanilla playerTouch handles delay, inventory, discard, and events.
-        // Use a 1.5-block horizontal reach matching vanilla player pickup range.
+        // 2.5-block reach so items dropped from nearby blocks are collected when bot walks over.
         if (!level().isClientSide()) {
-            AABB pickupBox = getBoundingBox().inflate(1.5, 0.5, 1.5);
+            AABB pickupBox = getBoundingBox().inflate(2.5, 1.0, 2.5);
             for (ItemEntity itemEntity : level().getEntitiesOfClass(ItemEntity.class, pickupBox)) {
                 if (!itemEntity.isRemoved()) {
                     itemEntity.playerTouch(this);
@@ -2171,23 +2215,36 @@ public class AmbNpcEntity extends FakePlayer {
                 return;
             }
 
-            // Never mine logs as navigation obstacles — they belong to structures or other trees.
-            // The gather_wood goal-arrival check handles mining the actual target log.
-            if (bs.is(BlockTags.LOGS)) {
-                return; // go around or find another path
+            // Only break natural terrain blocks during navigation.
+            // NEVER break player-placed blocks (planks, stone bricks, cobblestone, doors, etc.)
+            if (!isNaturalTerrainBlock(bs)) {
+                return; // go around; don't damage structures
             }
 
-            // Equip appropriate tool and use survival-mode gameMode.destroyBlock()
-            // (respects block hardness and game mode — no instant creative breaking)
             RealisticActions.equipBestTool(this, bs);
             float hardness = bs.getDestroySpeed(sl, breakPos);
-            // Emulate survival mining time: harder blocks take longer (min 5 ticks, max 120 ticks)
             navBreakCooldown = Math.min(120, Math.max(5, (int)(hardness * 10)));
             this.gameMode.destroyBlock(breakPos);
-            System.out.printf("[AMB-BREAK] %s clearing %s path block at %s (hardness=%.1f, cooldown=%d)%n",
-                getName().getString(), wpDY > 1 ? "upward" : "horizontal", breakPos, hardness, navBreakCooldown);
             return;
         }
+    }
+
+    /**
+     * Returns true for naturally-generated terrain blocks that the bot may clear during navigation.
+     * Never returns true for player-craftable/placeable blocks (planks, bricks, cobblestone, etc.)
+     */
+    private static boolean isNaturalTerrainBlock(BlockState bs) {
+        Block b = bs.getBlock();
+        return b == Blocks.DIRT || b == Blocks.GRASS_BLOCK || b == Blocks.GRAVEL
+            || b == Blocks.SAND || b == Blocks.RED_SAND || b == Blocks.CLAY
+            || b == Blocks.MUD || b == Blocks.DIRT_PATH || b == Blocks.COARSE_DIRT
+            || b == Blocks.ROOTED_DIRT || b == Blocks.PODZOL || b == Blocks.MYCELIUM
+            || b == Blocks.SNOW || b == Blocks.SNOW_BLOCK || b == Blocks.ICE
+            || b == Blocks.PACKED_ICE || b == Blocks.BLUE_ICE
+            || b == Blocks.STONE || b == Blocks.DEEPSLATE || b == Blocks.TUFF
+            || b == Blocks.GRANITE || b == Blocks.DIORITE || b == Blocks.ANDESITE
+            || b == Blocks.CALCITE || b == Blocks.SMOOTH_BASALT
+            || bs.is(BlockTags.LEAVES);
     }
 
     /**
@@ -2816,6 +2873,22 @@ public class AmbNpcEntity extends FakePlayer {
                         nearest = check;
                     }
                 }
+            }
+        }
+        return nearest;
+    }
+
+    /** Find the nearest ItemEntity within range that has no pickup delay (ready to collect). */
+    private ItemEntity findNearestItem(double radius) {
+        ItemEntity nearest = null;
+        double nearestDist = Double.MAX_VALUE;
+        AABB search = getBoundingBox().inflate(radius, radius / 2.0, radius);
+        for (ItemEntity item : level().getEntitiesOfClass(ItemEntity.class, search)) {
+            if (item.isRemoved() || item.hasPickUpDelay()) continue;
+            double dist = distanceTo(item);
+            if (dist < nearestDist) {
+                nearestDist = dist;
+                nearest = item;
             }
         }
         return nearest;
