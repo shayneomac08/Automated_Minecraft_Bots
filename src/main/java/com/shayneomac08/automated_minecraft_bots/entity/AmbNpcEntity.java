@@ -32,6 +32,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -262,10 +264,26 @@ public class AmbNpcEntity extends FakePlayer {
 
     // ==================== VISIBLE HANDS + REAL MINING ====================
 
+    /**
+     * Broadcast current mainhand item to all players in this level via equipment packet.
+     * Required for FakePlayer — its fake connection never sends equipment updates automatically.
+     */
+    private void broadcastEquipment() {
+        if (!(level() instanceof ServerLevel sl)) return;
+        ItemStack held = getMainHandItem();
+        var pkt = new ClientboundSetEquipmentPacket(this.getId(),
+            List.of(Pair.of(EquipmentSlot.MAINHAND, held.isEmpty() ? ItemStack.EMPTY : held.copy())));
+        for (ServerPlayer sp : sl.players()) sp.connection.send(pkt);
+    }
+
+    /**
+     * Equip an item in the mainhand slot and broadcast to nearby players.
+     * Uses setItemInHand so the item is visible server-side immediately.
+     */
     public void equipToolInHand(net.minecraft.world.item.Item item) {
         ItemStack stack = new ItemStack(item);
         this.setItemInHand(InteractionHand.MAIN_HAND, stack);
-        this.setItemSlot(EquipmentSlot.MAINHAND, stack.copy());
+        broadcastEquipment();
     }
 
     /**
@@ -2150,6 +2168,14 @@ public class AmbNpcEntity extends FakePlayer {
                     return;
                 }
 
+                // Show the building block in hand so players can see what the bot is holding.
+                // Use the stack from the real inventory slot so shrink() on placement stays correct.
+                ItemStack buildDisplay = getInventory().getItem(buildSlot);
+                if (!buildDisplay.isEmpty()) {
+                    setItemInHand(InteractionHand.MAIN_HAND, buildDisplay);
+                    broadcastEquipment();
+                }
+
                 // Apply vertical physics (keeps gravity correct between jumps)
                 applyVerticalPhysicsOnly();
 
@@ -2983,13 +3009,17 @@ public class AmbNpcEntity extends FakePlayer {
         return nearest;
     }
 
-    /** Find the nearest ItemEntity within range that has no pickup delay (ready to collect). */
+    /**
+     * Find the nearest ItemEntity within range for navigation purposes.
+     * Includes items with pickup delay — the bot will walk to them and pick them up
+     * once the delay expires (the pickup loop in runAllPlayerActions checks delay).
+     */
     private ItemEntity findNearestItem(double radius) {
         ItemEntity nearest = null;
         double nearestDist = Double.MAX_VALUE;
         AABB search = getBoundingBox().inflate(radius, radius / 2.0, radius);
         for (ItemEntity item : level().getEntitiesOfClass(ItemEntity.class, search)) {
-            if (item.isRemoved() || item.hasPickUpDelay()) continue;
+            if (item.isRemoved()) continue;
             double dist = distanceTo(item);
             if (dist < nearestDist) {
                 nearestDist = dist;

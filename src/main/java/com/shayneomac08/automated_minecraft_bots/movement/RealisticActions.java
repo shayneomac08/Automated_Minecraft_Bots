@@ -1,9 +1,12 @@
 package com.shayneomac08.automated_minecraft_bots.movement;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -130,7 +133,9 @@ public class RealisticActions {
     }
 
     /**
-     * Equip the best tool for a specific block type
+     * Equip the best tool for a specific block type, then broadcast to all players in the level
+     * so they can see what the bot is holding.
+     * FakePlayer's fake connection never sends equipment updates automatically.
      */
     public static void equipBestTool(FakePlayer player, BlockState blockState) {
         if (player == null || blockState == null) return;
@@ -150,9 +155,15 @@ public class RealisticActions {
             }
         }
 
-        // Equip the best tool
+        // Equip the best tool and broadcast so clients see it
         if (!bestTool.isEmpty()) {
-            player.setItemInHand(InteractionHand.MAIN_HAND, bestTool.copy());
+            player.setItemInHand(InteractionHand.MAIN_HAND, bestTool);
+            if (player.level() instanceof ServerLevel sl) {
+                ItemStack held = player.getMainHandItem();
+                var pkt = new ClientboundSetEquipmentPacket(player.getId(),
+                    java.util.List.of(Pair.of(EquipmentSlot.MAINHAND, held.isEmpty() ? ItemStack.EMPTY : held.copy())));
+                for (ServerPlayer sp : sl.players()) sp.connection.send(pkt);
+            }
         }
     }
 
