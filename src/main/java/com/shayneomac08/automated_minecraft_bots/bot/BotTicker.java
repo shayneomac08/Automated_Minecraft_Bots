@@ -68,7 +68,13 @@ public final class BotTicker {
             // Check for stuck movement and fix it
             boolean wasStuck = BotMovementHelper.checkAndFixStuck(level, body, brain.movementState, tick);
             if (wasStuck) {
+                brain.consecutiveStuckRecoveries++;
                 brain.lastThought = "Was stuck, took corrective action";
+                System.out.println("[AMB-STUCK] " + botName + " BotMovementHelper recovery #"
+                    + brain.consecutiveStuckRecoveries + " at " + body.blockPosition());
+            } else if (brain.consecutiveStuckRecoveries > 0) {
+                // Bot is moving freely again — reset the counter
+                brain.consecutiveStuckRecoveries = 0;
             }
 
             // AmbNpcEntity has a complete autonomous system (runAllPlayerActions) that

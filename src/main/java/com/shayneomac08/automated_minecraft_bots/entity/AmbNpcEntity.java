@@ -323,6 +323,10 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     public void setTask(String task) {
+        if (!java.util.Objects.equals(task, this.currentTask)) {
+            System.out.println("[AMB-TASK] " + getName().getString()
+                + " task: " + this.currentTask + " → " + task);
+        }
         this.currentTask = task;
     }
 
@@ -333,7 +337,13 @@ public class AmbNpcEntity extends FakePlayer {
     public void setMoveTarget(net.minecraft.world.phys.Vec3 target, float speed) {
         this.moveTarget = target;
         if (target != null) {
-            this.currentGoal = new BlockPos((int)target.x, (int)target.y, (int)target.z);
+            BlockPos newGoal = new BlockPos((int)target.x, (int)target.y, (int)target.z);
+            if (!newGoal.equals(this.currentGoal)) {
+                System.out.println("[AMB-NAV] " + getName().getString()
+                    + " move target: " + this.currentGoal + " → " + newGoal
+                    + " speed=" + String.format("%.2f", speed));
+            }
+            this.currentGoal = newGoal;
             this.isMovingToGoal = true;
             this.desiredSpeed = speed;
             this.setSprinting(speed >= 0.28f);

@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public final class BotBrain {
 
@@ -69,6 +70,18 @@ public final class BotBrain {
         public Map<String, Integer> resourcesGathered = new HashMap<>(); // Track what was actually collected
         public String currentActivity = "idle"; // What bot is actually doing right now
         public int ticksOnCurrentActivity = 0; // How long bot has been doing current activity
+
+        // ── Phase 1 diagnostics ──────────────────────────────────────────────────
+        /** Server tick when the last LLM request was fired (-1 = never). */
+        public int lastThinkTick = -1;
+        /** Server tick when the last ActionPlan was successfully applied (-1 = never). */
+        public int lastPlanTick  = -1;
+        /** Server tick when the last action inside a plan was executed (-1 = never). */
+        public int lastActionTick = -1;
+        /** Consecutive LLM request failures (network error or parse error). Reset on success. */
+        public int consecutiveLlmFailures = 0;
+        /** Consecutive stuck-recovery events recorded by BotBrain (not AmbNpcEntity's own counter). */
+        public int consecutiveStuckRecoveries = 0;
     }
 
     private static final Map<String, State> STATES = new ConcurrentHashMap<>();
@@ -121,32 +134,47 @@ public final class BotBrain {
     public static void tick(MinecraftServer server, String botName, BotPair pair) {
         final String keyName = norm(botName);
         final State st = stateForName(keyName);
+        final int tick = server.getTickCount();
 
         // Apply completed plan on server thread
         if (st.pending != null && st.pending.isDone()) {
             try {
                 ActionPlan plan = st.pending.join();
                 st.pending = null;
-                System.out.println("[AMB] " + botName + " received LLM response, executing plan...");
+                int latencyTicks = (st.lastThinkTick >= 0) ? (tick - st.lastThinkTick) : -1;
+                System.out.println("[AMB-PLAN] " + botName + " plan received"
+                    + " (latency=" + latencyTicks + " ticks"
+                    + " failures=" + st.consecutiveLlmFailures + ")");
+                st.lastPlanTick = tick;
+                st.consecutiveLlmFailures = 0;
                 ActionExecutor.apply(server, keyName, st, pair, plan);
 
             } catch (Exception e) {
                 st.pending = null;
+                st.consecutiveLlmFailures++;
                 st.lastError = (e.getMessage() == null) ? e.toString() : e.getMessage();
-                System.err.println("[AMB] ERROR for bot " + botName + ": " + st.lastError);
-                e.printStackTrace(); // Print full stack trace to see what's failing
+                System.err.println("[AMB-PLAN] " + botName + " LLM failed #"
+                    + st.consecutiveLlmFailures + ": " + st.lastError);
+                if (st.consecutiveLlmFailures >= 5) {
+                    // Back off longer after repeated failures to avoid API spam
+                    st.nextThinkTick = tick + 400; // 20 s
+                    System.err.println("[AMB-PLAN] " + botName
+                        + " backing off 20s after " + st.consecutiveLlmFailures + " consecutive failures");
+                }
             }
         }
 
         if (!st.autonomous) return;
-
-        int tick = server.getTickCount();
         if (tick < st.nextThinkTick) return;
 
 // FIX: Only call LLM when goal expires OR no goal is set
 // This prevents constant API spam and lets bots complete tasks
         if (tick < st.goalUntilTick) {
             // Goal is still active - don't interrupt
+            if (tick % 200 == 0) { // log at 10s intervals so it's visible but not spammy
+                System.out.println("[AMB-THINK] " + botName + " skip: goal active until tick "
+                    + st.goalUntilTick + " (now=" + tick + ")");
+            }
             return;
         }
 
@@ -170,7 +198,13 @@ public final class BotBrain {
         }
 
 // If already waiting on a response, don't spam
-        if (st.pending != null) return;
+        if (st.pending != null) {
+            if (tick % 100 == 0) {
+                System.out.println("[AMB-THINK] " + botName + " skip: pending LLM (started tick "
+                    + st.lastThinkTick + ", now=" + tick + ")");
+            }
+            return;
+        }
 
 // If follow is manually requested, we don't need LLM spam for that.
 // Let ticker handle follow movement.
@@ -430,11 +464,29 @@ public final class BotBrain {
 
 
         // Run the network call off-thread
+        System.out.println("[AMB-THINK] " + botName + " think start (tick=" + tick
+            + " provider=" + provider
+            + " failures=" + st.consecutiveLlmFailures
+            + " lastPlan=" + st.lastPlanTick + ")");
+        st.lastThinkTick = tick;
+
         st.pending = CompletableFuture.supplyAsync(() -> {
             try {
                 String response = LLMClient.query(prompt, provider, 500);
                 String json = extractFirstJsonObject(response);
-                return SimpleJson.parseActionPlan(json);
+                ActionPlan plan = SimpleJson.parseActionPlan(json);
+                if (plan == null || plan.actions() == null || plan.actions().isEmpty()) {
+                    System.err.println("[AMB-THINK] " + botName + " parsed plan is empty/null — using idle fallback");
+                    // Return a safe idle plan rather than null so the caller has something to apply
+                    ActionPlan.Action idle = new ActionPlan.Action(
+                        "idle", null, null, null, null, null, null, null, null, null, null, null);
+                    return new ActionPlan(java.util.List.of(idle));
+                }
+                System.out.println("[AMB-THINK] " + botName + " parsed plan: "
+                    + plan.actions().stream()
+                        .map(a -> a.type() + (a.goal() != null ? "=" + a.goal() : ""))
+                        .collect(java.util.stream.Collectors.joining(", ")));
+                return plan;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -481,7 +533,18 @@ public final class BotBrain {
         // Add to chat history
         addChatMessage(botName, sender, command);
 
-        System.out.println("[AMB] Processing chat command for bot: " + botName + " using LLM: " + st.llmProvider);
+        System.out.println("[AMB-CHAT] Processing chat command for bot: " + botName
+            + " from=" + sender + " pending=" + (st.pending != null && !st.pending.isDone()));
+
+        // Guard: don't fire a second LLM request if autonomous think is already in flight
+        if (st.pending != null && !st.pending.isDone()) {
+            System.out.println("[AMB-CHAT] " + botName
+                + " skipping chat LLM — autonomous think already pending (started tick "
+                + st.lastThinkTick + ")");
+            // Still queue a canned "I'm busy" response so the player gets feedback
+            st.pendingChatMessages.add("Hold on, I'm thinking right now…");
+            return CompletableFuture.completedFuture(false);
+        }
 
         final String chatProvider = st.llmProvider.getId();
         boolean chatKeyMissing = switch (st.llmProvider) {
@@ -605,7 +668,9 @@ public final class BotBrain {
         // Add the command to chat history so the LLM sees it in context
         st.chatHistory.add(playerName + " commanded: " + command);
 
-        System.out.println("[AMB] " + botName + " interrupted current goal to obey command from " + playerName);
+        System.out.println("[AMB-CHAT] " + botName + " interrupted: obey command from " + playerName
+            + " (\"" + command + "\")"
+            + " prev-task=" + st.currentActivity);
     }
 
     /**

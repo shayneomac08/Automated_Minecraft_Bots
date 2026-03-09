@@ -31,9 +31,18 @@ public final class ActionExecutor {
 
         LivingEntity body = pair.body();
         FakePlayer hands = pair.hands();
-        if (body == null || body.isRemoved()) return;
+        if (body == null || body.isRemoved()) {
+            System.err.println("[AMB-ACTION] " + botKeyName + " skipping action — body null or removed");
+            return;
+        }
 
         String type = a.type().trim().toLowerCase();
+        st.lastActionTick = server.getTickCount();
+        System.out.println("[AMB-ACTION] " + botKeyName + " execute: type=" + type
+            + (a.goal()   != null ? " goal=" + a.goal() : "")
+            + (a.text()   != null && !a.text().isBlank() ? " text=\"" + a.text() + "\"" : "")
+            + (a.minutes() != null ? " mins=" + a.minutes() : "")
+            + " tick=" + st.lastActionTick);
 
         switch (type) {
 
@@ -61,7 +70,9 @@ public final class ActionExecutor {
                     };
 
                     ambBot.setTask(task);
-                    System.out.println("[AMB] " + botKeyName + " task set to: " + task + " for " + minutes + " minutes");
+                    System.out.println("[AMB-ACTION] " + botKeyName
+                        + " set_goal: task=" + task + " duration=" + minutes + "m"
+                        + " goalUntilTick=" + st.goalUntilTick);
 
                     st.goal = BotBrain.GoalType.NONE; // FakePlayer doesn't use GoalType enum
                 } else {
@@ -194,7 +205,10 @@ public final class ActionExecutor {
                 // Multi-step plan: load queue and execute the first task immediately.
                 var tasks = a.queuedTasks();
                 var mins  = a.queuedMinutes();
-                if (tasks == null || tasks.isEmpty()) break;
+                if (tasks == null || tasks.isEmpty()) {
+                    System.err.println("[AMB-ACTION] " + botKeyName + " plan_queue has no tasks — ignoring");
+                    break;
+                }
 
                 if (a.thought() != null && !a.thought().isBlank()) {
                     st.lastThought = a.thought();
@@ -216,8 +230,10 @@ public final class ActionExecutor {
                 st.goalUntilTick = server.getTickCount() + (int)(firstMins * 1200);
                 st.mode = BotBrain.Mode.GOAL;
                 st.lastThought = "[plan] " + firstTask + " (+" + st.subGoalQueue.size() + " queued)";
-                System.out.println("[AMB] " + botKeyName + " loaded plan: " + firstTask
-                    + " → " + st.subGoalQueue.size() + " more steps queued");
+                System.out.println("[AMB-ACTION] " + botKeyName + " plan_queue loaded: first=" + firstTask
+                    + " mins=" + firstMins
+                    + " queued=" + st.subGoalQueue.size()
+                    + " goalUntilTick=" + st.goalUntilTick);
 
                 // Optional say message
                 if (a.text() != null && !a.text().isBlank()) {
@@ -227,7 +243,7 @@ public final class ActionExecutor {
             }
 
             default -> {
-                // ignore unknown actions safely
+                System.err.println("[AMB-ACTION] " + botKeyName + " unknown action type '" + type + "' — ignored");
             }
         }
 
