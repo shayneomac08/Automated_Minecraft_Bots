@@ -461,6 +461,10 @@ public class AmbNpcEntity extends FakePlayer {
             return; // stand still for 5 seconds to get bearings
         }
 
+        // PASSIVE PICKUP — unconditional, runs regardless of task/mode/health.
+        // Pickup intent (keep vs discard) is a post-pickup decision, not a pre-pickup gate.
+        doPassivePickup();
+
         // ENHANCED: BotTicker for physics and human-like movement
         BotTicker.tick(this, currentGoal, movementState);
 
@@ -1042,30 +1046,7 @@ public class AmbNpcEntity extends FakePlayer {
         }
         if (messageCooldown > 0) messageCooldown--;
 
-        // ITEM PICKUP — manual pickup with explicit animation packet directed at this bot.
-        // playerTouch() sends the animation via FakePlayer's fake connection (goes nowhere).
-        // We send ClientboundTakeItemEntityPacket to all real players so the animation aims
-        // at the bot entity, not the player.
-        if (!level().isClientSide() && level() instanceof ServerLevel sl) {
-            AABB pickupBox = getBoundingBox().inflate(4.0, 1.0, 4.0);
-            for (ItemEntity itemEntity : sl.getEntitiesOfClass(ItemEntity.class, pickupBox)) {
-                if (itemEntity.isRemoved() || itemEntity.hasPickUpDelay()) continue;
-                ItemStack stack = itemEntity.getItem();
-                if (stack.isEmpty()) continue;
-                int countBefore = stack.getCount();
-                getInventory().add(stack);
-                int grabbed = countBefore - stack.getCount();
-                if (grabbed > 0) {
-                    // Broadcast animation: item flies toward this bot's entity ID
-                    ClientboundTakeItemEntityPacket pkt = new ClientboundTakeItemEntityPacket(
-                            itemEntity.getId(), this.getId(), grabbed);
-                    for (net.minecraft.server.level.ServerPlayer sp : sl.players()) {
-                        sp.connection.send(pkt);
-                    }
-                    if (stack.isEmpty()) itemEntity.discard();
-                }
-            }
-        }
+        // (Passive pickup moved to doPassivePickup() — called unconditionally at top of runAllPlayerActions)
 
         // Lightweight auto-crafting for basics: planks and sticks (2x2 inventory recipes — always valid)
         if (tickCount % 100 == 0) {
@@ -1705,6 +1686,7 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     private void tryAutoCraftBasics() {
+        // All recipes below are 2x2 (inventory grid) — no crafting table required.
         // Convert common logs into matching planks
         craftPlanksFromLog(Items.OAK_LOG, Items.OAK_PLANKS);
         craftPlanksFromLog(Items.SPRUCE_LOG, Items.SPRUCE_PLANKS);
@@ -1741,6 +1723,9 @@ public class AmbNpcEntity extends FakePlayer {
             if (removed == 1) {
                 addToInventory(new ItemStack(planks, 4));
                 broadcastGroupChat("Crafted 4 planks from a log.");
+                System.out.printf("[AMB-CRAFT] %s 2x2 craft: 1x%s → 4x%s (no table needed)%n",
+                    getName().getString(),
+                    log.getDescriptionId(), planks.getDescriptionId());
             }
         }
     }
@@ -1968,35 +1953,48 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     private void craftStarterToolsAtTable() {
+        // Guard: must be adjacent to a real crafting table in the world (enforced by caller)
+        String botName = getName().getString();
+        System.out.printf("[AMB-CRAFT] %s table craft attempt at %s%n", botName, knownCraftingTable);
+
         int sticks = countItemInInventory(Items.STICK);
+        // Sticks are a 2x2 recipe but also fine to craft at table for convenience
         if (sticks < 2 && countTotalPlanks() >= 2) {
             if (removeAnyPlanks(2) == 2) {
                 addToInventory(new ItemStack(Items.STICK, 4));
                 broadcastGroupChat("Crafted 4 sticks at the table.");
+                System.out.printf("[AMB-CRAFT] %s table craft: 2 planks → 4 sticks%n", botName);
             }
         }
 
-        // Wooden pickaxe: 3 planks + 2 sticks
+        // Wooden pickaxe: 3 planks + 2 sticks (3x3 recipe — table required) ✓
         if (getInventory().countItem(Items.WOODEN_PICKAXE) == 0 && countTotalPlanks() >= 3 && countItemInInventory(Items.STICK) >= 2) {
+            System.out.printf("[AMB-CRAFT] %s table craft: 3x3 wooden_pickaxe (planks=%d sticks=%d)%n",
+                botName, countTotalPlanks(), countItemInInventory(Items.STICK));
             if (removeAnyPlanks(3) == 3 && removeItems(Items.STICK, 2) == 2) {
                 addToInventory(new ItemStack(Items.WOODEN_PICKAXE, 1));
                 broadcastGroupChat("Crafted a wooden pickaxe.");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: wooden_pickaxe%n", botName);
             }
         }
 
-        // Wooden axe
+        // Wooden axe (3x3 recipe — table required) ✓
         if (getInventory().countItem(Items.WOODEN_AXE) == 0 && countTotalPlanks() >= 3 && countItemInInventory(Items.STICK) >= 2) {
+            System.out.printf("[AMB-CRAFT] %s table craft: 3x3 wooden_axe%n", botName);
             if (removeAnyPlanks(3) == 3 && removeItems(Items.STICK, 2) == 2) {
                 addToInventory(new ItemStack(Items.WOODEN_AXE, 1));
                 broadcastGroupChat("Crafted a wooden axe.");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: wooden_axe%n", botName);
             }
         }
 
-        // Wooden sword
+        // Wooden sword (3x3 recipe — table required) ✓
         if (getInventory().countItem(Items.WOODEN_SWORD) == 0 && countTotalPlanks() >= 2 && countItemInInventory(Items.STICK) >= 1) {
+            System.out.printf("[AMB-CRAFT] %s table craft: 3x3 wooden_sword%n", botName);
             if (removeAnyPlanks(2) == 2 && removeItems(Items.STICK, 1) == 1) {
                 addToInventory(new ItemStack(Items.WOODEN_SWORD, 1));
                 broadcastGroupChat("Crafted a wooden sword.");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: wooden_sword%n", botName);
             }
         }
     }
@@ -2029,11 +2027,22 @@ public class AmbNpcEntity extends FakePlayer {
             BlockPos found = findNearestBlockExact(Blocks.FURNACE, 12);
             if (found != null) { knownFurnace = found; return; }
 
-            // Craft a furnace if we have cobblestone
+            // Craft a furnace — requires 3x3 grid (crafting table).
+            // Only craft if adjacent to a known crafting table; otherwise wait.
             if (countItemInInventory(Items.COBBLESTONE) >= 8) {
-                if (removeItems(Items.COBBLESTONE, 8) == 8) {
-                    addToInventory(new ItemStack(Blocks.FURNACE.asItem(), 1));
-                    broadcastGroupChat("Crafted a furnace.");
+                boolean hasTable = !knownCraftingTable.equals(BlockPos.ZERO)
+                    && level().getBlockState(knownCraftingTable).is(Blocks.CRAFTING_TABLE)
+                    && this.blockPosition().closerThan(knownCraftingTable, 2.0);
+                if (hasTable) {
+                    if (removeItems(Items.COBBLESTONE, 8) == 8) {
+                        addToInventory(new ItemStack(Blocks.FURNACE.asItem(), 1));
+                        broadcastGroupChat("Crafted a furnace at the crafting table.");
+                        System.out.printf("[AMB-CRAFT] %s crafted furnace at table %s (3x3 via table)%n",
+                            getName().getString(), knownCraftingTable);
+                    }
+                } else {
+                    System.out.printf("[AMB-CRAFT] %s wants furnace but no adjacent table — skipping%n",
+                        getName().getString());
                 }
             }
             if (getInventory().countItem(Blocks.FURNACE.asItem()) > 0) {
@@ -2144,6 +2153,10 @@ public class AmbNpcEntity extends FakePlayer {
      * Handles vertical physics, block placement on jump apex, mining, and teardown.
      */
     private void tickPillarSystem() {
+        // jumpCooldown is only decremented in the normal navigation block which is skipped
+        // during pillar mode. Decrement here so the bot can jump on each pillar step.
+        if (jumpCooldown > 0) jumpCooldown--;
+
         if (pillarCooldown > 0) {
             pillarCooldown--;
             applyVerticalPhysicsOnly(); // keep physics running during cooldown
@@ -2179,10 +2192,18 @@ public class AmbNpcEntity extends FakePlayer {
                 // Apply vertical physics (keeps gravity correct between jumps)
                 applyVerticalPhysicsOnly();
 
+                int heightDiff2 = pillarTarget.getY() - blockPosition().getY();
                 if (onGround() && jumpCooldown == 0) {
+                    System.out.printf("[AMB-PILLAR] %s BUILDING jump: botY=%d targetY=%d heightDiff=%d jumpCooldown=%d%n",
+                        getName().getString(), blockPosition().getY(), pillarTarget.getY(), heightDiff2, jumpCooldown);
                     jumpFromGround();
                     jumpCooldown = 20;
                     pillarWasAirborne = false;
+                } else if (onGround() && jumpCooldown > 0) {
+                    if (tickCount % 10 == 0) {
+                        System.out.printf("[AMB-PILLAR] %s BUILDING waiting for jumpCooldown=%d botY=%d%n",
+                            getName().getString(), jumpCooldown, blockPosition().getY());
+                    }
                 } else if (!onGround() && getDeltaMovement().y > 0.05) {
                     pillarWasAirborne = true; // mark that we've left the ground rising
                 } else if (pillarWasAirborne && !onGround() && getDeltaMovement().y <= 0.05) {
@@ -2190,6 +2211,9 @@ public class AmbNpcEntity extends FakePlayer {
                     BlockPos placePos = new BlockPos(blockPosition().getX(),
                                                      blockPosition().getY() - 1,
                                                      blockPosition().getZ());
+                    System.out.printf("[AMB-PILLAR] %s BUILDING apex: placing at %s (canOcclude=%b)%n",
+                        getName().getString(), placePos,
+                        level().getBlockState(placePos).canOcclude());
                     if (level() instanceof ServerLevel sl && !sl.getBlockState(placePos).canOcclude()) {
                         ItemStack stack = getInventory().getItem(buildSlot);
                         if (!stack.isEmpty() && stack.getItem() instanceof net.minecraft.world.item.BlockItem bi) {
@@ -2198,8 +2222,12 @@ public class AmbNpcEntity extends FakePlayer {
                             placedPillarBlocks.add(placePos);
                             pillarWasAirborne = false;
                             pillarCooldown = 8;
-                            System.out.println("[AMB-PILLAR] " + getName().getString()
-                                + " placed block at " + placePos + " (height " + placedPillarBlocks.size() + ")");
+                            System.out.printf("[AMB-PILLAR] %s placed %s at %s (pillar height=%d remaining=%d)%n",
+                                getName().getString(), bi.getBlock().getName().getString(),
+                                placePos, placedPillarBlocks.size(), stack.getCount());
+                        } else {
+                            System.out.printf("[AMB-PILLAR] %s BUILDING apex but buildSlot stack invalid slot=%d%n",
+                                getName().getString(), buildSlot);
                         }
                     }
                 }
@@ -3030,25 +3058,80 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
+     * Passive proximity pickup — runs unconditionally every tick regardless of task or mode.
+     * Items with active pickup delay are skipped; they are collected automatically once the
+     * delay expires (40 ticks for player-dropped items, 10 ticks for world-spawned drops).
+     * This must NOT be gated on LLM state, task state, or pillar state.
+     */
+    private void doPassivePickup() {
+        if (level().isClientSide() || !(level() instanceof ServerLevel sl)) return;
+        // Inflate: 4 blocks horizontal, 2 blocks vertical (covers items on adjacent Y levels)
+        AABB pickupBox = getBoundingBox().inflate(4.0, 2.0, 4.0);
+        int collectorId = (visualEntity != null && !visualEntity.isRemoved())
+                          ? visualEntity.getId() : this.getId();
+
+        for (ItemEntity itemEntity : sl.getEntitiesOfClass(ItemEntity.class, pickupBox)) {
+            if (itemEntity.isRemoved()) continue;
+            if (itemEntity.hasPickUpDelay()) {
+                // Item nearby but delay active — log only on first detection per item
+                if (tickCount % 20 == 0) {
+                    System.out.printf("[AMB-PICKUP] %s nearby item %s delayed (delay>0) at %s%n",
+                        getName().getString(),
+                        itemEntity.getItem().getHoverName().getString(),
+                        itemEntity.blockPosition());
+                }
+                continue;
+            }
+            ItemStack stack = itemEntity.getItem();
+            if (stack.isEmpty()) continue;
+            int countBefore = stack.getCount();
+            System.out.printf("[AMB-PICKUP] %s passive pickup attempt: %dx%s at %s%n",
+                getName().getString(), countBefore,
+                stack.getHoverName().getString(), itemEntity.blockPosition());
+            getInventory().add(stack);
+            int grabbed = countBefore - stack.getCount();
+            if (grabbed > 0) {
+                // Animation targets the visual entity (what clients actually see)
+                ClientboundTakeItemEntityPacket pkt =
+                    new ClientboundTakeItemEntityPacket(itemEntity.getId(), collectorId, grabbed);
+                for (ServerPlayer sp : sl.players()) sp.connection.send(pkt);
+                if (stack.isEmpty()) itemEntity.discard();
+                System.out.printf("[AMB-PICKUP] %s collected %dx%s (remaining=%d)%n",
+                    getName().getString(), grabbed,
+                    stack.getHoverName().getString(), stack.getCount());
+            } else {
+                System.out.printf("[AMB-PICKUP] %s passive pickup BLOCKED (inventory full?) item=%s%n",
+                    getName().getString(), stack.getHoverName().getString());
+            }
+        }
+    }
+
+    /**
      * Immediately collect item drops near a just-mined block, bypassing the pickup delay.
-     * Sends ClientboundTakeItemEntityPacket so the animation targets this bot instead of a
-     * nearby real player.
+     * Uses the visual entity's ID for the animation packet so clients see items fly to the bot.
      */
     private void collectDropsNear(BlockPos pos) {
         if (!(level() instanceof ServerLevel sl)) return;
+        int collectorId = (visualEntity != null && !visualEntity.isRemoved())
+                          ? visualEntity.getId() : this.getId();
         AABB box = new AABB(pos).inflate(2.0, 2.0, 2.0);
         for (ItemEntity item : sl.getEntitiesOfClass(ItemEntity.class, box)) {
             if (item.isRemoved()) continue;
             ItemStack stack = item.getItem();
             if (stack.isEmpty()) continue;
             int before = stack.getCount();
+            System.out.printf("[AMB-HARVEST] %s harvested drop: %dx%s at %s → collecting%n",
+                getName().getString(), before, stack.getHoverName().getString(), item.blockPosition());
             getInventory().add(stack);
             int grabbed = before - stack.getCount();
             if (grabbed > 0) {
-                ClientboundTakeItemEntityPacket pkt = new ClientboundTakeItemEntityPacket(
-                        item.getId(), this.getId(), grabbed);
+                // Target visualEntity so animation flies to what players actually see
+                ClientboundTakeItemEntityPacket pkt =
+                    new ClientboundTakeItemEntityPacket(item.getId(), collectorId, grabbed);
                 for (ServerPlayer sp : sl.players()) sp.connection.send(pkt);
                 if (stack.isEmpty()) item.discard();
+                System.out.printf("[AMB-HARVEST] %s collected %dx%s from mined block%n",
+                    getName().getString(), grabbed, stack.getHoverName().getString());
             }
         }
     }
