@@ -1,1702 +1,318 @@
-[21:36:25] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[21:36:26] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[21:36:26] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[21:36:26] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 8.
-[21:36:26] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[21:36:26] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[21:36:26] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[21:36:27] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
-[21:36:27] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
-[21:36:28] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
-[21:36:29] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 512 reached during a single frame. New capacity will be 1024.
-[21:36:31] [Render thread/WARN] [minecraft/ClientPacketListener]: Server attempted to add player prior to sending player info (Player id 36f02a5d-addf-4228-b111-4f725a2d0202)
-[21:36:31] [Render thread/WARN] [minecraft/ClientPacketListener]: Skipping Entity with id entity.minecraft.player
-[AMB-ACTION] bot execute: type=set_goal goal=gather_wood mins=3.0 tick=134
+[06:53:00] [Render thread/WARN] [minecraft/ModelManager]: No model loaded for default item model ID automated_minecraft_bots:example_block of automated_minecraft_bots:example_block
+[06:53:24] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[06:53:24] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[06:53:24] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[06:53:24] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[06:56:32] [Render thread/INFO] [minecraft/RecipeManager]: Loaded 1470 recipes
+[06:56:32] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 1584 advancements
+[06:56:33] [Server thread/INFO] [minecraft/IntegratedServer]: Starting integrated minecraft server version 1.21.11
+[06:56:33] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[06:56:33] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 0 persistent chunks...
+[06:56:33] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
+[06:56:34] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 49 chunks for player spawn...
+[06:56:34] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
+[06:56:34] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 100%
+[06:56:34] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Time elapsed: 1027 ms
+[06:56:35] [Server thread/INFO] [minecraft/PlayerList]: Dev[local:E:070cf725] logged in with entity id 72 at (-32.33383309719636, 63.0, 71.29781987367464)
+[06:56:35] [Server thread/INFO] [minecraft/MinecraftServer]: Dev joined the game
+[06:56:35] [Render thread/WARN] [minecraft/ClientPacketListener]: Ignoring chat session from Dev due to missing Services public key
+[06:56:35] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 322 advancements
+[06:56:35] [Server thread/INFO] [minecraft/IntegratedServer]: Changing view distance to 16, from 10
+[06:56:35] [Server thread/INFO] [minecraft/IntegratedServer]: Changing simulation distance to 12, from 0
+[06:56:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[06:56:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[06:56:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 8.
+[06:56:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[06:56:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[06:56:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[06:56:37] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
+[06:56:37] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
+[06:56:38] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
+[06:56:39] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 512 reached during a single frame. New capacity will be 1024.
+[06:56:53] [Render thread/WARN] [minecraft/ClientPacketListener]: Server attempted to add player prior to sending player info (Player id dacf6341-3f73-4ee1-bc05-b9bc65e6901b)
+[06:56:53] [Render thread/WARN] [minecraft/ClientPacketListener]: Skipping Entity with id entity.minecraft.player
+[AMB-ACTION] bot execute: type=set_goal goal=gather_wood mins=3.0 tick=362
 [AMB-TASK] bot task: explore ? gather_wood
-[AMB-ACTION] bot set_goal: task=gather_wood duration=3m goalUntilTick=3734
+[AMB-ACTION] bot set_goal: task=gather_wood duration=3m goalUntilTick=3962
 [AMB] bot spawned with player mindset: gather_wood (thinking: Need wood for tools and crafting)
-[21:36:31] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned bot (grok) - FakePlayer mode]
+[06:56:53] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned bot (grok) - FakePlayer mode]
 [AMB] Spawned FakePlayer bot: bot (LLM: grok)
-[21:36:31] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned bot (grok) - FakePlayer mode
-[21:36:31] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] I am now the GATHERER of the tribe. Let's begin our journey.
-[21:36:31] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] I am now the GATHERER of the tribe. Let's begin our journey.
-[AMB-THINK] bot skip: goal active until tick 3734 (now=200)
-[AMB-PICKUP] bot passive pickup attempt: 1xCherry Leaves at BlockPos{x=-33, y=63, z=70}
+[06:56:53] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[06:56:53] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] I am now the MINER of the tribe. Let's begin our journey.
+[06:56:53] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned bot (grok) - FakePlayer mode
+[06:56:53] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] I am now the MINER of the tribe. Let's begin our journey.
+[06:56:54] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 1024 reached during a single frame. New capacity will be 2048.
+[AMB-THINK] bot skip: goal active until tick 3962 (now=400)
+[AMB-PICKUP] bot passive pickup attempt: 1xCherry Log at BlockPos{x=-32, y=63, z=70}
 [AMB-PICKUP] bot collected 1xAir (remaining=0)
 [AMB] bot executing task: gather_wood
 [AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-33, y=63, z=70}?BlockPos{x=-34, y=73, z=79}: 30 nodes, walkable:true, dy:0
-[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-33, y=63, z=69} BlockPos{x=-32, y=63, z=68} BlockPos{x=-31, y=63, z=67} BlockPos{x=-31, y=63, z=66} BlockPos{x=-31, y=63, z=65}
+[AMB-PATH] A* BlockPos{x=-33, y=63, z=71}?BlockPos{x=-34, y=73, z=79}: 31 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-33, y=63, z=70} BlockPos{x=-33, y=63, z=69} BlockPos{x=-32, y=63, z=68} BlockPos{x=-31, y=63, z=67} BlockPos{x=-31, y=63, z=66}
 [AMB-DOOR] bot proactively opened door at BlockPos{x=-31, y=63, z=66}
+[AMB-DIAG] bot pos=(-30.700,63.000,67.300) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
 [AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.81
-[AMB-DIAG] bot pos=(-30.645,63.420,67.300) delta=(0.0000,0.3400,0.0000) hColl=true onGnd=false sprint=false
-[21:36:39] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 1024 reached during a single frame. New capacity will be 2048.
 [AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-30.511,64.120,67.300) blockPos=BlockPos{x=-31, y=64, z=67} dist=14.53 pathIdx=4/30 wp=BlockPos{x=-31, y=63, z=65})
-[AMB-DIAG] bot pos=(-30.511,64.120,67.300) delta=(0.0000,-0.1600,0.0000) hColl=true onGnd=false sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-30.516,64.200,67.300) blockPos=BlockPos{x=-31, y=64, z=67} dist=14.53 pathIdx=5/31 wp=BlockPos{x=-31, y=63, z=65})
+[AMB-DIAG] bot pos=(-30.516,64.200,67.300) delta=(0.0000,0.1000,0.0000) hColl=true onGnd=false sprint=false
+[AMB-DIAG] bot pos=(-30.512,63.000,65.793) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
 [AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=2.00
-[AMB-DIAG] bot pos=(-30.512,63.200,65.734) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=false sprint=false
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-35.497,62.938,65.512) blockPos=BlockPos{x=-36, y=62, z=65} dist=17.15 pathIdx=11/30 wp=BlockPos{x=-38, y=63, z=65})
-[AMB-DIAG] bot pos=(-35.497,62.938,65.512) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=1.08
-[AMB-DIAG] bot pos=(-38.364,63.500,66.193) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.47
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.495,66.500,68.975) blockPos=BlockPos{x=-39, y=66, z=68} dist=13.19 pathIdx=16/30 wp=BlockPos{x=-39, y=67, z=69})
-[AMB-DIAG] bot pos=(-38.495,66.500,68.975) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-34.913,62.938,65.515) blockPos=BlockPos{x=-35, y=62, z=65} dist=17.06 pathIdx=11/31 wp=BlockPos{x=-37, y=63, z=65})
+[AMB-DIAG] bot pos=(-34.913,62.938,65.515) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
+[06:57:03] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
+[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
+[06:57:03] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
+[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=1.09
+[AMB-DIAG] bot pos=(-38.306,63.837,65.700) delta=(0.0000,-0.3000,0.0000) hColl=true onGnd=false sprint=false
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.48
+[AMB-THINK] bot skip: goal active until tick 3962 (now=600)
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.492,66.000,68.686) blockPos=BlockPos{x=-39, y=66, z=68} dist=13.19 pathIdx=17/31 wp=BlockPos{x=-39, y=67, z=69})
+[AMB-DIAG] bot pos=(-38.492,66.000,68.686) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
 [AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.53
+[AMB-DIAG] bot pos=(-38.499,68.500,70.976) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
 [AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.52
-[AMB-DIAG] bot pos=(-38.500,68.500,70.977) delta=(0.1079,0.4200,0.1684) hColl=false onGnd=true sprint=true
-[AMB-THINK] bot skip: goal active until tick 3734 (now=400)
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.65
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.500,71.260,73.063) blockPos=BlockPos{x=-39, y=71, z=73} dist=7.35 pathIdx=22/31 wp=BlockPos{x=-39, y=72, z=74})
+[AMB-DIAG] bot pos=(-38.500,71.260,73.063) delta=(0.0000,0.2600,0.0000) hColl=false onGnd=false sprint=false
 [AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.66
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.500,71.700,73.479) blockPos=BlockPos{x=-39, y=71, z=73} dist=7.35 pathIdx=22/30 wp=BlockPos{x=-39, y=73, z=75})
-[AMB-DIAG] bot pos=(-38.500,71.700,73.479) delta=(0.0000,0.1000,0.0000) hColl=false onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.66
-[AMB-DIAG] bot pos=(-37.632,73.620,76.071) delta=(0.0000,-0.2200,0.0000) hColl=false onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.81
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-36.595,74.260,76.700) blockPos=BlockPos{x=-37, y=74, z=76} dist=3.74 pathIdx=25/30 wp=BlockPos{x=-37, y=73, z=78})
-[AMB-DIAG] bot pos=(-36.595,74.260,76.700) delta=(0.0000,-0.1400,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-36.508,73.220,76.700) delta=(0.0000,-0.4600,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-36.501,73.000,76.700) blockPos=BlockPos{x=-37, y=73, z=76} dist=3.61 pathIdx=25/30 wp=BlockPos{x=-37, y=73, z=78})
-[AMB-DIAG] bot pos=(-36.501,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-SKIP] bot waypoint BlockPos{x=-37, y=73, z=78} skipped after 60 ticks, new index=26
+[AMB-DIAG] bot pos=(-37.903,73.820,75.733) delta=(0.0000,-0.0600,0.0000) hColl=false onGnd=false sprint=false
+[AMB-FOLIAGE] bot log at BlockPos{x=-34, y=73, z=78} obstructed by leaf at BlockPos{x=-37, y=74, z=77} ∩┐╜ clearing foliage
+[AMB-FOLIAGE] bot cleared leaf at BlockPos{x=-37, y=74, z=77} ∩┐╜ reevaluating access to log at BlockPos{x=-34, y=73, z=78}
+[AMB-FOLIAGE] bot log at BlockPos{x=-34, y=73, z=78} obstructed by leaf at BlockPos{x=-36, y=74, z=77} ∩┐╜ clearing foliage
+[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.82
+[AMB-FOLIAGE] bot cleared leaf at BlockPos{x=-36, y=74, z=77} ∩┐╜ reevaluating access to log at BlockPos{x=-34, y=73, z=78}
+[AMB-FOLIAGE] bot log at BlockPos{x=-34, y=73, z=78} obstructed by leaf at BlockPos{x=-35, y=73, z=77} ∩┐╜ clearing foliage
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-36.625,74.300,77.347) blockPos=BlockPos{x=-37, y=74, z=77} dist=3.32 pathIdx=27/31 wp=BlockPos{x=-37, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.625,74.300,77.347) delta=(0.0000,0.0200,0.0000) hColl=false onGnd=false sprint=false
+[AMB-FOLIAGE] bot cleared leaf at BlockPos{x=-35, y=73, z=77} ∩┐╜ reevaluating access to log at BlockPos{x=-34, y=73, z=78}
+[AMB-FOLIAGE] bot log at BlockPos{x=-34, y=73, z=78} is unobstructed ∩┐╜ harvesting
+[AMB-DIAG] bot pos=(-36.510,74.000,77.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-36.503,74.000,77.700) blockPos=BlockPos{x=-37, y=74, z=77} dist=3.32 pathIdx=27/31 wp=BlockPos{x=-37, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.503,74.000,77.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-SKIP] bot waypoint BlockPos{x=-37, y=73, z=79} skipped after 60 ticks, new index=28
+[AMB-DIAG] bot pos=(-36.304,74.000,77.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
 [AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-34, y=73, z=78} ? collecting
 [AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=76}?BlockPos{x=-34, y=74, z=79}: 7 nodes, walkable:true, dy:0
-[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-37, y=74, z=77} BlockPos{x=-37, y=73, z=78} BlockPos{x=-37, y=74, z=79} BlockPos{x=-36, y=73, z=79} BlockPos{x=-35, y=74, z=79}
+[AMB-PATH] A* BlockPos{x=-37, y=74, z=77}?BlockPos{x=-34, y=74, z=79}: 5 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-37, y=73, z=78} BlockPos{x=-37, y=74, z=79} BlockPos{x=-36, y=73, z=79} BlockPos{x=-35, y=73, z=79} BlockPos{x=-34, y=74, z=79}
+[AMB-FOLIAGE] bot log at BlockPos{x=-34, y=74, z=78} is unobstructed ∩┐╜ harvesting
 [AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-36.500,74.020,76.700) delta=(0.0000,0.1800,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=74, z=78} (pos=(-36.500,74.260,76.700) blockPos=BlockPos{x=-37, y=74, z=76} dist=3.61 pathIdx=1/7 wp=BlockPos{x=-37, y=73, z=78})
-[AMB-DIAG] bot pos=(-36.500,74.260,76.700) delta=(0.0000,-0.1400,0.0000) hColl=true onGnd=false sprint=false
-[21:36:51] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
+[AMB] bot moving to goal BlockPos{x=-34, y=74, z=78} (pos=(-36.300,75.000,79.318) blockPos=BlockPos{x=-37, y=75, z=79} dist=3.32 pathIdx=2/5 wp=BlockPos{x=-36, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.318) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[06:57:13] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
 [AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:36:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-36.500,73.220,76.700) delta=(0.0000,-0.4600,0.0000) hColl=true onGnd=false sprint=false
+[06:57:13] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-THINK] bot skip: goal active until tick 3962 (now=800)
+[AMB] bot moving to goal BlockPos{x=-34, y=74, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=3.32 pathIdx=2/5 wp=BlockPos{x=-36, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
 [AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-34, y=74, z=78} ? collecting
 [AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 4 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 4 waypoints: BlockPos{x=-36, y=73, z=77} BlockPos{x=-35, y=73, z=77} BlockPos{x=-34, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot moving to goal BlockPos{x=-34, y=75, z=78} (pos=(-33.880,73.000,76.700) blockPos=BlockPos{x=-34, y=73, z=76} dist=2.83 pathIdx=3/4 wp=BlockPos{x=-34, y=73, z=78})
-[AMB-DIAG] bot pos=(-33.880,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.81
-[21:36:54] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[21:36:54] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[21:36:54] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[21:36:54] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[AMB-DIAG] bot pos=(-33.530,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-THINK] bot skip: goal active until tick 3734 (now=600)
-[AMB] bot moving to goal BlockPos{x=-34, y=75, z=78} (pos=(-33.502,73.000,76.700) blockPos=BlockPos{x=-34, y=73, z=76} dist=2.83 pathIdx=3/4 wp=BlockPos{x=-34, y=73, z=78})
-[AMB-DIAG] bot pos=(-33.502,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
+[AMB-PATH] A* BlockPos{x=-37, y=75, z=79}?BlockPos{x=-34, y=73, z=78}: 6 nodes, walkable:true, dy:-2
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-37, y=74, z=78} BlockPos{x=-37, y=73, z=79} BlockPos{x=-36, y=73, z=79} BlockPos{x=-35, y=73, z=79} BlockPos{x=-34, y=73, z=79}
+[AMB-FOLIAGE] bot log at BlockPos{x=-34, y=75, z=78} is unobstructed ∩┐╜ harvesting
+[AMB-DIAG] bot pos=(-36.342,75.000,79.285) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=75, z=78} (pos=(-36.342,75.000,79.285) blockPos=BlockPos{x=-37, y=75, z=79} dist=3.16 pathIdx=1/6 wp=BlockPos{x=-37, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.342,75.000,79.285) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.342,75.000,79.285) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[06:57:18] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
+[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
+[06:57:18] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
+[06:57:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
+[06:57:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
+[AMB-SKIP] bot waypoint BlockPos{x=-37, y=73, z=79} skipped after 60 ticks, new index=2
 [AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-34, y=75, z=78} ? collecting
 [AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-3
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-34, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-33.501,73.420,76.700) delta=(0.0000,0.3400,0.0000) hColl=true onGnd=false sprint=false
-[21:36:56] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
-[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:36:56] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=76, z=78} (pos=(-33.500,73.020,76.700) blockPos=BlockPos{x=-34, y=73, z=76} dist=3.61 pathIdx=1/2 wp=BlockPos{x=-34, y=73, z=78})
-[AMB-DIAG] bot pos=(-33.500,73.020,76.700) delta=(0.0000,-0.2800,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-33.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-SKIP] bot waypoint BlockPos{x=-34, y=73, z=78} skipped after 60 ticks, new index=2
+[AMB-PATH] A* BlockPos{x=-37, y=75, z=79}?BlockPos{x=-34, y=73, z=78}: 6 nodes, walkable:true, dy:-3
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-37, y=74, z=78} BlockPos{x=-37, y=73, z=79} BlockPos{x=-36, y=73, z=79} BlockPos{x=-35, y=73, z=79} BlockPos{x=-34, y=73, z=79}
+[AMB-FOLIAGE] bot log at BlockPos{x=-34, y=76, z=78} is unobstructed ∩┐╜ harvesting
+[AMB] bot moving to goal BlockPos{x=-34, y=76, z=78} (pos=(-36.384,75.000,79.071) blockPos=BlockPos{x=-37, y=75, z=79} dist=3.32 pathIdx=1/6 wp=BlockPos{x=-37, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.384,75.000,79.071) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.384,75.000,79.071) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=76, z=78} (pos=(-36.384,75.000,79.071) blockPos=BlockPos{x=-37, y=75, z=79} dist=3.32 pathIdx=1/6 wp=BlockPos{x=-37, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.384,75.000,79.071) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-SKIP] bot waypoint BlockPos{x=-37, y=73, z=79} skipped after 60 ticks, new index=2
 [AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-34, y=76, z=78} ? collecting
 [AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-34, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-35, y=74, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=76}?BlockPos{x=-35, y=75, z=78}: 3 nodes, walkable:true, dy:1
-[AMB-PATH-DETAIL] bot first 3 waypoints: BlockPos{x=-35, y=74, z=77} BlockPos{x=-35, y=75, z=77} BlockPos{x=-35, y=75, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.81
-[AMB] bot moving to goal BlockPos{x=-35, y=74, z=78} (pos=(-34.494,73.900,76.700) blockPos=BlockPos{x=-35, y=73, z=76} dist=2.24 pathIdx=1/3 wp=BlockPos{x=-35, y=75, z=77})
-[AMB-DIAG] bot pos=(-34.494,73.900,76.700) delta=(0.0000,-0.3000,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=0.80
-[AMB-DIAG] bot pos=(-34.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=0.80
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=0.80
-[AMB] bot moving to goal BlockPos{x=-35, y=74, z=78} (pos=(-34.500,74.200,76.700) blockPos=BlockPos{x=-35, y=74, z=76} dist=2.00 pathIdx=1/3 wp=BlockPos{x=-35, y=75, z=77})
-[AMB-DIAG] bot pos=(-34.500,74.200,76.700) delta=(0.0000,0.1000,0.0000) hColl=true onGnd=false sprint=false
-[21:37:01] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
+[AMB-PATH] A* BlockPos{x=-37, y=75, z=79}?BlockPos{x=-34, y=73, z=78}: 6 nodes, walkable:true, dy:-4
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-37, y=74, z=78} BlockPos{x=-37, y=73, z=79} BlockPos{x=-36, y=73, z=79} BlockPos{x=-35, y=73, z=79} BlockPos{x=-34, y=73, z=79}
+[AMB-FOLIAGE] bot log at BlockPos{x=-34, y=77, z=78} is unobstructed ∩┐╜ harvesting
+[AMB-DIAG] bot pos=(-36.384,75.000,79.071) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=77, z=78} (pos=(-36.384,75.000,79.071) blockPos=BlockPos{x=-37, y=75, z=79} dist=3.74 pathIdx=1/6 wp=BlockPos{x=-37, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.384,75.000,79.071) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[06:57:23] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
 [AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:37:01] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
-[21:37:01] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[21:37:01] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-35, y=74, z=78} ? collecting
+[06:57:23] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
+[06:57:23] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
+[06:57:23] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
+[AMB-DIAG] bot pos=(-36.384,75.000,79.071) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-SKIP] bot waypoint BlockPos{x=-37, y=73, z=79} skipped after 60 ticks, new index=2
+[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-34, y=77, z=78} ? collecting
 [AMB-HARVEST] bot collected 1xAir from mined block
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-36, y=74, z=78}
-[AMB-PATH] A* BlockPos{x=-35, y=74, z=76}?BlockPos{x=-35, y=74, z=78}: 2 nodes, walkable:true, dy:0
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-35, y=73, z=77} BlockPos{x=-35, y=74, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-DIAG] bot pos=(-34.500,73.900,76.700) delta=(0.0000,-0.3000,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-36, y=74, z=78} (pos=(-34.500,73.000,76.700) blockPos=BlockPos{x=-35, y=73, z=76} dist=2.45 pathIdx=1/2 wp=BlockPos{x=-35, y=74, z=78})
-[AMB-DIAG] bot pos=(-34.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-DIAG] bot pos=(-34.500,74.200,76.700) delta=(0.0000,0.1000,0.0000) hColl=true onGnd=false sprint=false
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-36, y=74, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-35, y=74, z=76}?BlockPos{x=-36, y=73, z=78}: 2 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-35, y=73, z=77} BlockPos{x=-36, y=73, z=78}
-[AMB-THINK] bot skip: goal active until tick 3734 (now=800)
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.81
-[AMB] bot moving to goal BlockPos{x=-36, y=75, z=78} (pos=(-35.375,74.200,76.700) blockPos=BlockPos{x=-36, y=74, z=76} dist=2.24 pathIdx=1/2 wp=BlockPos{x=-36, y=73, z=78})
-[AMB-DIAG] bot pos=(-35.375,74.200,76.700) delta=(0.0000,0.1000,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-35.490,74.120,76.700) delta=(0.0000,-0.2200,0.0000) hColl=true onGnd=false sprint=false
-[21:37:06] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
+[AMB-PATH] A* BlockPos{x=-37, y=75, z=79}?BlockPos{x=-34, y=79, z=78}: 13 nodes, walkable:true, dy:1
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-37, y=74, z=79} BlockPos{x=-36, y=73, z=79} BlockPos{x=-35, y=74, z=79} BlockPos{x=-34, y=73, z=79} BlockPos{x=-33, y=73, z=79}
+[AMB-THINK] bot skip: goal active until tick 3962 (now=1000)
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.498) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=1/13 wp=BlockPos{x=-36, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.498) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=1/13 wp=BlockPos{x=-36, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-SKIP] bot waypoint BlockPos{x=-36, y=73, z=79} skipped after 60 ticks, new index=2
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[06:57:28] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
 [AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:37:06] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
-[21:37:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[21:37:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-36, y=75, z=78} (pos=(-35.499,73.000,76.700) blockPos=BlockPos{x=-36, y=73, z=76} dist=2.83 pathIdx=1/2 wp=BlockPos{x=-36, y=73, z=78})
-[AMB-DIAG] bot pos=(-35.499,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-SKIP] bot waypoint BlockPos{x=-36, y=73, z=78} skipped after 60 ticks, new index=2
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-36, y=75, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-36, y=73, z=76}?BlockPos{x=-36, y=74, z=78}: 2 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-36, y=73, z=77} BlockPos{x=-36, y=74, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-DIAG] bot pos=(-35.500,73.420,76.700) delta=(0.0000,0.3400,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-36, y=76, z=78} (pos=(-35.500,74.320,76.700) blockPos=BlockPos{x=-36, y=74, z=76} dist=2.83 pathIdx=1/2 wp=BlockPos{x=-36, y=74, z=78})
-[AMB-DIAG] bot pos=(-35.500,74.320,76.700) delta=(0.0000,-0.0600,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-DIAG] bot pos=(-35.500,73.220,76.700) delta=(0.0000,-0.4600,0.0000) hColl=true onGnd=false sprint=false
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-36, y=76, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-36, y=73, z=76}?BlockPos{x=-36, y=74, z=78}: 2 nodes, walkable:true, dy:-3
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-36, y=73, z=77} BlockPos{x=-36, y=74, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-36, y=75, z=79}
-[AMB-PATH] A* BlockPos{x=-36, y=73, z=76}?BlockPos{x=-36, y=73, z=79}: 3 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 3 waypoints: BlockPos{x=-36, y=73, z=77} BlockPos{x=-36, y=73, z=78} BlockPos{x=-36, y=73, z=79}
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-36, y=75, z=79} (pos=(-35.500,73.000,76.700) blockPos=BlockPos{x=-36, y=73, z=76} dist=3.61 pathIdx=1/3 wp=BlockPos{x=-36, y=73, z=78})
-[AMB-DIAG] bot pos=(-35.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[21:37:11] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
+[06:57:28] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
+[06:57:28] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
+[06:57:28] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=2/13 wp=BlockPos{x=-35, y=74, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-SKIP] bot waypoint BlockPos{x=-35, y=74, z=79} skipped after 60 ticks, new index=3
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[06:57:33] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
 [AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:37:11] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
-[21:37:11] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[21:37:11] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-35.500,73.760,76.700) delta=(0.0000,0.2600,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-36, y=75, z=79} (pos=(-35.500,74.320,76.700) blockPos=BlockPos{x=-36, y=74, z=76} dist=3.16 pathIdx=1/3 wp=BlockPos{x=-36, y=73, z=78})
-[AMB-DIAG] bot pos=(-35.500,74.320,76.700) delta=(0.0000,-0.0600,0.0000) hColl=true onGnd=false sprint=false
-[AMB-SKIP] bot waypoint BlockPos{x=-36, y=73, z=78} skipped after 60 ticks, new index=2
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-36, y=75, z=79} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-33, y=74, z=78}
-[AMB-PATH] A* BlockPos{x=-36, y=73, z=76}?BlockPos{x=-33, y=75, z=78}: 7 nodes, walkable:true, dy:1
-[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-35, y=74, z=77} BlockPos{x=-35, y=75, z=77} BlockPos{x=-34, y=74, z=77} BlockPos{x=-34, y=75, z=77} BlockPos{x=-33, y=74, z=77}
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=0.83
-[AMB-DIAG] bot pos=(-34.508,73.220,76.700) delta=(0.0000,-0.4600,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=0.80
-[AMB-THINK] bot skip: goal active until tick 3734 (now=1000)
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=0.80
-[AMB] bot moving to goal BlockPos{x=-33, y=74, z=78} (pos=(-34.500,73.420,76.700) blockPos=BlockPos{x=-35, y=73, z=76} dist=3.00 pathIdx=1/7 wp=BlockPos{x=-35, y=75, z=77})
-[AMB-DIAG] bot pos=(-34.500,73.420,76.700) delta=(0.0000,0.3400,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=0.80
-[AMB-DIAG] bot pos=(-34.500,74.320,76.700) delta=(0.0000,-0.0600,0.0000) hColl=true onGnd=false sprint=false
-[21:37:16] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
+[06:57:33] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
+[06:57:33] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
+[06:57:33] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-THINK] bot skip: goal active until tick 3962 (now=1200)
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[06:57:40] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
+[06:57:40] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-THINK] bot skip: goal active until tick 3962 (now=1400)
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-THINK] bot skip: goal active until tick 3962 (now=1600)
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[06:57:56] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: Set own game mode to Survival Mode]
+[06:57:56] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Set own game mode to Survival Mode
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-THINK] bot skip: goal active until tick 3962 (now=1800)
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-PICKUP] bot passive pickup attempt: 1xCherry Log at BlockPos{x=-37, y=75, z=79}
+[AMB-PICKUP] bot collected 1xAir (remaining=0)
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[06:58:08] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
 [AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:37:16] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 sticks.
-[21:37:16] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[21:37:16] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 sticks.
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-33, y=74, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-32, y=74, z=78}
-[AMB-PATH] A* BlockPos{x=-35, y=73, z=76}?BlockPos{x=-31, y=74, z=78}: 6 nodes, walkable:true, dy:0
-[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-34, y=73, z=76} BlockPos{x=-33, y=73, z=76} BlockPos{x=-32, y=73, z=76} BlockPos{x=-31, y=74, z=77} BlockPos{x=-31, y=73, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.88
-[AMB] bot moving to goal BlockPos{x=-32, y=74, z=78} (pos=(-31.146,73.000,76.700) blockPos=BlockPos{x=-32, y=73, z=76} dist=2.24 pathIdx=3/6 wp=BlockPos{x=-31, y=74, z=77})
-[AMB-DIAG] bot pos=(-31.146,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[21:37:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[21:37:18] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[AMB-DIAG] bot pos=(-30.502,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB] bot moving to goal BlockPos{x=-32, y=74, z=78} (pos=(-30.500,73.420,76.700) blockPos=BlockPos{x=-31, y=73, z=76} dist=2.45 pathIdx=3/6 wp=BlockPos{x=-31, y=74, z=77})
-[AMB-DIAG] bot pos=(-30.500,73.420,76.700) delta=(0.0000,0.3400,0.0000) hColl=true onGnd=false sprint=false
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-32, y=74, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-31, y=73, z=76}?BlockPos{x=-32, y=73, z=78}: 2 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-32, y=73, z=77} BlockPos{x=-32, y=73, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.81
-[AMB-DIAG] bot pos=(-31.386,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-32, y=75, z=78} (pos=(-31.491,73.000,76.700) blockPos=BlockPos{x=-32, y=73, z=76} dist=2.83 pathIdx=1/2 wp=BlockPos{x=-32, y=73, z=78})
-[AMB-DIAG] bot pos=(-31.491,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[21:37:21] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
-[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:37:21] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-31.498,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-SKIP] bot waypoint BlockPos{x=-32, y=73, z=78} skipped after 60 ticks, new index=2
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-32, y=75, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-32, y=74, z=78}: 2 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-32, y=73, z=77} BlockPos{x=-32, y=74, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-32, y=76, z=78} (pos=(-31.499,73.000,76.700) blockPos=BlockPos{x=-32, y=73, z=76} dist=3.61 pathIdx=1/2 wp=BlockPos{x=-32, y=74, z=78})
-[AMB-DIAG] bot pos=(-31.499,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-DIAG] bot pos=(-31.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-THINK] bot skip: goal active until tick 3734 (now=1200)
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-32, y=76, z=78} (pos=(-31.500,73.000,76.700) blockPos=BlockPos{x=-32, y=73, z=76} dist=3.61 pathIdx=1/2 wp=BlockPos{x=-32, y=74, z=78})
-[AMB-DIAG] bot pos=(-31.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-32, y=76, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-THINK] bot skip: goal active until tick 3734 (now=1400)
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=77, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-32, y=74, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-32, y=75, z=78}: 3 nodes, walkable:true, dy:1
-[AMB-PATH-DETAIL] bot first 3 waypoints: BlockPos{x=-32, y=74, z=77} BlockPos{x=-32, y=75, z=77} BlockPos{x=-32, y=75, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.84
-[AMB-DIAG] bot pos=(-31.504,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB] bot moving to goal BlockPos{x=-32, y=74, z=78} (pos=(-31.500,73.020,76.700) blockPos=BlockPos{x=-32, y=73, z=76} dist=2.24 pathIdx=0/3 wp=BlockPos{x=-32, y=74, z=77})
-[AMB-DIAG] bot pos=(-31.500,73.020,76.700) delta=(0.0000,-0.2800,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB-DIAG] bot pos=(-31.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-32, y=74, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-THINK] bot skip: goal active until tick 3734 (now=1600)
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-32, y=73, z=78}: 2 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-32, y=73, z=77} BlockPos{x=-32, y=73, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-32, y=75, z=78} (pos=(-31.500,73.000,76.700) blockPos=BlockPos{x=-32, y=73, z=76} dist=2.83 pathIdx=1/2 wp=BlockPos{x=-32, y=73, z=78})
-[AMB-DIAG] bot pos=(-31.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-31.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[21:37:46] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
-[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:37:46] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-32, y=75, z=78} (pos=(-31.500,73.000,76.700) blockPos=BlockPos{x=-32, y=73, z=76} dist=2.83 pathIdx=1/2 wp=BlockPos{x=-32, y=73, z=78})
-[AMB-DIAG] bot pos=(-31.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-SKIP] bot waypoint BlockPos{x=-32, y=73, z=78} skipped after 60 ticks, new index=2
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-32, y=75, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-32, y=74, z=78}: 2 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-32, y=73, z=77} BlockPos{x=-32, y=74, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-DIAG] bot pos=(-31.500,73.420,76.700) delta=(0.0000,0.3400,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-32, y=76, z=78} (pos=(-31.500,73.000,76.700) blockPos=BlockPos{x=-32, y=73, z=76} dist=3.61 pathIdx=1/2 wp=BlockPos{x=-32, y=74, z=78})
-[AMB-DIAG] bot pos=(-31.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-DIAG] bot pos=(-31.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-32, y=76, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-33, y=74, z=78}
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-33, y=75, z=78}: 3 nodes, walkable:true, dy:1
-[AMB-PATH-DETAIL] bot first 3 waypoints: BlockPos{x=-33, y=74, z=77} BlockPos{x=-33, y=75, z=77} BlockPos{x=-33, y=75, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB] bot moving to goal BlockPos{x=-33, y=74, z=78} (pos=(-32.480,73.420,76.700) blockPos=BlockPos{x=-33, y=73, z=76} dist=2.24 pathIdx=0/3 wp=BlockPos{x=-33, y=74, z=77})
-[AMB-DIAG] bot pos=(-32.480,73.420,76.700) delta=(0.0000,0.3400,0.0000) hColl=true onGnd=false sprint=false
-[21:37:51] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
-[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:37:51] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB-DIAG] bot pos=(-32.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB] bot moving to goal BlockPos{x=-33, y=74, z=78} (pos=(-32.500,73.000,76.700) blockPos=BlockPos{x=-33, y=73, z=76} dist=2.24 pathIdx=0/3 wp=BlockPos{x=-33, y=74, z=77})
-[AMB-DIAG] bot pos=(-32.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-33, y=74, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-34, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-33, y=73, z=76}?BlockPos{x=-33, y=73, z=78}: 2 nodes, walkable:true, dy:0
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-33, y=73, z=78}
-[AMB-DIAG] bot pos=(-32.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-THINK] bot skip: goal active until tick 3734 (now=1800)
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-32.500,73.000,76.700) blockPos=BlockPos{x=-33, y=73, z=76} dist=2.24 pathIdx=1/2 wp=BlockPos{x=-33, y=73, z=78})
-[AMB-DIAG] bot pos=(-32.500,73.000,76.700) delta=(0.0000,0.4200,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-32.500,73.220,76.700) delta=(0.0000,-0.2800,0.0000) hColl=true onGnd=false sprint=false
-[21:37:56] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
-[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:37:56] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[AMB-SKIP] bot waypoint BlockPos{x=-33, y=73, z=78} skipped after 60 ticks, new index=2
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-34, y=73, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-33, y=73, z=76}?BlockPos{x=-33, y=74, z=78}: 2 nodes, walkable:true, dy:0
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-33, y=73, z=77} BlockPos{x=-33, y=74, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=74, z=78} (pos=(-32.500,73.000,76.700) blockPos=BlockPos{x=-33, y=73, z=76} dist=2.45 pathIdx=1/2 wp=BlockPos{x=-33, y=74, z=78})
-[AMB-DIAG] bot pos=(-32.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB-DIAG] bot pos=(-32.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[21:37:58] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[21:37:58] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=74, z=78} (pos=(-32.500,73.220,76.700) blockPos=BlockPos{x=-33, y=73, z=76} dist=2.45 pathIdx=1/2 wp=BlockPos{x=-33, y=74, z=78})
-[AMB-DIAG] bot pos=(-32.500,73.220,76.700) delta=(0.0000,-0.2800,0.0000) hColl=true onGnd=false sprint=false
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-34, y=74, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-33, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-34, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.81
-[AMB-DIAG] bot pos=(-33.330,73.220,76.700) delta=(0.0000,-0.2800,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=75, z=78} (pos=(-33.487,73.000,76.700) blockPos=BlockPos{x=-34, y=73, z=76} dist=2.83 pathIdx=1/2 wp=BlockPos{x=-34, y=73, z=78})
-[AMB-DIAG] bot pos=(-33.487,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[21:38:01] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
-[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:38:01] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-33.498,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-SKIP] bot waypoint BlockPos{x=-34, y=73, z=78} skipped after 60 ticks, new index=2
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-34, y=75, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-3
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-34, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=76, z=78} (pos=(-33.499,73.000,76.700) blockPos=BlockPos{x=-34, y=73, z=76} dist=3.61 pathIdx=1/2 wp=BlockPos{x=-34, y=73, z=78})
-[AMB-DIAG] bot pos=(-33.499,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-DIAG] bot pos=(-33.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-THINK] bot skip: goal active until tick 3734 (now=2000)
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB] bot moving to goal BlockPos{x=-34, y=76, z=78} (pos=(-33.500,73.000,76.700) blockPos=BlockPos{x=-34, y=73, z=76} dist=3.61 pathIdx=1/2 wp=BlockPos{x=-34, y=73, z=78})
-[AMB-DIAG] bot pos=(-33.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
-[AMB-SKIP] bot waypoint BlockPos{x=-34, y=73, z=78} skipped after 60 ticks, new index=2
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-34, y=76, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=76}?BlockPos{x=-34, y=73, z=78}: 2 nodes, walkable:true, dy:-4
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-34, y=73, z=77} BlockPos{x=-34, y=73, z=78}
-[AMB] bot executing task: gather_wood
-[AMB] bot gather_wood: heading for tree log at BlockPos{x=-32, y=74, z=78}
-[AMB-PATH] A* BlockPos{x=-34, y=73, z=76}?BlockPos{x=-31, y=74, z=78}: 4 nodes, walkable:true, dy:0
-[AMB-PATH-DETAIL] bot first 4 waypoints: BlockPos{x=-33, y=73, z=76} BlockPos{x=-32, y=74, z=77} BlockPos{x=-31, y=73, z=77} BlockPos{x=-31, y=74, z=78}
-[AMB-DIAG] bot pos=(-31.640,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[21:38:06] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
-[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
-[21:38:06] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB] bot moving to goal BlockPos{x=-32, y=74, z=78} (pos=(-31.500,73.020,76.700) blockPos=BlockPos{x=-32, y=73, z=76} dist=2.24 pathIdx=1/4 wp=BlockPos{x=-32, y=74, z=77})
-[AMB-DIAG] bot pos=(-31.500,73.020,76.700) delta=(0.0000,-0.2800,0.0000) hColl=true onGnd=false sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB-DIAG] bot pos=(-31.500,73.000,76.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=1 horizDist=0.80
-[AMB-HARVEST] bot harvested drop: 1xCherry Log at BlockPos{x=-32, y=74, z=78} ? collecting
-[AMB-HARVEST] bot collected 1xAir from mined block
-[AMB-PATH] A* BlockPos{x=-32, y=73, z=76}?BlockPos{x=-32, y=73, z=78}: 2 nodes, walkable:true, dy:-2
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-32, y=73, z=77} BlockPos{x=-32, y=73, z=78}
-[21:38:09] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: bot]
+[06:58:08] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-THINK] bot skip: goal active until tick 3962 (now=2000)
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[06:58:20] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: Set own game mode to Creative Mode]
+[06:58:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Set own game mode to Creative Mode
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-THINK] bot skip: goal active until tick 3962 (now=2200)
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-THINK] bot skip: goal active until tick 3962 (now=2400)
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[06:58:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
+[06:58:44] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
+[AMB-THINK] bot skip: goal active until tick 3962 (now=2600)
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=78, z=78} (pos=(-36.300,75.000,79.499) blockPos=BlockPos{x=-37, y=75, z=79} dist=4.36 pathIdx=3/13 wp=BlockPos{x=-34, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.300,75.000,79.499) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[06:58:49] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: bot]
 [AMB] Bot removed: bot
-[21:38:09] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: bot
+[06:58:49] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: bot

@@ -169,6 +169,12 @@ public class AmbNpcEntity extends FakePlayer {
     private int  pillarCooldown     = 0;
     private boolean pillarWasAirborne = false;
 
+    // ── Foliage obstruction clearing ─────────────────────────────────────────
+    // When a leaf block is found on the line of access to the log goal, mining is
+    // temporarily redirected here.  currentGoal (the log) is never changed so that
+    // after the leaf is broken, normal log-harvesting resumes automatically.
+    private BlockPos foliageClearTarget = BlockPos.ZERO;
+
     // Item seeking
     private ItemEntity seekingItem = null;
 
@@ -620,8 +626,26 @@ public class AmbNpcEntity extends FakePlayer {
                 BlockState mineCheck = level().getBlockState(currentGoal);
                 if (shouldMineBlock(mineCheck) && distMine < 4.5) {
                     if (!miningState.isMining) {
-                        RealisticActions.equipBestTool(this, mineCheck);
-                        RealisticActions.startMining(this, currentGoal, miningState);
+                        // Obstruction check: a log may not be mined through intervening leaf blocks.
+                        // Find the first leaf on the ray from the bot's eye to the log center.
+                        BlockPos startTarget = currentGoal;
+                        BlockState startState = mineCheck;
+                        if (mineCheck.is(BlockTags.LOGS)) {
+                            BlockPos leaf = findObstructingLeaf(currentGoal);
+                            if (leaf != null) {
+                                System.out.printf("[AMB-FOLIAGE] %s log at %s obstructed by leaf at %s — clearing foliage%n",
+                                    getName().getString(), currentGoal, leaf);
+                                foliageClearTarget = leaf;
+                                startTarget = leaf;
+                                startState = level().getBlockState(leaf);
+                            } else {
+                                foliageClearTarget = BlockPos.ZERO;
+                                System.out.printf("[AMB-FOLIAGE] %s log at %s is unobstructed — harvesting%n",
+                                    getName().getString(), currentGoal);
+                            }
+                        }
+                        RealisticActions.equipBestTool(this, startState);
+                        RealisticActions.startMining(this, startTarget, miningState);
                     }
                     // Apply gravity but don't navigate — let mining run this tick
                     if (currentPath.isEmpty()) {
@@ -937,10 +961,24 @@ public class AmbNpcEntity extends FakePlayer {
                 // Check if we should mine the block at goal
                 BlockState targetState = level().getBlockState(currentGoal);
                 if (shouldMineBlock(targetState)) {
-                    // Start mining
+                    // Start mining — with obstruction check for logs
                     if (!miningState.isMining) {
-                        RealisticActions.equipBestTool(this, targetState);
-                        RealisticActions.startMining(this, currentGoal, miningState);
+                        BlockPos reachTarget = currentGoal;
+                        BlockState reachState = targetState;
+                        if (targetState.is(BlockTags.LOGS)) {
+                            BlockPos leaf = findObstructingLeaf(currentGoal);
+                            if (leaf != null) {
+                                System.out.printf("[AMB-FOLIAGE] %s log at %s obstructed by leaf at %s — clearing foliage%n",
+                                    getName().getString(), currentGoal, leaf);
+                                foliageClearTarget = leaf;
+                                reachTarget = leaf;
+                                reachState = level().getBlockState(leaf);
+                            } else {
+                                foliageClearTarget = BlockPos.ZERO;
+                            }
+                        }
+                        RealisticActions.equipBestTool(this, reachState);
+                        RealisticActions.startMining(this, reachTarget, miningState);
                     }
                 } else {
                     // CRITICAL FIX: Goal reached but nothing to mine - check nearby for mineable blocks
@@ -989,7 +1027,19 @@ public class AmbNpcEntity extends FakePlayer {
                 collectDropsNear(minedPos);
             }
             if (blockBroken) {
-                if (pillarPhase == PillarPhase.MINING) {
+                // If we were clearing an obstructing leaf, do NOT run trunk-following or
+                // goal-clearing — currentGoal is still the log.  Just reset foliage state;
+                // the mining-start check re-fires next tick and either finds another leaf or
+                // starts mining the (now unobstructed) log.
+                if (!foliageClearTarget.equals(BlockPos.ZERO)) {
+                    System.out.printf("[AMB-FOLIAGE] %s cleared leaf at %s — reevaluating access to log at %s%n",
+                        getName().getString(), foliageClearTarget, currentGoal);
+                    foliageClearTarget = BlockPos.ZERO;
+                    if (pillarPhase == PillarPhase.MINING) {
+                        miningState.isMining = false; // let pillar system continue
+                    }
+                    // else: leave miningState reset (done by continueMining); next tick restarts
+                } else if (pillarPhase == PillarPhase.MINING) {
                     // Pillar system will detect block gone next tick and find the next one
                     miningState.isMining = false;
                 } else {
@@ -2302,8 +2352,23 @@ public class AmbNpcEntity extends FakePlayer {
                 // Look at the target and start mining if not already
                 RealisticMovement.lookAt(this, Vec3.atCenterOf(pillarTarget));
                 if (!miningState.isMining) {
-                    RealisticActions.equipBestTool(this, bs);
-                    RealisticActions.startMining(this, pillarTarget, miningState);
+                    // Obstruction check: even when elevated, a leaf between bot and log must be cleared first
+                    BlockPos pillarMineTarget = pillarTarget;
+                    BlockState pillarMineState = bs;
+                    if (bs.is(BlockTags.LOGS)) {
+                        BlockPos leaf = findObstructingLeaf(pillarTarget);
+                        if (leaf != null) {
+                            System.out.printf("[AMB-FOLIAGE] %s pillar-MINING: log at %s obstructed by leaf at %s%n",
+                                getName().getString(), pillarTarget, leaf);
+                            foliageClearTarget = leaf;
+                            pillarMineTarget = leaf;
+                            pillarMineState = level().getBlockState(leaf);
+                        } else {
+                            foliageClearTarget = BlockPos.ZERO;
+                        }
+                    }
+                    RealisticActions.equipBestTool(this, pillarMineState);
+                    RealisticActions.startMining(this, pillarMineTarget, miningState);
                 }
             }
 
@@ -2381,6 +2446,33 @@ public class AmbNpcEntity extends FakePlayer {
             if (!bs.isAir() && bs.canOcclude()) break; // solid non-target stops the search
         }
         return null;
+    }
+
+    /**
+     * Discrete ray march from the bot's eye to the center of `target`.
+     * Returns the position of the first leaf block found along the path, or null if clear.
+     * Used to enforce that a log cannot be broken through intervening foliage — a real player
+     * would have to break the leaves first.
+     *
+     * Steps in 0.5-block increments to catch every intermediate block along the line of access.
+     */
+    private BlockPos findObstructingLeaf(BlockPos target) {
+        Vec3 from = new Vec3(getX(), getEyeY(), getZ());
+        Vec3 to = Vec3.atCenterOf(target);
+        Vec3 delta = to.subtract(from);
+        double totalDist = delta.length();
+        if (totalDist < 0.5) return null; // nothing between us and target
+        Vec3 stepVec = delta.normalize().scale(0.5);
+        int maxSteps = (int)(totalDist / 0.5) + 2;
+        for (int i = 1; i <= maxSteps; i++) {
+            Vec3 pos = from.add(stepVec.x * i, stepVec.y * i, stepVec.z * i);
+            BlockPos check = BlockPos.containing(pos);
+            if (check.equals(target)) break; // reached the target — stop
+            if (level().getBlockState(check).is(BlockTags.LEAVES)) {
+                return check; // obstructing leaf found
+            }
+        }
+        return null; // line of access is clear
     }
 
     /**
