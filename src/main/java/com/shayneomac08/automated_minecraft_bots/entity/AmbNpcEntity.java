@@ -270,8 +270,12 @@ public class AmbNpcEntity extends FakePlayer {
      */
     private void broadcastEquipment() {
         if (!(level() instanceof ServerLevel sl)) return;
+        // Fix F: send packet using the visual entity's ID — that is the entity clients actually track.
+        // Sending with the FakePlayer's own ID does nothing because FakePlayers are server-only.
+        int entityId = (visualEntity != null && !visualEntity.isRemoved())
+                       ? visualEntity.getId() : this.getId();
         ItemStack held = getMainHandItem();
-        var pkt = new ClientboundSetEquipmentPacket(this.getId(),
+        var pkt = new ClientboundSetEquipmentPacket(entityId,
             List.of(Pair.of(EquipmentSlot.MAINHAND, held.isEmpty() ? ItemStack.EMPTY : held.copy())));
         for (ServerPlayer sp : sl.players()) sp.connection.send(pkt);
     }
@@ -281,9 +285,22 @@ public class AmbNpcEntity extends FakePlayer {
      * Uses setItemInHand so the item is visible server-side immediately.
      */
     public void equipToolInHand(net.minecraft.world.item.Item item) {
-        ItemStack stack = new ItemStack(item);
-        this.setItemInHand(InteractionHand.MAIN_HAND, stack);
-        broadcastEquipment();
+        // Fix E: Never create items from thin air — find from actual inventory and swap to selected slot.
+        // FakePlayer's selected hotbar slot is always 0 (inventory.selected is private and never changed).
+        for (int i = 0; i < getInventory().getContainerSize(); i++) {
+            ItemStack st = getInventory().getItem(i);
+            if (!st.isEmpty() && st.is(item)) {
+                if (i != 0) {
+                    // Swap: bring the tool to slot 0 (selected/mainhand), move old slot-0 item to slot i
+                    ItemStack prev = getInventory().getItem(0);
+                    getInventory().setItem(0, st);
+                    getInventory().setItem(i, prev);
+                }
+                broadcastEquipment();
+                return;
+            }
+        }
+        // Item not in inventory — do not conjure it from thin air
     }
 
     /**
@@ -581,6 +598,14 @@ public class AmbNpcEntity extends FakePlayer {
                     double hDistXZ = Math.sqrt(Math.pow(currentGoal.getX() + 0.5 - getX(), 2)
                                              + Math.pow(currentGoal.getZ() + 0.5 - getZ(), 2));
                     if (heightAbove > 1 && hDistXZ < 2.5) {
+                        // Fix B: before pillaring, check if there are reachable logs at a lower Y that
+                        // A* can navigate to. Pillar is a last resort — only use it when the current
+                        // goal is the only remaining log and it genuinely requires vertical climbing.
+                        if (level().getBlockState(currentGoal).is(BlockTags.LOGS) && hasOtherReachableLogs(16)) {
+                            // Better option exists — re-run task to pick a closer/lower log
+                            executeCurrentTask();
+                            return;
+                        }
                         enterPillarMode(currentGoal);
                         return; // pillar system takes over next tick
                     }
@@ -2165,6 +2190,27 @@ public class AmbNpcEntity extends FakePlayer {
 
         switch (pillarPhase) {
             case BUILDING -> {
+                // Fix C: Clear leaf blocks directly above the bot before jumping through them.
+                // Leaves are instant-break by hand and would otherwise collide with the bot mid-jump,
+                // capping the arc and preventing the bot from reaching the apex for block placement.
+                if (!miningState.isMining) {
+                    BlockPos leafAbove = findLeafInColumnAbove(4);
+                    if (leafAbove != null) {
+                        System.out.printf("[AMB-PILLAR] %s clearing leaf at %s before pillar jump%n",
+                            getName().getString(), leafAbove);
+                        RealisticActions.equipBestTool(this, level().getBlockState(leafAbove));
+                        RealisticActions.startMining(this, leafAbove, miningState);
+                        applyVerticalPhysicsOnly();
+                        return;
+                    }
+                } else {
+                    // Continue leaf mining in progress
+                    boolean leafDone = RealisticActions.continueMining(this, miningState);
+                    applyVerticalPhysicsOnly();
+                    if (!leafDone) return; // still mining the leaf
+                    // Leaf done — re-equip building block display next tick
+                }
+
                 int heightDiff = pillarTarget.getY() - blockPosition().getY();
                 if (heightDiff <= 1) {
                     // Close enough — switch to mining
@@ -2335,6 +2381,41 @@ public class AmbNpcEntity extends FakePlayer {
             if (!bs.isAir() && bs.canOcclude()) break; // solid non-target stops the search
         }
         return null;
+    }
+
+    /**
+     * Fix C: Find the lowest leaf block in the column directly above the bot (within maxHeight).
+     * Used to clear leaves before and during pillar jumps so they don't cap the jump arc.
+     */
+    private BlockPos findLeafInColumnAbove(int maxHeight) {
+        for (int dy = 1; dy <= maxHeight; dy++) {
+            BlockPos check = blockPosition().above(dy);
+            BlockState bs = level().getBlockState(check);
+            if (bs.is(BlockTags.LEAVES)) return check;
+            if (bs.canOcclude()) break; // a solid block ends the column search
+        }
+        return null;
+    }
+
+    /**
+     * Fix B: Returns true if there is at least one log block within hRadius horizontal blocks
+     * and within ±4 Y of the bot (i.e., ground-level reachable without a pillar), excluding
+     * the current goal which is already established as out of reach.
+     */
+    private boolean hasOtherReachableLogs(int hRadius) {
+        int myY = blockPosition().getY();
+        for (int dx = -hRadius; dx <= hRadius; dx++) {
+            for (int dy = -2; dy <= 4; dy++) {
+                for (int dz = -hRadius; dz <= hRadius; dz++) {
+                    BlockPos check = blockPosition().offset(dx, dy, dz);
+                    if (check.equals(currentGoal)) continue;
+                    if (!level().getBlockState(check).is(BlockTags.LOGS)) continue;
+                    // Reachable means: Y within ±4 (can navigate without pillar)
+                    if (Math.abs(check.getY() - myY) <= 4) return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

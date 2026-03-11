@@ -32,33 +32,42 @@ public class ClientModEvents {
     public static void onRegisterRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(
             ModEntities.AMB_NPC_VISUAL.get(),
-            context -> new LivingEntityRenderer<AmbNpcVisualEntity, HumanoidRenderState, HumanoidModel<HumanoidRenderState>>(
-                context,
-                new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)),
-                0.5f) {
+            context -> {
+                var model = new HumanoidModel<HumanoidRenderState>(context.bakeLayer(ModelLayers.PLAYER));
+                var renderer = new LivingEntityRenderer<AmbNpcVisualEntity, HumanoidRenderState, HumanoidModel<HumanoidRenderState>>(
+                    context, model, 0.5f) {
 
-                @Override
-                public HumanoidRenderState createRenderState() {
-                    return new HumanoidRenderState();
-                }
+                    @Override
+                    public HumanoidRenderState createRenderState() {
+                        return new HumanoidRenderState();
+                    }
 
-                @Override
-                public Identifier getTextureLocation(HumanoidRenderState state) {
-                    return Identifier.withDefaultNamespace("textures/entity/player/wide/steve.png");
-                }
+                    @Override
+                    public Identifier getTextureLocation(HumanoidRenderState state) {
+                        return Identifier.withDefaultNamespace("textures/entity/player/wide/steve.png");
+                    }
 
-                /**
-                 * Populate held-item render state so HumanoidModel.setupAnim() produces the
-                 * correct arm pose and item geometry is passed to rendering layers.
-                 * Without this, extractRenderState leaves rightHandItemStack/leftHandItemStack
-                 * empty and the model renders with bare hands regardless of inventory state.
-                 */
-                @Override
-                public void extractRenderState(AmbNpcVisualEntity entity, HumanoidRenderState state, float partialTick) {
-                    super.extractRenderState(entity, state, partialTick);
-                    ArmedEntityRenderState.extractArmedEntityRenderState(
-                        entity, state, this.itemModelResolver, partialTick);
-                }
+                    /**
+                     * Populate held-item render state so HumanoidModel.setupAnim() produces the
+                     * correct arm pose and item geometry is passed to rendering layers.
+                     * Without this, extractRenderState leaves rightHandItemStack/leftHandItemStack
+                     * empty and the model renders with bare hands regardless of inventory state.
+                     */
+                    @Override
+                    public void extractRenderState(AmbNpcVisualEntity entity, HumanoidRenderState state, float partialTick) {
+                        super.extractRenderState(entity, state, partialTick);
+                        ArmedEntityRenderState.extractArmedEntityRenderState(
+                            entity, state, this.itemModelResolver, partialTick);
+                    }
+                };
+
+                // Fix F: Add ItemInHandLayer so the item geometry (3D model) actually renders
+                // in the bot's hand. Without this layer the arm pose changes correctly but no
+                // item model is drawn. ItemInHandLayer reads rightHandItemState / leftHandItemState
+                // that were populated by extractArmedEntityRenderState above.
+                renderer.addLayer(new net.minecraft.client.renderer.entity.layers.ItemInHandLayer<>(renderer));
+
+                return renderer;
             }
         );
     }
