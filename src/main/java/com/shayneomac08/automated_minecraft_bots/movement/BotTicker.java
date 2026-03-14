@@ -117,11 +117,13 @@ public class BotTicker {
             bot.setYHeadRot(newYaw);
             bot.yBodyRot = newYaw;
 
-            // Look up for trees, level for ground
+            // Look up for tall targets (trees), level or slightly down for ground targets.
+            // FIX A: removed random ±2° pitch sway — it caused the bot to appear to "shake
+            // its head" continuously, making normal pauses look like malfunctions.
             if (dy > 2) {
-                bot.setXRot(-10.0f); // Look up slightly
+                bot.setXRot(-15.0f); // Look up toward elevated targets
             } else {
-                bot.setXRot(0.0f + (float)(Math.random() * 4 - 2)); // Level with slight sway
+                bot.setXRot(5.0f); // Look slightly down while navigating ground level
             }
         }
     }

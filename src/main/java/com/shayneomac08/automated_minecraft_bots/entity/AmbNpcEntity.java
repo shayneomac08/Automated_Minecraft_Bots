@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -271,6 +272,23 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== VISIBLE HANDS + REAL MINING ====================
 
     /**
+     * FIX B: Override swing() to re-broadcast the animation for the visual entity.
+     * FakePlayer.swing() sends ClientboundAnimatePacket with the FakePlayer's entity ID,
+     * but clients only track AmbNpcVisualEntity — that packet is silently ignored.
+     * This override sends a second packet with the visual entity's ID so clients see the swing.
+     */
+    @Override
+    public void swing(InteractionHand hand, boolean force) {
+        super.swing(hand, force);
+        if (visualEntity != null && !visualEntity.isRemoved() && level() instanceof ServerLevel sl) {
+            // 0 = swing main hand, 3 = swing offhand (ClientboundAnimatePacket actions)
+            int action = (hand == InteractionHand.MAIN_HAND) ? 0 : 3;
+            ClientboundAnimatePacket pkt = new ClientboundAnimatePacket(visualEntity, action);
+            for (ServerPlayer sp : sl.players()) sp.connection.send(pkt);
+        }
+    }
+
+    /**
      * Broadcast current mainhand item to all players in this level via equipment packet.
      * Required for FakePlayer — its fake connection never sends equipment updates automatically.
      */
@@ -317,8 +335,8 @@ public class AmbNpcEntity extends FakePlayer {
         // Don't override if actively mining (equipBestTool will handle that)
         net.minecraft.world.item.Item tool = switch (currentTask == null ? "" : currentTask) {
             case "gather_wood", "chop_trees", "gather_logs" -> Items.WOODEN_AXE;
-            case "mine_stone", "mine_ores", "gather_stone"  -> Items.WOODEN_PICKAXE;
-            case "till_soil", "plant", "farm", "gather_food" -> Items.WOODEN_SHOVEL;
+            case "mine_stone", "mine_ores", "gather_stone", "mine_ore" -> Items.WOODEN_PICKAXE;
+            case "mine_dirt", "till_soil", "plant", "farm", "gather_food" -> Items.WOODEN_SHOVEL;
             case "build", "construct"                        -> Items.OAK_PLANKS;
             case "craft"                                     -> Items.CRAFTING_TABLE.asItem();
             case "cook", "smelt"                             -> Items.COAL.asItem();
@@ -500,6 +518,17 @@ public class AmbNpcEntity extends FakePlayer {
         // Keep the bot's hand visually populated with the task-appropriate tool
         if (tickCount % 100 == 0) {
             updateTaskTool();
+        }
+
+        // STALL DIAGNOSIS — compact state snapshot every 40 ticks so the console log
+        // makes any post-harvest pause obvious without drowning in per-tick noise.
+        if (tickCount % 40 == 0) {
+            System.out.printf("[AMB-STATE] %s task=%s goal=%s pillar=%s mining=%b seeking=%s stuck=%d/%d%n",
+                getName().getString(), currentTask,
+                currentGoal.equals(BlockPos.ZERO) ? "NONE" : currentGoal,
+                pillarPhase, miningState.isMining,
+                seekingItem != null ? seekingItem.getItem().getHoverName().getString() : "none",
+                stuckState.stuckTicks, stuckState.ticksSinceProgress);
         }
 
         // CRITICAL SURVIVAL - Eat if hungry
@@ -1683,7 +1712,16 @@ public class AmbNpcEntity extends FakePlayer {
             case "mine_ore":
                 return state.is(Blocks.COAL_ORE) || state.is(Blocks.IRON_ORE) ||
                        state.is(Blocks.COPPER_ORE) || state.is(Blocks.GOLD_ORE) ||
-                       state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.EMERALD_ORE);
+                       state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.EMERALD_ORE) ||
+                       state.is(Blocks.DEEPSLATE_COAL_ORE) || state.is(Blocks.DEEPSLATE_IRON_ORE) ||
+                       state.is(Blocks.DEEPSLATE_COPPER_ORE) || state.is(Blocks.DEEPSLATE_GOLD_ORE) ||
+                       state.is(Blocks.DEEPSLATE_DIAMOND_ORE) || state.is(Blocks.DEEPSLATE_EMERALD_ORE);
+            // FIX D: mine_dirt — newly implemented
+            case "mine_dirt":
+                return state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) ||
+                       state.is(Blocks.COARSE_DIRT) || state.is(Blocks.ROOTED_DIRT) ||
+                       state.is(Blocks.GRAVEL) || state.is(Blocks.SAND) ||
+                       state.is(Blocks.RED_SAND);
             case "build_underground_base":
                 // Mine any solid non-bedrock block that is the current dig target
                 if (!baseDigQueue.isEmpty() && state.canOcclude() && !state.is(Blocks.BEDROCK)) {
@@ -1726,6 +1764,18 @@ public class AmbNpcEntity extends FakePlayer {
                     equipToolInHand(Items.STONE_PICKAXE);
                 } else if (getInventory().countItem(Items.WOODEN_PICKAXE) > 0) {
                     equipToolInHand(Items.WOODEN_PICKAXE);
+                }
+                break;
+            case "mine_dirt":
+                // Shovel is fastest for dirt/gravel/sand, but hand also works
+                if (getInventory().countItem(Items.DIAMOND_SHOVEL) > 0) {
+                    equipToolInHand(Items.DIAMOND_SHOVEL);
+                } else if (getInventory().countItem(Items.IRON_SHOVEL) > 0) {
+                    equipToolInHand(Items.IRON_SHOVEL);
+                } else if (getInventory().countItem(Items.STONE_SHOVEL) > 0) {
+                    equipToolInHand(Items.STONE_SHOVEL);
+                } else if (getInventory().countItem(Items.WOODEN_SHOVEL) > 0) {
+                    equipToolInHand(Items.WOODEN_SHOVEL);
                 }
                 break;
             case "hunt_animals":
@@ -2317,24 +2367,44 @@ public class AmbNpcEntity extends FakePlayer {
                     BlockPos placePos = new BlockPos(blockPosition().getX(),
                                                      blockPosition().getY() - 1,
                                                      blockPosition().getZ());
-                    System.out.printf("[AMB-PILLAR] %s BUILDING apex: placing at %s (canOcclude=%b)%n",
-                        getName().getString(), placePos,
-                        level().getBlockState(placePos).canOcclude());
-                    if (level() instanceof ServerLevel sl && !sl.getBlockState(placePos).canOcclude()) {
-                        ItemStack stack = getInventory().getItem(buildSlot);
-                        if (!stack.isEmpty() && stack.getItem() instanceof net.minecraft.world.item.BlockItem bi) {
-                            sl.setBlock(placePos, bi.getBlock().defaultBlockState(), 3);
-                            stack.shrink(1);
-                            placedPillarBlocks.add(placePos);
-                            pillarWasAirborne = false;
-                            pillarCooldown = 8;
-                            System.out.printf("[AMB-PILLAR] %s placed %s at %s (pillar height=%d remaining=%d)%n",
-                                getName().getString(), bi.getBlock().getName().getString(),
-                                placePos, placedPillarBlocks.size(), stack.getCount());
-                        } else {
-                            System.out.printf("[AMB-PILLAR] %s BUILDING apex but buildSlot stack invalid slot=%d%n",
-                                getName().getString(), buildSlot);
+                    BlockState placeState = level().getBlockState(placePos);
+                    System.out.printf("[AMB-PILLAR] %s BUILDING apex: placing at %s (canOcclude=%b isLog=%b)%n",
+                        getName().getString(), placePos, placeState.canOcclude(),
+                        placeState.is(BlockTags.LOGS));
+
+                    if (!placeState.canOcclude()) {
+                        // Normal case: air below us — place building block
+                        if (level() instanceof ServerLevel sl) {
+                            ItemStack stack = getInventory().getItem(buildSlot);
+                            if (!stack.isEmpty() && stack.getItem() instanceof net.minecraft.world.item.BlockItem bi) {
+                                sl.setBlock(placePos, bi.getBlock().defaultBlockState(), 3);
+                                stack.shrink(1);
+                                placedPillarBlocks.add(placePos);
+                                pillarWasAirborne = false;
+                                pillarCooldown = 8;
+                                System.out.printf("[AMB-PILLAR] %s placed %s at %s (pillar height=%d remaining=%d)%n",
+                                    getName().getString(), bi.getBlock().getName().getString(),
+                                    placePos, placedPillarBlocks.size(), stack.getCount());
+                            } else {
+                                System.out.printf("[AMB-PILLAR] %s BUILDING apex but buildSlot stack invalid slot=%d%n",
+                                    getName().getString(), buildSlot);
+                                pillarWasAirborne = false; // reset so bot can try again next jump
+                            }
                         }
+                    } else if (placeState.is(BlockTags.LOGS) && shouldMineBlock(placeState)) {
+                        // FIX A/C: Tree trunk occupies the placement position — we're already at
+                        // a harvestable log.  Switch directly to MINING instead of looping.
+                        pillarTarget = placePos;
+                        pillarPhase = PillarPhase.MINING;
+                        pillarWasAirborne = false;
+                        System.out.printf("[AMB-PILLAR] %s apex is a log at %s — switching to MINING%n",
+                            getName().getString(), placePos);
+                    } else {
+                        // Placement position is occupied by a non-log solid block (terrain, etc.)
+                        // Reset airborne flag so the bot can try a different approach next jump.
+                        pillarWasAirborne = false;
+                        System.out.printf("[AMB-PILLAR] %s apex placement blocked by %s at %s — will retry%n",
+                            getName().getString(), placeState.getBlock().getName().getString(), placePos);
                     }
                 }
             }
@@ -2552,13 +2622,13 @@ public class AmbNpcEntity extends FakePlayer {
     private boolean hasOtherReachableLogs(int hRadius) {
         int myY = blockPosition().getY();
         for (int dx = -hRadius; dx <= hRadius; dx++) {
-            for (int dy = -2; dy <= 4; dy++) {
+            for (int dy = -2; dy <= 6; dy++) { // FIX A/C: 4→6 — logs 5-6 blocks up are navigable
                 for (int dz = -hRadius; dz <= hRadius; dz++) {
                     BlockPos check = blockPosition().offset(dx, dy, dz);
                     if (check.equals(currentGoal)) continue;
                     if (!level().getBlockState(check).is(BlockTags.LOGS)) continue;
-                    // Reachable means: Y within ±4 (can navigate without pillar)
-                    if (Math.abs(check.getY() - myY) <= 4) return true;
+                    // Reachable: within ±6 Y (A* handles moderate slopes; pillar only for 7+)
+                    if (Math.abs(check.getY() - myY) <= 6) return true;
                 }
             }
         }
@@ -2911,15 +2981,33 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
             case "mine_stone" -> {
-                BlockPos stone = findNearestBlock(Blocks.STONE, 32);
+                BlockPos stone = findNearestHarvestTarget(new net.minecraft.world.level.block.Block[]{
+                    Blocks.STONE, Blocks.COBBLESTONE, Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE}, 32);
                 if (stone != null) {
                     currentGoal = stone;
                     doorPhase = 0; doorPos = BlockPos.ZERO; originalDoorPos = BlockPos.ZERO; doorTimer = 0; avoidTicks = 0;
                     currentPath.clear(); pathIndex = 0; pathRetryTimer = 0;
-                    System.out.println("[AMB] " + getName().getString() + " mine_stone: heading for stone at " + stone);
+                    System.out.printf("[AMB-PERCEIVE] %s mine_stone target: %s at %s%n",
+                        getName().getString(), level().getBlockState(stone).getBlock().getName().getString(), stone);
                 } else {
                     currentGoal = blockPosition().offset(random.nextInt(40) - 20, 0, random.nextInt(40) - 20);
                     System.out.println("[AMB] " + getName().getString() + " no stone in range, wandering");
+                }
+            }
+            case "mine_dirt" -> {
+                // FIX D: mine_dirt — find nearest dirt-type block
+                BlockPos dirt = findNearestHarvestTarget(new net.minecraft.world.level.block.Block[]{
+                    Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT, Blocks.ROOTED_DIRT,
+                    Blocks.GRAVEL, Blocks.SAND, Blocks.RED_SAND}, 32);
+                if (dirt != null) {
+                    currentGoal = dirt;
+                    doorPhase = 0; doorPos = BlockPos.ZERO; originalDoorPos = BlockPos.ZERO; doorTimer = 0; avoidTicks = 0;
+                    currentPath.clear(); pathIndex = 0; pathRetryTimer = 0;
+                    System.out.printf("[AMB-PERCEIVE] %s mine_dirt target: %s at %s%n",
+                        getName().getString(), level().getBlockState(dirt).getBlock().getName().getString(), dirt);
+                } else {
+                    currentGoal = blockPosition().offset(random.nextInt(40) - 20, 0, random.nextInt(40) - 20);
+                    System.out.println("[AMB] " + getName().getString() + " no dirt-type blocks in range, wandering");
                 }
             }
             case "explore" -> {
@@ -3248,6 +3336,33 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
+     * Find the nearest block that is one of the specified block types.
+     * Searches a y range of ±10, same as findNearestBlock(Block, int).
+     * Used by mine_stone, mine_dirt, mine_ore task selection.
+     */
+    private BlockPos findNearestHarvestTarget(net.minecraft.world.level.block.Block[] blocks, int radius) {
+        BlockPos myPos = blockPosition();
+        BlockPos nearest = null;
+        double nearestDist = Double.MAX_VALUE;
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -10; y <= 10; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    BlockPos check = myPos.offset(x, y, z);
+                    BlockState st = level().getBlockState(check);
+                    boolean matches = false;
+                    for (net.minecraft.world.level.block.Block b : blocks) {
+                        if (st.is(b)) { matches = true; break; }
+                    }
+                    if (!matches) continue;
+                    double dist = myPos.distSqr(check);
+                    if (dist < nearestDist) { nearestDist = dist; nearest = check; }
+                }
+            }
+        }
+        return nearest;
+    }
+
+    /**
      * Find the nearest log that is part of a natural tree (has at least one leaf within 6 blocks).
      * Avoids mining logs in player structures which have no leaves nearby.
      */
@@ -3278,9 +3393,13 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
-     * Find the nearest ItemEntity within range for navigation purposes.
-     * Includes items with pickup delay — the bot will walk to them and pick them up
-     * once the delay expires (the pickup loop in runAllPlayerActions checks delay).
+     * Find the nearest collectible ItemEntity for active navigation.
+     *
+     * FIX A: Only redirect navigation toward items that are ALREADY collectable
+     * (pickup delay expired) or within the 4-block passive-pickup radius.
+     * Items still in their 10-tick delay beyond pickup range are excluded — chasing
+     * them interrupts harvesting and the bot arrives to find an empty air block
+     * (passive pickup already collected the item while the bot was en route).
      */
     private ItemEntity findNearestItem(double radius) {
         ItemEntity nearest = null;
@@ -3289,6 +3408,9 @@ public class AmbNpcEntity extends FakePlayer {
         for (ItemEntity item : level().getEntitiesOfClass(ItemEntity.class, search)) {
             if (item.isRemoved()) continue;
             double dist = distanceTo(item);
+            // Skip items still in pickup delay unless they're already in passive-pickup range.
+            // Passive pickup radius is 4 blocks; items there will be grabbed anyway.
+            if (item.hasPickUpDelay() && dist > 4.0) continue;
             if (dist < nearestDist) {
                 nearestDist = dist;
                 nearest = item;
