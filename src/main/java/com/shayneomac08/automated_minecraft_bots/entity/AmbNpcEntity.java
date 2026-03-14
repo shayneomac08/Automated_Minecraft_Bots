@@ -825,7 +825,10 @@ public class AmbNpcEntity extends FakePlayer {
 
             // ENHANCED: Multi-level stuck detection with progressive recovery
             // Bug 1: skip entirely while door rescue is already in progress
-            if (!doorRescueActive && StuckDetection.isStuck(this, stuckState, currentGoal)) {
+            // FIX C: skip while actively mining — position is intentionally static during a break.
+            //        Stuck recovery (jump + strafe) would interrupt mining and cancel progress.
+            //        stuckState.reset() is called on successful block break above.
+            if (!doorRescueActive && !miningState.isMining && StuckDetection.isStuck(this, stuckState, currentGoal)) {
                 System.out.println("[AMB-STUCK] " + getName().getString() + " stuck at " + blockPosition() +
                     " (level " + stuckState.recoveryLevel + ", ticks: " + stuckState.stuckTicks + ")");
 
@@ -1021,10 +1024,17 @@ public class AmbNpcEntity extends FakePlayer {
             BlockPos minedPos = miningState.targetBlock; // save before continueMining resets it
             boolean blockBroken = RealisticActions.continueMining(this, miningState);
             if (blockBroken && !minedPos.equals(BlockPos.ZERO)) {
-                // Immediately collect drops from the mined block before vanilla collision can
-                // give them to a nearby real player. Items have a 10-tick delay for normal
-                // pickup, but we bypass it here since these are our own drops.
-                collectDropsNear(minedPos);
+                // FIX A: Do NOT call collectDropsNear() here.
+                // gameMode.destroyBlock() already spawned item entities in the world with a
+                // 10-tick pickup delay.  Bypassing that delay made items disappear the same
+                // tick they were created — clients never saw them on the ground.
+                // doPassivePickup() (called unconditionally at the top of every tick) will
+                // collect these items naturally once the delay expires, producing a visible
+                // world-drop → fly-to-bot animation.
+                System.out.printf("[AMB-HARVEST] %s broke block at %s — drops are world-spawned, awaiting natural pickup (10-tick delay)%n",
+                    getName().getString(), minedPos);
+                // Clear stuck counters: a successful break is progress, not a stuck state.
+                stuckState.reset();
             }
             if (blockBroken) {
                 // If we were clearing an obstructing leaf, do NOT run trunk-following or
@@ -2456,23 +2466,68 @@ public class AmbNpcEntity extends FakePlayer {
      *
      * Steps in 0.5-block increments to catch every intermediate block along the line of access.
      */
+    /**
+     * FIX B: Two-pass obstruction check.
+     *
+     * Pass 1 — ray march (0.5-block steps) from eye to log center.
+     *   Finds leaves that are directly on the line of sight.
+     *
+     * Pass 2 — neighbourhood scan (±2-block cube around target).
+     *   Catches leaves that are slightly off the direct ray but still physically
+     *   between the bot and the log (e.g. leaves on adjacent faces of a log in a
+     *   dense cluster).  Only leaves that are (a) closer to the bot than the log,
+     *   and (b) roughly in the forward half-cone (dot product > 0.5) are flagged.
+     */
     private BlockPos findObstructingLeaf(BlockPos target) {
         Vec3 from = new Vec3(getX(), getEyeY(), getZ());
-        Vec3 to = Vec3.atCenterOf(target);
+        Vec3 to   = Vec3.atCenterOf(target);
         Vec3 delta = to.subtract(from);
         double totalDist = delta.length();
-        if (totalDist < 0.5) return null; // nothing between us and target
+        if (totalDist < 0.5) return null;
+
+        // ── Pass 1: ray march ────────────────────────────────────────────────
         Vec3 stepVec = delta.normalize().scale(0.5);
         int maxSteps = (int)(totalDist / 0.5) + 2;
         for (int i = 1; i <= maxSteps; i++) {
             Vec3 pos = from.add(stepVec.x * i, stepVec.y * i, stepVec.z * i);
             BlockPos check = BlockPos.containing(pos);
-            if (check.equals(target)) break; // reached the target — stop
+            if (check.equals(target)) break;
             if (level().getBlockState(check).is(BlockTags.LEAVES)) {
-                return check; // obstructing leaf found
+                return check; // leaf on direct ray
             }
         }
-        return null; // line of access is clear
+
+        // ── Pass 2: neighbourhood scan (±2 blocks around target) ─────────────
+        // Only flags leaves that are between the bot and the log and broadly
+        // in the approach direction.
+        Vec3 botPos      = position();
+        Vec3 toTargetNorm = to.subtract(botPos).normalize();
+        BlockPos closest  = null;
+        double closestDist = Double.MAX_VALUE;
+
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
+                for (int dz = -2; dz <= 2; dz++) {
+                    if (dx == 0 && dy == 0 && dz == 0) continue;
+                    BlockPos check = target.offset(dx, dy, dz);
+                    if (!level().getBlockState(check).is(BlockTags.LEAVES)) continue;
+                    Vec3 leafCenter    = Vec3.atCenterOf(check);
+                    double distToBot   = leafCenter.distanceTo(botPos);
+                    if (distToBot >= totalDist) continue; // behind or at the target
+                    Vec3 toLeaf = leafCenter.subtract(botPos).normalize();
+                    if (toTargetNorm.dot(toLeaf) < 0.5) continue; // outside forward half-cone
+                    if (distToBot < closestDist) {
+                        closestDist = distToBot;
+                        closest = check;
+                    }
+                }
+            }
+        }
+        if (closest != null) {
+            System.out.printf("[AMB-FOLIAGE] %s secondary scan: off-ray leaf at %s obstructs log at %s (dist=%.1f)%n",
+                getName().getString(), closest, target, closestDist);
+        }
+        return closest;
     }
 
     /**
@@ -2828,14 +2883,26 @@ public class AmbNpcEntity extends FakePlayer {
             case "gather_wood" -> {
                 // Only target logs that are part of a natural tree (have leaves nearby).
                 // This prevents mining logs in player structures.
+                // FIX D: log local perception snapshot before choosing target.
+                int nearbyLogs   = countBlocksNearby(BlockTags.LOGS,   20);
+                int nearbyLeaves = countBlocksNearby(BlockTags.LEAVES,  20);
+                System.out.printf("[AMB-PERCEIVE] %s local snapshot: logs=%d leaves=%d within 20 blocks%n",
+                    getName().getString(), nearbyLogs, nearbyLeaves);
                 BlockPos log = findNearestTreeLog(32);
                 if (log != null) {
+                    double dist = position().distanceTo(Vec3.atCenterOf(log));
+                    // Quick obstruction hint: how many leaves are adjacent to this log?
+                    int adjLeaves = 0;
+                    for (int dx = -1; dx <= 1; dx++) for (int dy = -1; dy <= 1; dy++) for (int dz = -1; dz <= 1; dz++) {
+                        if (level().getBlockState(log.offset(dx, dy, dz)).is(BlockTags.LEAVES)) adjLeaves++;
+                    }
                     currentGoal = log;
                     doorPhase = 0; doorPos = BlockPos.ZERO; originalDoorPos = BlockPos.ZERO; doorTimer = 0; avoidTicks = 0;
                     currentPath.clear();
                     pathIndex = 0;
                     pathRetryTimer = 0;
-                    System.out.println("[AMB] " + getName().getString() + " gather_wood: heading for tree log at " + log);
+                    System.out.printf("[AMB-PERCEIVE] %s gather_wood target: log at %s dist=%.1f adjLeaves=%d%n",
+                        getName().getString(), log, dist, adjLeaves);
                 } else {
                     // No natural tree found — wander to find one
                     currentGoal = blockPosition().offset(
@@ -3246,9 +3313,11 @@ public class AmbNpcEntity extends FakePlayer {
         for (ItemEntity itemEntity : sl.getEntitiesOfClass(ItemEntity.class, pickupBox)) {
             if (itemEntity.isRemoved()) continue;
             if (itemEntity.hasPickUpDelay()) {
-                // Item nearby but delay active — log only on first detection per item
-                if (tickCount % 20 == 0) {
-                    System.out.printf("[AMB-PICKUP] %s nearby item %s delayed (delay>0) at %s%n",
+                // Item nearby but delay active — log only occasionally to avoid spam.
+                // This is the expected state immediately after a block break: item entity
+                // is in the world and visible to clients, just waiting for the delay.
+                if (tickCount % 40 == 0) {
+                    System.out.printf("[AMB-PICKUP] %s world-drop %s at %s waiting (delay active)%n",
                         getName().getString(),
                         itemEntity.getItem().getHoverName().getString(),
                         itemEntity.blockPosition());
@@ -3307,6 +3376,19 @@ public class AmbNpcEntity extends FakePlayer {
                     getName().getString(), grabbed, stack.getHoverName().getString());
             }
         }
+    }
+
+    /** Count blocks matching a tag within radius of the bot's position (cheap perception snapshot). */
+    private int countBlocksNearby(net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> tag, int radius) {
+        int count = 0;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -4; dy <= 8; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (level().getBlockState(blockPosition().offset(dx, dy, dz)).is(tag)) count++;
+                }
+            }
+        }
+        return count;
     }
 
     /** Returns true if there is at least one leaf block within the given radius of pos. */
