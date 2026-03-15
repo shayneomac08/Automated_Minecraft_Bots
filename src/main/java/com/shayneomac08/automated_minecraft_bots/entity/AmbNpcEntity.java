@@ -33,7 +33,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -272,19 +271,19 @@ public class AmbNpcEntity extends FakePlayer {
     // ==================== VISIBLE HANDS + REAL MINING ====================
 
     /**
-     * FIX B: Override swing() to re-broadcast the animation for the visual entity.
+     * Override swing() to delegate the arm-swing animation to the visual entity.
      * FakePlayer.swing() sends ClientboundAnimatePacket with the FakePlayer's entity ID,
      * but clients only track AmbNpcVisualEntity — that packet is silently ignored.
-     * This override sends a second packet with the visual entity's ID so clients see the swing.
+     * Calling visualEntity.swing() triggers LivingEntity.swing() on the PathfinderMob,
+     * which uses the vanilla sendToTrackingPlayers() mechanism to deliver the animate
+     * packet to every client that has the visual entity loaded. This is the authoritative
+     * path for swing animations in Minecraft — no manual packet construction needed.
      */
     @Override
     public void swing(InteractionHand hand, boolean force) {
         super.swing(hand, force);
-        if (visualEntity != null && !visualEntity.isRemoved() && level() instanceof ServerLevel sl) {
-            // 0 = swing main hand, 3 = swing offhand (ClientboundAnimatePacket actions)
-            int action = (hand == InteractionHand.MAIN_HAND) ? 0 : 3;
-            ClientboundAnimatePacket pkt = new ClientboundAnimatePacket(visualEntity, action);
-            for (ServerPlayer sp : sl.players()) sp.connection.send(pkt);
+        if (visualEntity != null && !visualEntity.isRemoved()) {
+            visualEntity.swing(hand, force);
         }
     }
 
