@@ -451,24 +451,12 @@ public class AmbNpcEntity extends FakePlayer {
         bot.setYRot(player.getYRot());
         bot.setYHeadRot(player.getYRot());
 
-        // CRITICAL: Broadcast ADD_PLAYER info to all clients BEFORE adding the entity.
-        // Without this, clients receive ClientboundAddEntityPacket for an unknown UUID and
-        // log "Skipping Entity with id entity.minecraft.player" — the bot renders invisible.
-        net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket infoPacket =
-            new net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket(
-                java.util.EnumSet.of(
-                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER,
-                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE,
-                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED,
-                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LATENCY,
-                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME
-                ),
-                java.util.List.of(bot)
-            );
-        for (net.minecraft.server.level.ServerPlayer sp : level.getServer().getPlayerList().getPlayers()) {
-            sp.connection.send(infoPacket);
-        }
-
+        // NOTE: Do NOT send ClientboundPlayerInfoUpdatePacket here.
+        // AmbNpcVisualEntity (PathfinderMob) is the sole visible body. Sending a
+        // PlayerInfoPacket makes the FakePlayer visible to clients as a second player
+        // entity, producing two overlapping Steve bodies. The visual entity handles
+        // all rendering: skin, held items (ItemInHandLayer), and swing animation
+        // (via the swing() override delegate to visualEntity.swing()).
         // IMPORTANT: Add the FakePlayer entity to the world so its tick() runs
         // Without this, the bot will never tick and thus never move
         level.addFreshEntity(bot);
@@ -541,12 +529,14 @@ public class AmbNpcEntity extends FakePlayer {
         // STALL DIAGNOSIS — compact state snapshot every 40 ticks so the console log
         // makes any post-harvest pause obvious without drowning in per-tick noise.
         if (tickCount % 40 == 0) {
-            System.out.printf("[AMB-STATE] %s task=%s goal=%s pillar=%s mining=%b seeking=%s stuck=%d/%d%n",
+            LocalAwareness awareness = captureLocalAwareness();
+            System.out.printf("[AMB-STATE] %s task=%s goal=%s pillar=%s mining=%b seeking=%s stuck=%d/%d awareness=[%s]%n",
                 getName().getString(), currentTask,
                 currentGoal.equals(BlockPos.ZERO) ? "NONE" : currentGoal,
                 pillarPhase, miningState.isMining,
                 seekingItem != null ? seekingItem.getItem().getHoverName().getString() : "none",
-                stuckState.stuckTicks, stuckState.ticksSinceProgress);
+                stuckState.stuckTicks, stuckState.ticksSinceProgress,
+                awareness.summary);
         }
 
         // CRITICAL SURVIVAL - Eat if hungry
@@ -656,12 +646,24 @@ public class AmbNpcEntity extends FakePlayer {
                         // A* can navigate to. Pillar is a last resort — only use it when the current
                         // goal is the only remaining log and it genuinely requires vertical climbing.
                         boolean otherLogs = level().getBlockState(currentGoal).is(BlockTags.LOGS) && hasOtherReachableLogs(16);
-                        System.out.printf("[AMB-PILLAR] %s decision: heightAbove=%d hDist=%.1f pathEmpty=%b otherLogs=%b%n",
-                            getName().getString(), heightAbove, hDistXZ, currentPath.isEmpty(), otherLogs);
+                        LocalAwareness aw = captureLocalAwareness();
+                        System.out.printf("[AMB-PILLAR] %s decision: heightAbove=%d hDist=%.1f pathEmpty=true otherLogs=%b awareness=[%s]%n",
+                            getName().getString(), heightAbove, hDistXZ, otherLogs, aw.summary);
                         if (otherLogs) {
                             // Better option exists — re-run task to pick a closer/lower log
                             executeCurrentTask();
                             return;
+                        }
+                        // If headroom directly above is blocked by a soft obstacle, clear it before
+                        // entering pillar mode — the BUILDING phase also does this, but catching it
+                        // here avoids entering pillar mode unnecessarily.
+                        if (!aw.headroomClear && aw.headroomIsSoft && navBreakCooldown == 0
+                                && level() instanceof ServerLevel sl) {
+                            System.out.printf("[AMB-PILLAR] %s pre-pillar: clearing headroom leaf at %s%n",
+                                getName().getString(), aw.headroomObstructor);
+                            sl.destroyBlock(aw.headroomObstructor, true, this);
+                            navBreakCooldown = 5;
+                            return; // recheck next tick
                         }
                         enterPillarMode(currentGoal);
                         return; // pillar system takes over next tick
@@ -837,17 +839,39 @@ public class AmbNpcEntity extends FakePlayer {
             }
 
             if (shouldJump && jumpCooldown == 0) {
-                // Gather context for log
-                double horizDist = 0;
-                if (!currentPath.isEmpty() && pathIndex < currentPath.size()) {
-                    BlockPos wp = currentPath.get(pathIndex);
-                    horizDist = Math.sqrt(Math.pow(getX() - (wp.getX() + 0.5), 2)
-                                        + Math.pow(getZ() - (wp.getZ() + 0.5), 2));
+                // Before jumping: verify the headroom column (Y+1..Y+3 above bot) and the
+                // space above the landing waypoint are free of leaf blocks. Leaves physically
+                // block the jump arc even though A* marks them as passable (clearable).
+                // Breaking the leaf takes priority over the jump; retry jump next tick.
+                BlockPos headLeaf = findLeafInColumnAbove(3);
+                if (headLeaf == null && !currentPath.isEmpty() && pathIndex < currentPath.size()) {
+                    // Also check above the target landing waypoint (head clearance on arrival)
+                    BlockPos landingWp = currentPath.get(pathIndex);
+                    for (int dy = 0; dy <= 2; dy++) {
+                        BlockPos chk = landingWp.above(dy);
+                        if (level().getBlockState(chk).is(BlockTags.LEAVES)) { headLeaf = chk; break; }
+                    }
                 }
-                jumpFromGround();
-                jumpCooldown = 15;
-                System.out.printf("[AMB-JUMP] %s jump: hColl=%s waypointDY=%d horizDist=%.2f%n",
-                    getName().getString(), horizontalCollision, wpDY, horizDist);
+                if (headLeaf != null && navBreakCooldown == 0 && level() instanceof ServerLevel sl) {
+                    System.out.printf("[AMB-LEAF] %s clearing headroom leaf at %s before jump%n",
+                        getName().getString(), headLeaf);
+                    RealisticActions.equipBestTool(this, level().getBlockState(headLeaf));
+                    sl.destroyBlock(headLeaf, true, this);
+                    navBreakCooldown = 5;
+                } else if (headLeaf == null) {
+                    // Headroom is clear — safe to jump
+                    double horizDist = 0;
+                    if (!currentPath.isEmpty() && pathIndex < currentPath.size()) {
+                        BlockPos logWp = currentPath.get(pathIndex);
+                        horizDist = Math.sqrt(Math.pow(getX() - (logWp.getX() + 0.5), 2)
+                                            + Math.pow(getZ() - (logWp.getZ() + 0.5), 2));
+                    }
+                    jumpFromGround();
+                    jumpCooldown = 15;
+                    System.out.printf("[AMB-JUMP] %s jump: hColl=%s waypointDY=%d horizDist=%.2f%n",
+                        getName().getString(), horizontalCollision, wpDY, horizDist);
+                }
+                // else: leaf found but navBreakCooldown > 0 — wait for previous break to clear
             }
             // ─────────────────────────────────────────────────────────────────────────
 
@@ -1393,6 +1417,86 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
         return best;
+    }
+
+    // ==================== LOCAL AWARENESS SNAPSHOT ====================
+    /**
+     * Lightweight snapshot of nearby world state consumed by movement, mining, and recovery.
+     * Generated on-demand; shared across all major decision points so each subsystem
+     * does not build its own independent local scan.
+     */
+    static class LocalAwareness {
+        final boolean headroomClear;       // Y+1..Y+3 above bot are all passable
+        final BlockPos headroomObstructor; // first blocking block in Y+1..Y+3, or null
+        final boolean headroomIsSoft;      // obstructor is leaves (breakable, no tool needed)
+        final int nearbyLogCount;          // logs within 8-block radius
+        final int nearbyLeafCount;         // leaf blocks within 4-block radius
+        final boolean toolSuitable;        // mainhand tool matches current task
+        final String summary;
+
+        LocalAwareness(boolean headroomClear, BlockPos headroomObstructor, boolean headroomIsSoft,
+                       int nearbyLogCount, int nearbyLeafCount, boolean toolSuitable) {
+            this.headroomClear      = headroomClear;
+            this.headroomObstructor = headroomObstructor;
+            this.headroomIsSoft     = headroomIsSoft;
+            this.nearbyLogCount     = nearbyLogCount;
+            this.nearbyLeafCount    = nearbyLeafCount;
+            this.toolSuitable       = toolSuitable;
+            this.summary = String.format(
+                "headClear=%b obstructor=%s soft=%b logs=%d leaves=%d toolOK=%b",
+                headroomClear, headroomObstructor, headroomIsSoft,
+                nearbyLogCount, nearbyLeafCount, toolSuitable);
+        }
+    }
+
+    /**
+     * Capture a LocalAwareness snapshot. Cheap: only checks 4-8 block radius.
+     * Called every 40 ticks and at decision branch points (pillar entry, stuck recovery).
+     */
+    private LocalAwareness captureLocalAwareness() {
+        // ── Headroom ──────────────────────────────────────────────────────────
+        BlockPos obstructor = null;
+        boolean isSoft = false;
+        for (int dy = 1; dy <= 3; dy++) {
+            BlockPos check = blockPosition().above(dy);
+            BlockState bs = level().getBlockState(check);
+            boolean physSolid = bs.canOcclude() || bs.is(BlockTags.LEAVES);
+            if (!bs.isAir() && physSolid) {
+                obstructor = check;
+                isSoft = bs.is(BlockTags.LEAVES);
+                break;
+            }
+        }
+
+        // ── Nearby block counts ───────────────────────────────────────────────
+        int logs = 0, leaves = 0;
+        for (int dx = -8; dx <= 8; dx++) {
+            for (int dy = -2; dy <= 8; dy++) {
+                for (int dz = -8; dz <= 8; dz++) {
+                    BlockPos p = blockPosition().offset(dx, dy, dz);
+                    BlockState bs = level().getBlockState(p);
+                    if (bs.is(BlockTags.LOGS)) logs++;
+                    else if (bs.is(BlockTags.LEAVES) && Math.abs(dx) <= 4 && Math.abs(dz) <= 4) leaves++;
+                }
+            }
+        }
+
+        // ── Tool suitability ─────────────────────────────────────────────────
+        ItemStack held = getMainHandItem();
+        boolean toolOK;
+        if (held.isEmpty()) {
+            toolOK = false;
+        } else {
+            String itemName = held.getItem().toString();
+            toolOK = switch (currentTask == null ? "" : currentTask) {
+                case "gather_wood", "chop_trees" -> itemName.contains("axe");
+                case "mine_stone", "mine_ore"   -> itemName.contains("pickaxe");
+                case "mine_dirt"                 -> itemName.contains("shovel");
+                default                          -> true;
+            };
+        }
+
+        return new LocalAwareness(obstructor == null, obstructor, isSoft, logs, leaves, toolOK);
     }
 
     // ==================== A* PATHFINDING ====================
@@ -2692,7 +2796,12 @@ public class AmbNpcEntity extends FakePlayer {
         for (int dy = dyStart; dy <= dyEnd; dy++) {
             BlockPos breakPos = ahead.above(dy);
             BlockState bs = sl.getBlockState(breakPos);
-            if (!bs.canOcclude() || bs.is(Blocks.BEDROCK)) continue;
+            if (bs.is(Blocks.BEDROCK)) continue;
+            // Leaf blocks have canOcclude()=false yet possess a full collision box in 1.21.1.
+            // A* treats them as passable (clearable), but entities are physically blocked by them.
+            // Allow tryBreakPathBlock to handle leaves so forward motion isn't permanently stalled.
+            boolean physicallyBlocking = bs.canOcclude() || bs.is(BlockTags.LEAVES);
+            if (!physicallyBlocking) continue;
 
             // NEVER break blocks that can simply be climbed — stairs, slabs, walls, fences.
             // These should be handled by the step-up / jump system instead.
