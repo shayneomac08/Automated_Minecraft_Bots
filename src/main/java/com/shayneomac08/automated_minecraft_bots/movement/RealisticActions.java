@@ -68,6 +68,11 @@ public class RealisticActions {
         state.miningTicks = 0;
         state.isMining = true;
 
+        System.out.printf("[AMB-MINE] %s startMining %s at %s hardness=%.1f tool=%s requiredTicks=%d%n",
+            player.getName().getString(), blockState.getBlock().getName().getString(),
+            target, hardness, tool.isEmpty() ? "bare-hand" : tool.getHoverName().getString(),
+            state.requiredTicks);
+
         // Look at the block being mined
         RealisticMovement.lookAt(player, Vec3.atCenterOf(target));
 
@@ -104,6 +109,8 @@ public class RealisticActions {
 
         // Swing arm for visual feedback
         if (state.miningTicks % 4 == 0) {
+            System.out.printf("[AMB-SWING] %s swing tick=%d/%d at %s%n",
+                player.getName().getString(), state.miningTicks, state.requiredTicks, state.targetBlock);
             player.swing(InteractionHand.MAIN_HAND);
         }
 

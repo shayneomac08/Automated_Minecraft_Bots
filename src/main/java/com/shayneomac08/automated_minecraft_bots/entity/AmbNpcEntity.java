@@ -168,6 +168,7 @@ public class AmbNpcEntity extends FakePlayer {
     private final List<BlockPos> placedPillarBlocks = new ArrayList<>();
     private int  pillarCooldown     = 0;
     private boolean pillarWasAirborne = false;
+    private int  pillarPlaceFailCount = 0;  // abort pillar after repeated terrain-blocked apex
 
     // ── Foliage obstruction clearing ─────────────────────────────────────────
     // When a leaf block is found on the line of access to the log goal, mining is
@@ -450,6 +451,24 @@ public class AmbNpcEntity extends FakePlayer {
         bot.setYRot(player.getYRot());
         bot.setYHeadRot(player.getYRot());
 
+        // CRITICAL: Broadcast ADD_PLAYER info to all clients BEFORE adding the entity.
+        // Without this, clients receive ClientboundAddEntityPacket for an unknown UUID and
+        // log "Skipping Entity with id entity.minecraft.player" — the bot renders invisible.
+        net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket infoPacket =
+            new net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket(
+                java.util.EnumSet.of(
+                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER,
+                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE,
+                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED,
+                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LATENCY,
+                    net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME
+                ),
+                java.util.List.of(bot)
+            );
+        for (net.minecraft.server.level.ServerPlayer sp : level.getServer().getPlayerList().getPlayers()) {
+            sp.connection.send(infoPacket);
+        }
+
         // IMPORTANT: Add the FakePlayer entity to the world so its tick() runs
         // Without this, the bot will never tick and thus never move
         level.addFreshEntity(bot);
@@ -631,11 +650,15 @@ public class AmbNpcEntity extends FakePlayer {
                     int heightAbove = currentGoal.getY() - blockPosition().getY();
                     double hDistXZ = Math.sqrt(Math.pow(currentGoal.getX() + 0.5 - getX(), 2)
                                              + Math.pow(currentGoal.getZ() + 0.5 - getZ(), 2));
-                    if (heightAbove > 1 && hDistXZ < 2.5) {
+                    if (heightAbove > 1 && hDistXZ < 2.5 && currentPath.isEmpty()) {
+                        // Only pillar when A* has no path — if a navigable route exists, follow it normally.
                         // Fix B: before pillaring, check if there are reachable logs at a lower Y that
                         // A* can navigate to. Pillar is a last resort — only use it when the current
                         // goal is the only remaining log and it genuinely requires vertical climbing.
-                        if (level().getBlockState(currentGoal).is(BlockTags.LOGS) && hasOtherReachableLogs(16)) {
+                        boolean otherLogs = level().getBlockState(currentGoal).is(BlockTags.LOGS) && hasOtherReachableLogs(16);
+                        System.out.printf("[AMB-PILLAR] %s decision: heightAbove=%d hDist=%.1f pathEmpty=%b otherLogs=%b%n",
+                            getName().getString(), heightAbove, hDistXZ, currentPath.isEmpty(), otherLogs);
+                        if (otherLogs) {
                             // Better option exists — re-run task to pick a closer/lower log
                             executeCurrentTask();
                             return;
@@ -1105,10 +1128,14 @@ public class AmbNpcEntity extends FakePlayer {
                             if (level().getBlockState(above).canOcclude()) break;
                         }
                         if (nextLog != null) {
+                            System.out.printf("[AMB-WOOD] %s trunk follow: next log at %s (was %s)%n",
+                                getName().getString(), nextLog, currentGoal);
                             currentGoal = nextLog;
                             currentPath.clear();
                             pathIndex = 0;
                         } else {
+                            System.out.printf("[AMB-WOOD] %s trunk exhausted at %s — searching for new tree%n",
+                                getName().getString(), currentGoal);
                             currentGoal = BlockPos.ZERO;
                             executeCurrentTask();
                         }
@@ -2266,6 +2293,7 @@ public class AmbNpcEntity extends FakePlayer {
         placedPillarBlocks.clear();
         pillarWasAirborne = false;
         pillarCooldown = 0;
+        pillarPlaceFailCount = 0;
         System.out.printf("[AMB-PILLAR] %s entering pillar mode target=%s baseY=%d%n",
             getName().getString(), target, pillarBaseY);
     }
@@ -2400,10 +2428,16 @@ public class AmbNpcEntity extends FakePlayer {
                             getName().getString(), placePos);
                     } else {
                         // Placement position is occupied by a non-log solid block (terrain, etc.)
-                        // Reset airborne flag so the bot can try a different approach next jump.
                         pillarWasAirborne = false;
-                        System.out.printf("[AMB-PILLAR] %s apex placement blocked by %s at %s — will retry%n",
-                            getName().getString(), placeState.getBlock().getName().getString(), placePos);
+                        pillarPlaceFailCount++;
+                        System.out.printf("[AMB-PILLAR] %s apex placement blocked by %s at %s — fail %d/3%n",
+                            getName().getString(), placeState.getBlock().getName().getString(), placePos, pillarPlaceFailCount);
+                        if (pillarPlaceFailCount >= 3) {
+                            // Terrain is permanently obstructing the apex — abort pillar and pick a new target.
+                            System.out.printf("[AMB-PILLAR] %s aborting pillar after 3 blocked apices — resuming task%n",
+                                getName().getString());
+                            pillarPhase = PillarPhase.TEARDOWN;
+                        }
                     }
                 }
             }
