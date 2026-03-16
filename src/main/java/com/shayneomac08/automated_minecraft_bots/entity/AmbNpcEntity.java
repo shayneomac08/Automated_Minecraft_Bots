@@ -619,12 +619,20 @@ public class AmbNpcEntity extends FakePlayer {
                         }
                     }
                     if (aStarFailCount >= 5) {
-                        System.out.println("[AMB-NAV] " + getName().getString() + " abandoning unreachable goal " + currentGoal + " after 5 A* failures");
-                        currentGoal = BlockPos.ZERO;
-                        currentPath.clear();
-                        aStarFailCount = 0;
-                        executeCurrentTask();
-                        return;
+                        // Don't abandon goal if we're actively mining the target (A* can't path to a solid block)
+                        if (miningState.isMining &&
+                                position().distanceTo(Vec3.atCenterOf(miningState.targetBlock)) < 4.5) {
+                            System.out.printf("[AMB-NAV] %s A* blocked but mining in range — keeping goal%n",
+                                getName().getString());
+                            aStarFailCount = 0;
+                        } else {
+                            System.out.println("[AMB-NAV] " + getName().getString() + " abandoning unreachable goal " + currentGoal + " after 5 A* failures");
+                            currentGoal = BlockPos.ZERO;
+                            currentPath.clear();
+                            aStarFailCount = 0;
+                            executeCurrentTask();
+                            return;
+                        }
                     }
                 } else {
                     pathRetryTimer = 0;
@@ -1094,8 +1102,12 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
-        // REALISTIC MINING - Continue mining if in progress (skip if exiting interior)
-        if (miningState.isMining && !exitingNow) {
+        // REALISTIC MINING - Continue mining if in progress.
+        // Allow mining even when exitingNow if we're within reach of the target — interior
+        // detection can falsely fire inside a tree canopy and must not suppress active harvest.
+        boolean miningInRange = miningState.isMining &&
+            position().distanceTo(Vec3.atCenterOf(miningState.targetBlock)) < 4.5;
+        if (miningState.isMining && (!exitingNow || miningInRange)) {
             BlockPos minedPos = miningState.targetBlock; // save before continueMining resets it
             boolean blockBroken = RealisticActions.continueMining(this, miningState);
             if (blockBroken && !minedPos.equals(BlockPos.ZERO)) {
@@ -2844,7 +2856,8 @@ public class AmbNpcEntity extends FakePlayer {
             || b == Blocks.STONE || b == Blocks.DEEPSLATE || b == Blocks.TUFF
             || b == Blocks.GRANITE || b == Blocks.DIORITE || b == Blocks.ANDESITE
             || b == Blocks.CALCITE || b == Blocks.SMOOTH_BASALT
-            || bs.is(BlockTags.LEAVES);
+            || bs.is(BlockTags.LEAVES)
+            || bs.is(BlockTags.LOGS);  // tree logs are natural — not structural walls
     }
 
     /**
