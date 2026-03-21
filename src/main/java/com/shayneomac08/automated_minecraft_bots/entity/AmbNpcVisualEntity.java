@@ -1,5 +1,8 @@
 package com.shayneomac08.automated_minecraft_bots.entity;
 
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -8,10 +11,22 @@ import net.minecraft.world.level.Level;
 
 /**
  * HYBRID SYSTEM — VISUAL MIRROR ENTITY FOR CLIENT RENDERING
- * This PathfinderMob mirrors the FakePlayer's position/rotation for client visibility
- * The FakePlayer (AmbNpcEntity) handles all logic, AI, inventory, and tasks
+ * This PathfinderMob mirrors the FakePlayer's position/rotation for client visibility.
+ * The FakePlayer (AmbNpcEntity) handles all logic, AI, inventory, and tasks.
+ *
+ * Skin randomization: SKIN_VARIANT is a synced data field set from the entity UUID on
+ * server spawn; the client renderer reads it via getSkinVariant() to pick from a skin pool.
+ * This is deterministic — same UUID always picks same skin — and costs one extra int per
+ * entity in the entity data packet (negligible).
  */
 public class AmbNpcVisualEntity extends PathfinderMob {
+
+    /** Number of distinct skin variants available (must match ClientModEvents.SKIN_POOL length). */
+    public static final int SKIN_COUNT = 8;
+
+    /** Synced data key: skin variant index (0..SKIN_COUNT-1). Synced client automatically. */
+    private static final EntityDataAccessor<Integer> SKIN_VARIANT =
+        SynchedEntityData.defineId(AmbNpcVisualEntity.class, EntityDataSerializers.INT);
 
     private final AmbNpcEntity logicEntity;
 
@@ -26,6 +41,28 @@ public class AmbNpcVisualEntity extends PathfinderMob {
         this.logicEntity = logic;
         this.setNoAi(true); // No AI - just mirrors the FakePlayer
         this.setSilent(true);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SKIN_VARIANT, 0);
+    }
+
+    /**
+     * Assign skin variant from this entity's UUID so every bot gets a different look.
+     * Call this immediately after the entity is added to the world (UUID is then stable).
+     */
+    public void initSkinFromUUID() {
+        int variant = (int)(Math.abs(getUUID().getMostSignificantBits()) % SKIN_COUNT);
+        entityData.set(SKIN_VARIANT, variant);
+        System.out.printf("[AMB-SKIN] visualEntity id=%d → skinVariant=%d (UUID=%s)%n",
+            getId(), variant, getUUID());
+    }
+
+    /** Returns the skin variant index (0..SKIN_COUNT-1). Used by the client renderer. */
+    public int getSkinVariant() {
+        return entityData.get(SKIN_VARIANT);
     }
 
     @Override

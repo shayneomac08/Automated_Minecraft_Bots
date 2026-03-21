@@ -245,7 +245,7 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     // Visual entity that mirrors this FakePlayer
-    private AmbNpcVisualEntity visualEntity = null;
+    public AmbNpcVisualEntity visualEntity = null;
 
     // ==================== PERMANENT NO DIRT KICKING ====================
 
@@ -280,6 +280,22 @@ public class AmbNpcEntity extends FakePlayer {
      * packet to every client that has the visual entity loaded. This is the authoritative
      * path for swing animations in Minecraft — no manual packet construction needed.
      */
+    /**
+     * 1-arg swing: used by RealisticActions.continueMining() and most callers.
+     * Always uses force=true on the visual entity so ClientboundAnimatePacket is
+     * guaranteed to be sent every time — the 6-tick swing cycle vs. 4-tick call
+     * interval means force=false would silently drop ~half the mining swings.
+     */
+    @Override
+    public void swing(InteractionHand hand) {
+        super.swing(hand, false);
+        if (visualEntity != null && !visualEntity.isRemoved()) {
+            System.out.printf("[AMB-SWING] %s swing(force) → visualEntity id=%d hand=%s%n",
+                getName().getString(), visualEntity.getId(), hand);
+            visualEntity.swing(hand, true); // force=true: always broadcast animate packet
+        }
+    }
+
     @Override
     public void swing(InteractionHand hand, boolean force) {
         super.swing(hand, force);
@@ -471,6 +487,12 @@ public class AmbNpcEntity extends FakePlayer {
         level.addFreshEntity(visual);
         bot.visualEntity = visual;
 
+        // Assign randomized skin variant from UUID (UUID is stable after addFreshEntity)
+        visual.initSkinFromUUID();
+
+        System.out.printf("[AMB-SPAWN] %s spawned — logicId=%d visualId=%d skinVariant=%d%n",
+            name, bot.getId(), visual.getId(), visual.getSkinVariant());
+
         return bot;
     }
 
@@ -530,12 +552,21 @@ public class AmbNpcEntity extends FakePlayer {
         // makes any post-harvest pause obvious without drowning in per-tick noise.
         if (tickCount % 40 == 0) {
             LocalAwareness awareness = captureLocalAwareness();
-            System.out.printf("[AMB-STATE] %s task=%s goal=%s pillar=%s mining=%b seeking=%s stuck=%d/%d awareness=[%s]%n",
+            String miningProgress = miningState.isMining
+                ? miningState.miningTicks + "/" + miningState.requiredTicks + "@" + miningState.targetBlock
+                : "none";
+            System.out.printf("[AMB-STATE] %s task=%s substate=%s goal=%s mining=%s pillar=%s "
+                + "exitNow=%b exitInterior=%b aStarFail=%d pathRetry=%d seeking=%s stuck=%d "
+                + "path=%d/%d awareness=[%s]%n",
                 getName().getString(), currentTask,
+                exitingNow ? "EXIT" : miningState.isMining ? "MINING" : !currentGoal.equals(BlockPos.ZERO) ? "NAV" : "IDLE",
                 currentGoal.equals(BlockPos.ZERO) ? "NONE" : currentGoal,
-                pillarPhase, miningState.isMining,
+                miningProgress, pillarPhase,
+                exitingNow, exitingInterior,
+                aStarFailCount, pathRetryTimer,
                 seekingItem != null ? seekingItem.getItem().getHoverName().getString() : "none",
-                stuckState.stuckTicks, stuckState.ticksSinceProgress,
+                stuckState.stuckTicks,
+                pathIndex, currentPath.size(),
                 awareness.summary);
         }
 
@@ -891,8 +922,8 @@ public class AmbNpcEntity extends FakePlayer {
                     Math.sqrt(blockPosition().distSqr(currentGoal)),
                     pathIndex, currentPath.size(), waypoint);
             }
-            // Diagnostic every second: exact pos, deltaMovement, collision flags
-            if (tickCount % 20 == 0) {
+            // Diagnostic every 5 seconds: exact pos, deltaMovement, collision flags
+            if (tickCount % 100 == 0) {
                 Vec3 dm = getDeltaMovement();
                 System.out.printf("[AMB-DIAG] %s pos=(%.3f,%.3f,%.3f) delta=(%.4f,%.4f,%.4f) hColl=%b onGnd=%b sprint=%b%n",
                     getName().getString(),
@@ -1444,25 +1475,39 @@ public class AmbNpcEntity extends FakePlayer {
         final int nearbyLogCount;          // logs within 8-block radius
         final int nearbyLeafCount;         // leaf blocks within 4-block radius
         final boolean toolSuitable;        // mainhand tool matches current task
+        final boolean craftingTableNear;   // crafting table within 12 blocks
+        final BlockPos nearestTable;       // position of nearest table, or null
+        final boolean chestNear;           // chest within 12 blocks
+        final int droppedItemCount;        // dropped item entities within 8 blocks
+        final String miningProgress;       // "ticks/required@pos" or "none"
         final String summary;
 
         LocalAwareness(boolean headroomClear, BlockPos headroomObstructor, boolean headroomIsSoft,
-                       int nearbyLogCount, int nearbyLeafCount, boolean toolSuitable) {
+                       int nearbyLogCount, int nearbyLeafCount, boolean toolSuitable,
+                       boolean craftingTableNear, BlockPos nearestTable, boolean chestNear,
+                       int droppedItemCount, String miningProgress) {
             this.headroomClear      = headroomClear;
             this.headroomObstructor = headroomObstructor;
             this.headroomIsSoft     = headroomIsSoft;
             this.nearbyLogCount     = nearbyLogCount;
             this.nearbyLeafCount    = nearbyLeafCount;
             this.toolSuitable       = toolSuitable;
+            this.craftingTableNear  = craftingTableNear;
+            this.nearestTable       = nearestTable;
+            this.chestNear          = chestNear;
+            this.droppedItemCount   = droppedItemCount;
+            this.miningProgress     = miningProgress;
             this.summary = String.format(
-                "headClear=%b obstructor=%s soft=%b logs=%d leaves=%d toolOK=%b",
+                "headClear=%b obstructor=%s soft=%b logs=%d leaves=%d toolOK=%b table=%s chest=%b drops=%d mining=%s",
                 headroomClear, headroomObstructor, headroomIsSoft,
-                nearbyLogCount, nearbyLeafCount, toolSuitable);
+                nearbyLogCount, nearbyLeafCount, toolSuitable,
+                nearestTable != null ? nearestTable.toString() : "none",
+                chestNear, droppedItemCount, miningProgress);
         }
     }
 
     /**
-     * Capture a LocalAwareness snapshot. Cheap: only checks 4-8 block radius.
+     * Capture a LocalAwareness snapshot. Cheap: only checks 4-12 block radius.
      * Called every 40 ticks and at decision branch points (pillar entry, stuck recovery).
      */
     private LocalAwareness captureLocalAwareness() {
@@ -1480,18 +1525,31 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
 
-        // ── Nearby block counts ───────────────────────────────────────────────
+        // ── Nearby block counts + interactables ───────────────────────────────
         int logs = 0, leaves = 0;
-        for (int dx = -8; dx <= 8; dx++) {
+        BlockPos nearestTable = null;
+        double nearestTableDist = Double.MAX_VALUE;
+        boolean chestNear = false;
+        for (int dx = -12; dx <= 12; dx++) {
             for (int dy = -2; dy <= 8; dy++) {
-                for (int dz = -8; dz <= 8; dz++) {
+                for (int dz = -12; dz <= 12; dz++) {
                     BlockPos p = blockPosition().offset(dx, dy, dz);
                     BlockState bs = level().getBlockState(p);
-                    if (bs.is(BlockTags.LOGS)) logs++;
+                    if (bs.is(BlockTags.LOGS) && Math.abs(dx) <= 8 && Math.abs(dz) <= 8) logs++;
                     else if (bs.is(BlockTags.LEAVES) && Math.abs(dx) <= 4 && Math.abs(dz) <= 4) leaves++;
+                    else if (bs.is(Blocks.CRAFTING_TABLE)) {
+                        double d2 = dx * dx + dy * dy + dz * dz;
+                        if (d2 < nearestTableDist) { nearestTableDist = d2; nearestTable = p; }
+                    } else if (bs.getBlock() instanceof ChestBlock) {
+                        if (Math.abs(dx) <= 12 && Math.abs(dz) <= 12) chestNear = true;
+                    }
                 }
             }
         }
+
+        // ── Dropped item entities in 8-block radius ───────────────────────────
+        int drops = level().getEntitiesOfClass(ItemEntity.class,
+            new AABB(blockPosition()).inflate(8)).size();
 
         // ── Tool suitability ─────────────────────────────────────────────────
         ItemStack held = getMainHandItem();
@@ -1508,7 +1566,13 @@ public class AmbNpcEntity extends FakePlayer {
             };
         }
 
-        return new LocalAwareness(obstructor == null, obstructor, isSoft, logs, leaves, toolOK);
+        // ── Mining progress string ─────────────────────────────────────────────
+        String miningProg = miningState.isMining
+            ? miningState.miningTicks + "/" + miningState.requiredTicks + "@" + miningState.targetBlock
+            : "none";
+
+        return new LocalAwareness(obstructor == null, obstructor, isSoft, logs, leaves, toolOK,
+            nearestTable != null, nearestTable, chestNear, drops, miningProg);
     }
 
     // ==================== A* PATHFINDING ====================
@@ -2092,18 +2156,27 @@ public class AmbNpcEntity extends FakePlayer {
         // If the table is placed THIS call, the bot hasn't navigated to it yet — skip crafting.
         boolean tablePreviouslyKnown = !knownCraftingTable.equals(BlockPos.ZERO);
 
+        System.out.printf("[AMB-STATION] %s manageStations: task=%s hasGoal=%b tableKnown=%b tablePos=%s%n",
+            getName().getString(), currentTask, hasActiveGoal, tablePreviouslyKnown, knownCraftingTable);
+
         ensureCraftingTableAvailable(hasActiveGoal);
         boolean tableJustPlaced = !tablePreviouslyKnown && !knownCraftingTable.equals(BlockPos.ZERO);
         // Simple starter tool progression at table (wood tier).
         // Guard: skip if table was just placed this tick (bot hasn't walked there yet).
         if (!knownCraftingTable.equals(BlockPos.ZERO) && !tableJustPlaced
                 && this.blockPosition().closerThan(knownCraftingTable, 2.0)) {
+            System.out.printf("[AMB-STATION] %s AT crafting table %s — interacting and crafting tools%n",
+                getName().getString(), knownCraftingTable);
             // Look at and "right-click" the table so the interaction is visible to players
             RealisticMovement.lookAt(this, Vec3.atCenterOf(knownCraftingTable));
             swing(InteractionHand.MAIN_HAND);
             craftStarterToolsAtTable();
             // Do NOT pick up the table immediately after crafting — leave it in place so
             // the player can see the bot used a physical crafting table.
+        } else if (!knownCraftingTable.equals(BlockPos.ZERO) && !tableJustPlaced) {
+            double tableDist = blockPosition().distSqr(knownCraftingTable);
+            System.out.printf("[AMB-STATION] %s table at %s, distance=%.1f — navigating (hasGoal=%b)%n",
+                getName().getString(), knownCraftingTable, Math.sqrt(tableDist), hasActiveGoal);
         }
 
         // Furnace pipeline (basic): ensure, move to, smelt inputs, collect outputs
@@ -2125,6 +2198,8 @@ public class AmbNpcEntity extends FakePlayer {
         // If we know one and it's loaded, done
         if (!knownCraftingTable.equals(BlockPos.ZERO)) {
             if (!level().getBlockState(knownCraftingTable).is(Blocks.CRAFTING_TABLE)) {
+                System.out.printf("[AMB-STATION] %s known table at %s is GONE — clearing%n",
+                    getName().getString(), knownCraftingTable);
                 knownCraftingTable = BlockPos.ZERO;
             }
         }
@@ -2134,13 +2209,22 @@ public class AmbNpcEntity extends FakePlayer {
             BlockPos found = findNearestBlockExact(Blocks.CRAFTING_TABLE, 12);
             if (found != null) {
                 knownCraftingTable = found;
+                System.out.printf("[AMB-STATION] %s found existing crafting table at %s%n",
+                    getName().getString(), found);
                 return;
             }
 
+            int planks = countTotalPlanks();
+            int tableInInv = getInventory().countItem(Blocks.CRAFTING_TABLE.asItem());
+            System.out.printf("[AMB-STATION] %s no table in world — planks=%d tableInInv=%d%n",
+                getName().getString(), planks, tableInInv);
+
             // No table placed: craft one then place it nearby
-            if (countTotalPlanks() >= 4) {
+            if (planks >= 4) {
                 if (removeAnyPlanks(4) == 4) {
                     addToInventory(new ItemStack(Blocks.CRAFTING_TABLE.asItem(), 1));
+                    System.out.printf("[AMB-STATION] %s crafted 1 crafting table from planks%n",
+                        getName().getString());
                     broadcastGroupChat("Crafted a crafting table.");
                 }
             }
@@ -2155,20 +2239,30 @@ public class AmbNpcEntity extends FakePlayer {
                         level().setBlock(place, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
                         knownCraftingTable = place;
                         craftingTableSelfPlaced = true; // remember we placed this so we can pick it up later
+                        System.out.printf("[AMB-STATION] %s placed crafting table at %s%n",
+                            getName().getString(), place);
                         broadcastGroupChat("Placed a crafting table at " + place + ".");
                     }
+                } else {
+                    System.out.printf("[AMB-STATION] %s has table in inv but found no valid placement spot%n",
+                        getName().getString());
                 }
             } else {
                 // Only redirect to placement area if bot has no active goal
-                if (!hasActiveGoal && countTotalPlanks() >= 4) {
+                if (!hasActiveGoal && planks >= 4) {
                     BlockPos target = blockPosition().offset(2, 0, 2);
                     this.currentGoal = target;
+                } else {
+                    System.out.printf("[AMB-STATION] %s BLOCKED — planks=%d tableInInv=%d hasGoal=%b (need 4 planks)%n",
+                        getName().getString(), planks, tableInInv, hasActiveGoal);
                 }
             }
         } else {
             // Only move toward table if bot has no active goal and intends to craft
             if (!hasActiveGoal && !this.blockPosition().closerThan(knownCraftingTable, 1.5)) {
                 this.currentGoal = knownCraftingTable;
+                System.out.printf("[AMB-STATION] %s navigating to table at %s%n",
+                    getName().getString(), knownCraftingTable);
             }
         }
     }
