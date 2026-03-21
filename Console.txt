@@ -4,11 +4,12 @@ WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.i
 WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
 WARNING: Restricted methods will be blocked in a future release unless native access is enabled
 
+Starting a Gradle Daemon (subsequent builds will be faster)
 Reusing configuration cache.
 > Task :generateModMetadata NO-SOURCE
 > Task :createMinecraftArtifacts UP-TO-DATE
-> Task :compileJava UP-TO-DATE
 > Task :processResources
+> Task :compileJava UP-TO-DATE
 > Task :classes
 
 > Task :downloadAssets
@@ -20,119 +21,121 @@ Using Minecraft asset root: C:\Users\shayn\.gradle\caches\neoformruntime\assets
 > Task :prepareClientRun
 
 > Task :runClient
-2026-03-15T19:04:06.738415300Z main WARN Advanced terminal features are not available in this environment
-[14:04:10] [Datafixer Bootstrap/INFO] [mojang/DataFixerBuilder]: 290 Datafixer optimizations took 576 milliseconds
-[14:04:11] [main/WARN] [os.dr.wi.pe.PerfmonDisabled/]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
-[14:04:17] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
-[14:04:17] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
-[14:04:17] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
-[14:04:17] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
-[14:04:17] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
-[14:04:17] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [waypoint, modify, waypoint, color, reset] and [waypoint, modify, waypoint, color, color] with inputs: [reset]
-[14:04:18] [Render thread/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
-[14:04:18] [Render thread/INFO] [minecraft/Minecraft]: Setting user: Dev
-[14:04:18] [Render thread/INFO] [minecraft/Minecraft]: Backend library: LWJGL version 3.3.3+5
-[14:04:18] [Render thread/INFO] [minecraft/Minecraft]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
-[14:04:19] [Render thread/INFO] [minecraft/ReloadableResourceManager]: Reloading ResourceManager: vanilla, mod_resources, mod/automated_minecraft_bots, mod/neoforge
-[14:04:20] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_pua-17.0.01.hex, loading
-[14:04:20] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_all_no_pua-17.0.01.hex, loading
-[14:04:20] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_jp_patch-17.0.01.hex, loading
-[14:04:21] [resourceLoad/WARN] [minecraft/ModelManager]: Missing model for variant: 'Block{automated_minecraft_bots:example_block}'
-[14:04:22] [Render thread/INFO] [mojang/Library]: OpenAL initialized on device OpenAL Soft on Speakers (Razer Kraken Ultimate)
-[14:04:22] [Render thread/INFO] [minecraft/SoundEngine]: Sound engine started
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x2048x4 minecraft:textures/atlas/blocks.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
-[14:04:22] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
-[14:04:22] [Render thread/WARN] [minecraft/ModelManager]: No model loaded for default item model ID automated_minecraft_bots:example_block of automated_minecraft_bots:example_block
-[14:04:32] [Render thread/INFO] [minecraft/RecipeManager]: Loaded 1470 recipes
-[14:04:32] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 1584 advancements
-[14:04:32] [Server thread/INFO] [minecraft/IntegratedServer]: Starting integrated minecraft server version 1.21.11
-[14:04:32] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
-[14:04:32] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 0 persistent chunks...
-[14:04:32] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
-[14:04:33] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 49 chunks for player spawn...
-[14:04:33] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
-[14:04:34] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 72%
-[14:04:34] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Time elapsed: 1249 ms
-[14:04:34] [Server thread/INFO] [minecraft/PlayerList]: Dev[local:E:58f901bb] logged in with entity id 92 at (-28.5939503559376, 63.0, 69.5135934890237)
-[14:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: Dev joined the game
-[14:04:35] [Render thread/WARN] [minecraft/ClientPacketListener]: Ignoring chat session from Dev due to missing Services public key
-[14:04:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[14:04:35] [Server thread/INFO] [minecraft/IntegratedServer]: Changing view distance to 16, from 10
-[14:04:35] [Server thread/INFO] [minecraft/IntegratedServer]: Changing simulation distance to 12, from 0
-[14:04:35] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 322 advancements
-[14:04:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[14:04:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[14:04:35] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[14:04:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[14:04:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[14:04:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[14:04:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
-[14:04:36] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
-[14:04:38] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
-[14:04:39] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 512 reached during a single frame. New capacity will be 1024.
-[14:04:43] [Render thread/WARN] [minecraft/ClientPacketListener]: Server attempted to add player prior to sending player info (Player id 0369ad7e-c11e-4bd2-8639-2dc865284e40)
-[14:04:43] [Render thread/WARN] [minecraft/ClientPacketListener]: Skipping Entity with id entity.minecraft.player
-[AMB-ACTION] bot execute: type=set_goal goal=gather_wood mins=3.0 tick=170
+2026-03-21T18:47:32.768547200Z main WARN Advanced terminal features are not available in this environment
+[13:47:36] [Datafixer Bootstrap/INFO] [mojang/DataFixerBuilder]: 290 Datafixer optimizations took 612 milliseconds
+[13:47:37] [main/WARN] [os.dr.wi.pe.PerfmonDisabled/]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[13:47:42] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[13:47:42] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[13:47:42] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[13:47:42] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[13:47:42] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[13:47:42] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [waypoint, modify, waypoint, color, reset] and [waypoint, modify, waypoint, color, color] with inputs: [reset]
+[13:47:43] [Render thread/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[13:47:43] [Render thread/INFO] [minecraft/Minecraft]: Setting user: Dev
+[13:47:43] [Render thread/INFO] [minecraft/Minecraft]: Backend library: LWJGL version 3.3.3+5
+[13:47:43] [Render thread/INFO] [minecraft/Minecraft]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+[13:47:44] [Render thread/INFO] [minecraft/ReloadableResourceManager]: Reloading ResourceManager: vanilla, mod_resources, mod/automated_minecraft_bots, mod/neoforge
+[13:47:44] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_pua-17.0.01.hex, loading
+[13:47:44] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_jp_patch-17.0.01.hex, loading
+[13:47:44] [resourceLoad/INFO] [minecraft/UnihexProvider]: Found unifont_all_no_pua-17.0.01.hex, loading
+[13:47:46] [resourceLoad/WARN] [minecraft/ModelManager]: Missing model for variant: 'Block{automated_minecraft_bots:example_block}'
+[13:47:47] [Render thread/INFO] [mojang/Library]: OpenAL initialized on device OpenAL Soft on Speakers (Razer Kraken Ultimate)
+[13:47:47] [Render thread/INFO] [minecraft/SoundEngine]: Sound engine started
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 2048x2048x4 minecraft:textures/atlas/blocks.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
+[13:47:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[13:47:47] [Render thread/WARN] [minecraft/ModelManager]: No model loaded for default item model ID automated_minecraft_bots:example_block of automated_minecraft_bots:example_block
+[13:47:55] [Render thread/INFO] [minecraft/RecipeManager]: Loaded 1470 recipes
+[13:47:55] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 1584 advancements
+[13:47:56] [Server thread/INFO] [minecraft/IntegratedServer]: Starting integrated minecraft server version 1.21.11
+[13:47:56] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[13:47:56] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 0 persistent chunks...
+[13:47:56] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
+[13:47:57] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 49 chunks for player spawn...
+[13:47:57] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 16%
+[13:47:57] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 98%
+[13:47:57] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Time elapsed: 1149 ms
+[13:47:58] [Server thread/INFO] [minecraft/PlayerList]: Dev[local:E:7a5020cd] logged in with entity id 74 at (-31.163548743693426, 63.0, 71.44790937062959)
+[13:47:58] [Server thread/INFO] [minecraft/MinecraftServer]: Dev joined the game
+[13:47:58] [Render thread/WARN] [minecraft/ClientPacketListener]: Ignoring chat session from Dev due to missing Services public key
+[13:47:58] [Server thread/INFO] [minecraft/IntegratedServer]: Changing view distance to 16, from 10
+[13:47:58] [Server thread/INFO] [minecraft/IntegratedServer]: Changing simulation distance to 12, from 0
+[13:47:58] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[13:47:58] [Render thread/INFO] [minecraft/AdvancementTree]: Loaded 322 advancements
+[13:47:59] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[13:47:59] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[13:47:59] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[13:47:59] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[13:47:59] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[13:47:59] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[13:47:59] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[13:47:59] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
+[13:48:00] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
+[13:48:02] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 256 reached during a single frame. New capacity will be 512.
+[13:48:03] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 512 reached during a single frame. New capacity will be 1024.
+[13:48:05] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 1024 reached during a single frame. New capacity will be 2048.
+[13:48:07] [Render thread/WARN] [minecraft/ClientPacketListener]: Server attempted to add player prior to sending player info (Player id d4cf0cea-97f1-47fb-8c98-f1f76d884de5)
+[13:48:07] [Render thread/WARN] [minecraft/ClientPacketListener]: Skipping Entity with id entity.minecraft.player
+[AMB-ACTION] bot execute: type=set_goal goal=gather_wood mins=3.0 tick=186
 [AMB-TASK] bot task: explore ? gather_wood
-[AMB-ACTION] bot set_goal: task=gather_wood duration=3m goalUntilTick=3770
+[AMB-ACTION] bot set_goal: task=gather_wood duration=3m goalUntilTick=3786
 [AMB] bot spawned with player mindset: gather_wood (thinking: Need wood for tools and crafting)
-[14:04:43] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned bot (grok) - FakePlayer mode]
+[13:48:07] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Spawned bot (grok) - FakePlayer mode]
 [AMB] Spawned FakePlayer bot: bot (LLM: grok)
-[14:04:43] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned bot (grok) - FakePlayer mode
-[14:04:43] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] I am now the GATHERER of the tribe. Let's begin our journey.
-[14:04:43] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] I am now the GATHERER of the tribe. Let's begin our journey.
-[AMB-THINK] bot skip: goal active until tick 3770 (now=200)
-[14:04:47] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Chunk Sections UBO, capacity limit of 1024 reached during a single frame. New capacity will be 2048.
-[AMB-STATE] bot task=gather_wood goal=NONE pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-29, y=66, z=69} soft=false logs=0 leaves=0 toolOK=false]
+[13:48:07] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Spawned bot (grok) - FakePlayer mode
+[13:48:07] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] I am now the BUILDER of the tribe. Let's begin our journey.
+[13:48:07] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] I am now the BUILDER of the tribe. Let's begin our journey.
+[AMB-THINK] bot skip: goal active until tick 3786 (now=200)
+[13:48:11] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[13:48:11] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[13:48:11] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[13:48:11] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
+[AMB-STATE] bot task=gather_wood goal=NONE pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-32, y=66, z=71} soft=false logs=0 leaves=0 toolOK=false]
 [AMB] bot executing task: gather_wood
 [AMB-PERCEIVE] bot local snapshot: logs=0 leaves=0 within 20 blocks
-[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-34, y=73, z=78} dist=14.7 adjLeaves=14
-[AMB-PATH] A* BlockPos{x=-29, y=63, z=69}?BlockPos{x=-34, y=73, z=79}: 29 nodes, walkable:true, dy:0
-[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-29, y=63, z=68} BlockPos{x=-30, y=63, z=67} BlockPos{x=-30, y=63, z=66} BlockPos{x=-31, y=63, z=65} BlockPos{x=-32, y=63, z=65}
+[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-34, y=73, z=78} dist=12.9 adjLeaves=14
+[AMB-PATH] A* BlockPos{x=-32, y=63, z=71}?BlockPos{x=-34, y=73, z=79}: 31 nodes, walkable:true, dy:0
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-32, y=63, z=70} BlockPos{x=-32, y=63, z=69} BlockPos{x=-32, y=63, z=68} BlockPos{x=-31, y=63, z=67} BlockPos{x=-31, y=63, z=66}
 [AMB-DOOR] bot proactively opened door at BlockPos{x=-31, y=63, z=66}
-[AMB-DIAG] bot pos=(-30.230,63.000,67.300) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.81
-[14:04:50] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[14:04:50] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[14:04:50] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[14:04:50] [Render thread/INFO] [mojang/GlDebug]: OpenGL debug message: id=1005, source=API, type=ERROR, severity=HIGH, message='No detailed debug message due to a non-debug context'
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-34, y=73, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-31, y=65, z=66} soft=false logs=0 leaves=0 toolOK=false]
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-30.512,63.000,66.082) blockPos=BlockPos{x=-31, y=63, z=66} dist=15.91 pathIdx=5/29 wp=BlockPos{x=-33, y=63, z=65})
-[AMB-DIAG] bot pos=(-30.512,63.000,66.082) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=2.01
-[AMB-DIAG] bot pos=(-33.238,62.938,65.538) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
-[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=1.10
+[AMB-DIAG] bot pos=(-30.624,63.000,67.300) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
+[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=1.80
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-34, y=73, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-31, y=66, z=67} soft=false logs=0 leaves=0 toolOK=false]
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-30.510,64.200,67.300) blockPos=BlockPos{x=-31, y=64, z=67} dist=14.53 pathIdx=5/31 wp=BlockPos{x=-31, y=63, z=65})
+[AMB-DIAG] bot pos=(-30.510,64.200,67.300) delta=(0.0000,0.1000,0.0000) hColl=true onGnd=false sprint=false
+[AMB-DIAG] bot pos=(-30.512,63.000,65.792) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
+[AMB-JUMP] bot jump: hColl=true waypointDY=0 horizDist=2.00
 [AMB-STATE] bot task=gather_wood goal=BlockPos{x=-34, y=73, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=0 leaves=0 toolOK=false]
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.083,63.957,65.700) blockPos=BlockPos{x=-39, y=63, z=65} dist=17.15 pathIdx=13/29 wp=BlockPos{x=-39, y=65, z=67})
-[AMB-DIAG] bot pos=(-38.083,63.957,65.700) delta=(0.0000,0.1800,0.0000) hColl=true onGnd=false sprint=false
-[14:04:53] [Render thread/WARN] [minecraft/SoundEngine]: Unable to play empty soundEvent: minecraft:entity.cod.ambient
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.48
-[AMB-DIAG] bot pos=(-38.472,65.700,67.869) delta=(0.0000,0.1000,0.0000) hColl=false onGnd=false sprint=true
-[AMB-THINK] bot skip: goal active until tick 3770 (now=400)
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.51
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-34, y=73, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=9 leaves=0 toolOK=false]
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.499,67.620,70.200) blockPos=BlockPos{x=-39, y=67, z=70} dist=11.18 pathIdx=17/29 wp=BlockPos{x=-39, y=69, z=71})
-[AMB-DIAG] bot pos=(-38.499,67.620,70.200) delta=(0.0000,-0.2200,0.0000) hColl=true onGnd=false sprint=false
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-34.958,62.938,65.516) blockPos=BlockPos{x=-35, y=62, z=65} dist=17.06 pathIdx=11/31 wp=BlockPos{x=-37, y=63, z=65})
+[AMB-DIAG] bot pos=(-34.958,62.938,65.516) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
+[AMB-JUMP] bot jump: hColl=true waypointDY=2 horizDist=1.06
+[AMB-THINK] bot skip: goal active until tick 3786 (now=400)
+[AMB-DIAG] bot pos=(-38.322,63.837,65.700) delta=(0.0000,-0.3000,0.0000) hColl=true onGnd=false sprint=false
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.47
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-34, y=73, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=0 leaves=0 toolOK=false]
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.493,66.000,68.698) blockPos=BlockPos{x=-39, y=66, z=68} dist=13.19 pathIdx=17/31 wp=BlockPos{x=-39, y=67, z=69})
+[AMB-DIAG] bot pos=(-38.493,66.000,68.698) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
 [AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.52
-[AMB-DIAG] bot pos=(-38.500,70.500,72.846) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
-[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.65
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-34, y=73, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=26 toolOK=false]
+[AMB-DIAG] bot pos=(-38.500,68.500,70.965) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=true
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.53
 [AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.66
-[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.500,72.500,74.841) blockPos=BlockPos{x=-39, y=72, z=74} dist=6.48 pathIdx=21/29 wp=BlockPos{x=-39, y=73, z=75})
-[AMB-DIAG] bot pos=(-38.500,72.500,74.841) delta=(0.0000,0.4200,0.0000) hColl=false onGnd=true sprint=false
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-34, y=73, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=23 leaves=5 toolOK=false]
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-38.500,71.260,73.062) blockPos=BlockPos{x=-39, y=71, z=73} dist=7.35 pathIdx=22/31 wp=BlockPos{x=-39, y=72, z=74})
+[AMB-DIAG] bot pos=(-38.500,71.260,73.062) delta=(0.0000,0.2600,0.0000) hColl=false onGnd=false sprint=false
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.66
+[AMB-DIAG] bot pos=(-37.902,73.820,75.739) delta=(0.0000,-0.0600,0.0000) hColl=false onGnd=false sprint=false
 [AMB-FOLIAGE] bot log at BlockPos{x=-34, y=73, z=78} obstructed by leaf at BlockPos{x=-37, y=74, z=77} ∩┐╜ clearing foliage
 [AMB-MINE] bot startMining Cherry Leaves at BlockPos{x=-37, y=74, z=77} hardness=0.2 tool=bare-hand requiredTicks=6
 [AMB-SWING] bot swing tick=4/6 at BlockPos{x=-37, y=74, z=77}
@@ -141,12 +144,14 @@ Using Minecraft asset root: C:\Users\shayn\.gradle\caches\neoformruntime\assets
 [AMB-FOLIAGE] bot log at BlockPos{x=-34, y=73, z=78} obstructed by leaf at BlockPos{x=-36, y=74, z=77} ∩┐╜ clearing foliage
 [AMB-MINE] bot startMining Cherry Leaves at BlockPos{x=-36, y=74, z=77} hardness=0.2 tool=bare-hand requiredTicks=6
 [AMB-SWING] bot swing tick=4/6 at BlockPos{x=-36, y=74, z=77}
-[AMB-DIAG] bot pos=(-36.777,73.000,77.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
 [AMB-HARVEST] bot broke block at BlockPos{x=-36, y=74, z=77} ∩┐╜ drops are world-spawned, awaiting natural pickup (10-tick delay)
 [AMB-FOLIAGE] bot cleared leaf at BlockPos{x=-36, y=74, z=77} ∩┐╜ reevaluating access to log at BlockPos{x=-34, y=73, z=78}
 [AMB-FOLIAGE] bot log at BlockPos{x=-34, y=73, z=78} obstructed by leaf at BlockPos{x=-35, y=73, z=78} ∩┐╜ clearing foliage
 [AMB-MINE] bot startMining Cherry Leaves at BlockPos{x=-35, y=73, z=78} hardness=0.2 tool=bare-hand requiredTicks=6
 [AMB-SWING] bot swing tick=4/6 at BlockPos{x=-35, y=73, z=78}
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-34, y=73, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=96 toolOK=false]
+[AMB] bot moving to goal BlockPos{x=-34, y=73, z=78} (pos=(-36.629,73.000,77.700) blockPos=BlockPos{x=-37, y=73, z=77} dist=3.16 pathIdx=27/31 wp=BlockPos{x=-37, y=73, z=79})
+[AMB-DIAG] bot pos=(-36.629,73.000,77.700) delta=(0.0000,-0.0800,0.0000) hColl=true onGnd=true sprint=false
 [AMB-HARVEST] bot broke block at BlockPos{x=-35, y=73, z=78} ∩┐╜ drops are world-spawned, awaiting natural pickup (10-tick delay)
 [AMB-FOLIAGE] bot cleared leaf at BlockPos{x=-35, y=73, z=78} ∩┐╜ reevaluating access to log at BlockPos{x=-34, y=73, z=78}
 [AMB-FOLIAGE] bot secondary scan: off-ray leaf at BlockPos{x=-36, y=73, z=77} obstructs log at BlockPos{x=-34, y=73, z=78} (dist=1.2)
@@ -159,322 +164,142 @@ Using Minecraft asset root: C:\Users\shayn\.gradle\caches\neoformruntime\assets
 [AMB-FOLIAGE] bot log at BlockPos{x=-34, y=73, z=78} obstructed by leaf at BlockPos{x=-36, y=73, z=79} ∩┐╜ clearing foliage
 [AMB-MINE] bot startMining Cherry Leaves at BlockPos{x=-36, y=73, z=79} hardness=0.2 tool=bare-hand requiredTicks=6
 [AMB-SWING] bot swing tick=4/6 at BlockPos{x=-36, y=73, z=79}
+[AMB-PICKUP] bot passive pickup attempt: 1xCherry Sapling at BlockPos{x=-36, y=74, z=77}
+[AMB-PICKUP] bot collected 1xAir (remaining=0)
 [AMB-LEAF] bot clearing headroom leaf at BlockPos{x=-35, y=73, z=79} before jump
 [AMB-HARVEST] bot broke block at BlockPos{x=-36, y=73, z=79} ∩┐╜ drops are world-spawned, awaiting natural pickup (10-tick delay)
 [AMB-FOLIAGE] bot cleared leaf at BlockPos{x=-36, y=73, z=79} ∩┐╜ reevaluating access to log at BlockPos{x=-34, y=73, z=78}
-[AMB-PICKUP] bot world-drop Cherry Sapling at BlockPos{x=-36, y=73, z=77} waiting (delay active)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-34, y=73, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-36, y=73, z=77}: 2 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 2 waypoints: BlockPos{x=-37, y=73, z=77} BlockPos{x=-36, y=73, z=77}
-[AMB] bot moving to goal BlockPos{x=-36, y=73, z=77} (pos=(-36.335,73.000,78.486) blockPos=BlockPos{x=-37, y=73, z=78} dist=1.41 pathIdx=0/2 wp=BlockPos{x=-37, y=73, z=77})
-[AMB-DIAG] bot pos=(-36.335,73.000,78.486) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-36, y=74, z=78}
-[AMB-FOLIAGE] bot log at BlockPos{x=-36, y=74, z=78} is unobstructed ∩┐╜ harvesting
-[AMB-MINE] bot startMining Cherry Log at BlockPos{x=-36, y=74, z=78} hardness=2.0 tool=bare-hand requiredTicks=60
-[AMB-PICKUP] bot passive pickup attempt: 1xCherry Sapling at BlockPos{x=-36, y=73, z=76}
+[AMB-FOLIAGE] bot secondary scan: off-ray leaf at BlockPos{x=-35, y=73, z=77} obstructs log at BlockPos{x=-34, y=73, z=78} (dist=2.2)
+[AMB-FOLIAGE] bot log at BlockPos{x=-34, y=73, z=78} obstructed by leaf at BlockPos{x=-35, y=73, z=77} ∩┐╜ clearing foliage
+[AMB-MINE] bot startMining Cherry Leaves at BlockPos{x=-35, y=73, z=77} hardness=0.2 tool=Cherry Sapling requiredTicks=6
+[AMB-SWING] bot swing tick=4/6 at BlockPos{x=-35, y=73, z=77}
+[AMB-HARVEST] bot broke block at BlockPos{x=-35, y=73, z=77} ∩┐╜ drops are world-spawned, awaiting natural pickup (10-tick delay)
+[AMB-FOLIAGE] bot cleared leaf at BlockPos{x=-35, y=73, z=77} ∩┐╜ reevaluating access to log at BlockPos{x=-34, y=73, z=78}
+[AMB-PICKUP] bot passive pickup attempt: 1xCherry Log at BlockPos{x=-36, y=73, z=79}
 [AMB-PICKUP] bot collected 1xAir (remaining=0)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-THINK] bot skip: goal active until tick 3770 (now=600)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=false seeking=Air stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=78} soft=false logs=23 leaves=97 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=78} soft=false logs=23 leaves=97 toolOK=false]
+[AMB-THINK] bot skip: goal active until tick 3786 (now=600)
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=78} soft=false logs=23 leaves=97 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=78} soft=false logs=23 leaves=97 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=78} soft=false logs=23 leaves=97 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=false seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=78} soft=false logs=23 leaves=97 toolOK=false]
 [AMB-NAV] bot abandoning unreachable goal BlockPos{x=-36, y=74, z=78} after 5 A* failures
 [AMB] bot executing task: gather_wood
-[AMB-PERCEIVE] bot local snapshot: logs=173 leaves=640 within 20 blocks
-[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-36, y=74, z=78} dist=1.7 adjLeaves=5
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-THINK] bot skip: goal active until tick 3770 (now=800)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-NAV] bot abandoning unreachable goal BlockPos{x=-36, y=74, z=78} after 5 A* failures
+[AMB-PERCEIVE] bot local snapshot: logs=166 leaves=611 within 20 blocks
+[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-35, y=74, z=78} dist=2.1 adjLeaves=6
+[AMB-PATH] A* BlockPos{x=-36, y=73, z=78}?BlockPos{x=-35, y=75, z=78}: 5 nodes, walkable:true, dy:1
+[AMB-PATH-DETAIL] bot first 5 waypoints: BlockPos{x=-36, y=73, z=79} BlockPos{x=-35, y=73, z=79} BlockPos{x=-35, y=74, z=79} BlockPos{x=-35, y=75, z=79} BlockPos{x=-35, y=75, z=78}
+[AMB-FOLIAGE] bot log at BlockPos{x=-35, y=74, z=78} is unobstructed ∩┐╜ harvesting
+[AMB-MINE] bot startMining Cherry Log at BlockPos{x=-35, y=74, z=78} hardness=2.0 tool=Cherry Sapling requiredTicks=60
+[AMB-SWING] bot swing tick=4/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-SWING] bot swing tick=8/60 at BlockPos{x=-35, y=74, z=78}
+[13:48:36] [Server thread/INFO] [minecraft/IntegratedServer]: Saving and pausing game...
+[13:48:36] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:overworld
+[13:48:36] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_nether
+[13:48:36] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_end
+[AMB-SWING] bot swing tick=12/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-SWING] bot swing tick=16/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-LEAF] bot clearing headroom leaf at BlockPos{x=-35, y=74, z=79} before jump
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-35, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=23 leaves=96 toolOK=false]
+[AMB] bot moving to goal BlockPos{x=-35, y=74, z=78} (pos=(-35.081,73.000,79.495) blockPos=BlockPos{x=-36, y=73, z=79} dist=1.73 pathIdx=2/5 wp=BlockPos{x=-35, y=74, z=79})
+[AMB-DIAG] bot pos=(-35.081,73.000,79.495) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-SWING] bot swing tick=20/60 at BlockPos{x=-35, y=74, z=78}
+[13:49:07] [Server thread/INFO] [minecraft/MinecraftServer]: [bot] Crafted 4 planks from a log.
+[AMB-CRAFT] bot 2x2 craft: 1xblock.minecraft.cherry_log ? 4xblock.minecraft.cherry_planks (no table needed)
+[13:49:07] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [bot] Crafted 4 planks from a log.
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.58
+[AMB-SWING] bot swing tick=24/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-SWING] bot swing tick=28/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-SWING] bot swing tick=32/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-THINK] bot skip: goal active until tick 3786 (now=800)
+[AMB-SWING] bot swing tick=36/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-DIAG] bot pos=(-35.081,73.000,79.495) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
+[AMB-SWING] bot swing tick=40/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.58
+[AMB-SWING] bot swing tick=44/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-SWING] bot swing tick=48/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-SWING] bot swing tick=52/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-SWING] bot swing tick=56/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-JUMP] bot jump: hColl=false waypointDY=1 horizDist=0.58
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-35, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=23 leaves=96 toolOK=false]
+[AMB] bot moving to goal BlockPos{x=-35, y=74, z=78} (pos=(-35.081,73.120,79.495) blockPos=BlockPos{x=-36, y=73, z=79} dist=1.73 pathIdx=2/5 wp=BlockPos{x=-35, y=74, z=79})
+[AMB-DIAG] bot pos=(-35.081,73.120,79.495) delta=(0.0000,-0.1600,0.0000) hColl=false onGnd=false sprint=false
+[AMB-SWING] bot swing tick=60/60 at BlockPos{x=-35, y=74, z=78}
+[AMB-HARVEST] bot broke block at BlockPos{x=-35, y=74, z=78} ∩┐╜ drops are world-spawned, awaiting natural pickup (10-tick delay)
+[AMB-WOOD] bot trunk exhausted at BlockPos{x=-35, y=74, z=78} ∩┐╜ searching for new tree
 [AMB] bot executing task: gather_wood
-[AMB-PERCEIVE] bot local snapshot: logs=173 leaves=640 within 20 blocks
-[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-36, y=74, z=78} dist=1.7 adjLeaves=5
-[AMB-THINK] bot skip: goal active until tick 3770 (now=1000)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[14:05:26] [Render thread/INFO] [minecraft/DynamicUniformStorage]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[14:05:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[14:05:30] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-THINK] bot skip: goal active until tick 3770 (now=1200)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-NAV] bot abandoning unreachable goal BlockPos{x=-36, y=74, z=78} after 5 A* failures
-[AMB] bot executing task: gather_wood
-[AMB-PERCEIVE] bot local snapshot: logs=173 leaves=640 within 20 blocks
-[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-36, y=74, z=78} dist=1.7 adjLeaves=5
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB] bot INTERIOR DETECTED! No door found, navigating toward nearest outdoor pos BlockPos{x=-38, y=73, z=78}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB] bot opening door at BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-38, y=73, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=25 leaves=94 toolOK=false]
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB] bot moving to goal BlockPos{x=-38, y=73, z=78} (pos=(-36.976,73.000,78.494) blockPos=BlockPos{x=-37, y=73, z=78} dist=1.00 pathIdx=0/1 wp=BlockPos{x=-38, y=73, z=78})
-[AMB-DIAG] bot pos=(-36.976,73.000,78.494) delta=(0.0000,-0.0800,0.0000) hColl=false onGnd=true sprint=false
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-JUMP] bot jump: hColl=false waypointDY=0 horizDist=0.52
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-36, y=74, z=78}
-[AMB] bot successfully exited interior!
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-SWING] bot swing tick=4/60 at BlockPos{x=-36, y=74, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=25 leaves=94 toolOK=false]
-[AMB-THINK] bot skip: goal active until tick 3770 (now=1400)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=25 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=25 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=25 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=25 leaves=94 toolOK=false]
-[AMB] bot INTERIOR DETECTED! No door found, navigating toward nearest outdoor pos BlockPos{x=-38, y=73, z=78}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-JUMP] bot jump: hColl=false waypointDY=0 horizDist=0.52
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-DIAG] bot pos=(-36.976,73.760,78.494) delta=(0.0000,0.2600,0.0000) hColl=false onGnd=false sprint=false
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-37, y=73, z=77}
-[AMB] bot exit plan: moving to BlockPos{x=-38, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=73, z=78}?BlockPos{x=-38, y=73, z=78}: 1 nodes, walkable:false, dy:0
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-38, y=73, z=78}
-[AMB-TASK] bot reached position but found mineable block nearby at BlockPos{x=-36, y=74, z=78}
-[AMB] bot successfully exited interior!
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-SWING] bot swing tick=8/60 at BlockPos{x=-36, y=74, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-PATH] A* BlockPos{x=-37, y=74, z=78}?BlockPos{x=-37, y=73, z=78}: 1 nodes, walkable:true, dy:-1
-[AMB-PATH-DETAIL] bot first 1 waypoints: BlockPos{x=-37, y=73, z=78}
-[AMB-SWING] bot swing tick=12/60 at BlockPos{x=-36, y=74, z=78}
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=25 leaves=94 toolOK=false]
-[AMB-THINK] bot skip: goal active until tick 3770 (now=1600)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=25 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=25 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-NAV] bot abandoning unreachable goal BlockPos{x=-36, y=74, z=78} after 5 A* failures
-[AMB] bot executing task: gather_wood
-[AMB-PERCEIVE] bot local snapshot: logs=173 leaves=640 within 20 blocks
-[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-36, y=74, z=78} dist=2.1 adjLeaves=5
-[AMB-THINK] bot skip: goal active until tick 3770 (now=1800)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-PICKUP] bot world-drop Cherry Sapling at BlockPos{x=-38, y=73, z=77} waiting (delay active)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=Cherry Sapling stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-PICKUP] bot passive pickup attempt: 1xCherry Sapling at BlockPos{x=-38, y=73, z=77}
+[AMB-PERCEIVE] bot local snapshot: logs=165 leaves=625 within 20 blocks
+[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-36, y=75, z=79} dist=2.4 adjLeaves=4
+[AMB-FOLIAGE] bot log at BlockPos{x=-36, y=75, z=79} is unobstructed ∩┐╜ harvesting
+[AMB-MINE] bot startMining Cherry Log at BlockPos{x=-36, y=75, z=79} hardness=2.0 tool=Cherry Sapling requiredTicks=60
+[AMB-PICKUP] bot passive pickup attempt: 1xCherry Log at BlockPos{x=-35, y=74, z=78}
 [AMB-PICKUP] bot collected 1xAir (remaining=0)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-PICKUP] bot world-drop Cherry Log at BlockPos{x=-37, y=73, z=78} waiting (delay active)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=Cherry Log stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-PICKUP] bot passive pickup attempt: 2xCherry Log at BlockPos{x=-37, y=73, z=78}
-[AMB-PICKUP] bot collected 2xAir (remaining=0)
-[AMB-THINK] bot skip: goal active until tick 3770 (now=2000)
-[AMB-PICKUP] bot world-drop Cherry Log at BlockPos{x=-38, y=73, z=78} waiting (delay active)
-[AMB-PICKUP] bot world-drop Cherry Log at BlockPos{x=-37, y=74, z=76} waiting (delay active)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=Cherry Log stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-NAV] bot abandoning unreachable goal BlockPos{x=-36, y=74, z=78} after 5 A* failures
-[AMB] bot executing task: gather_wood
-[AMB-PERCEIVE] bot local snapshot: logs=173 leaves=640 within 20 blocks
-[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-36, y=74, z=78} dist=2.1 adjLeaves=5
-[AMB-PICKUP] bot passive pickup attempt: 2xCherry Log at BlockPos{x=-38, y=73, z=78}
-[AMB-PICKUP] bot collected 2xAir (remaining=0)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=Air stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[14:06:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[14:06:20] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-THINK] bot skip: goal active until tick 3770 (now=2200)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-NAV] bot abandoning unreachable goal BlockPos{x=-36, y=74, z=78} after 5 A* failures
-[AMB] bot executing task: gather_wood
-[AMB-PERCEIVE] bot local snapshot: logs=173 leaves=640 within 20 blocks
-[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-36, y=74, z=78} dist=2.1 adjLeaves=5
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-38, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=74, z=75} waiting (delay active)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-38, y=73, z=78} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=78} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=78} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-38, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-38, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=78} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=77} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=76} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=76} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=73, z=76} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=74, z=76} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=74, z=76} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=74, z=76} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=74, z=75} waiting (delay active)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-37, y=74, z=75} waiting (delay active)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=Stick stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-THINK] bot skip: goal active until tick 3770 (now=2400)
-[AMB-PICKUP] bot passive pickup attempt: 63xStick at BlockPos{x=-38, y=73, z=78}
-[AMB-PICKUP] bot collected 63xAir (remaining=0)
-[AMB-PICKUP] bot world-drop Stick at BlockPos{x=-38, y=73, z=77} waiting (delay active)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=Air stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-PICKUP] bot passive pickup attempt: 1xStick at BlockPos{x=-38, y=73, z=77}
-[AMB-PICKUP] bot collected 1xAir (remaining=0)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[14:06:37] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
-[14:06:37] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-NAV] bot abandoning unreachable goal BlockPos{x=-36, y=74, z=78} after 5 A* failures
-[AMB] bot executing task: gather_wood
-[AMB-PERCEIVE] bot local snapshot: logs=173 leaves=640 within 20 blocks
-[AMB-PERCEIVE] bot gather_wood target: log at BlockPos{x=-36, y=74, z=78} dist=2.1 adjLeaves=5
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-THINK] bot skip: goal active until tick 3770 (now=2600)
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=74, z=78} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=true obstructor=null soft=false logs=24 leaves=94 toolOK=false]
-[14:06:48] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: bot]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-THINK] bot skip: goal active until tick 3786 (now=1000)
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-NAV] bot A* blocked but mining in range ∩┐╜ keeping goal
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-THINK] bot skip: goal active until tick 3786 (now=1200)
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-NAV] bot A* blocked but mining in range ∩┐╜ keeping goal
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-THINK] bot skip: goal active until tick 3786 (now=1400)
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[13:49:41] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] Bot GUI for bot
+[13:49:41] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Opening bot's inventory
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-THINK] bot skip: goal active until tick 3786 (now=1600)
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-NAV] bot A* blocked but mining in range ∩┐╜ keeping goal
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=96 toolOK=false]
+[AMB-THINK] bot skip: goal active until tick 3786 (now=1800)
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=94 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=93 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=93 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=93 toolOK=false]
+[AMB-NAV] bot A* blocked but mining in range ∩┐╜ keeping goal
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=93 toolOK=false]
+[AMB-THINK] bot skip: goal active until tick 3786 (now=2000)
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=93 toolOK=false]
+[AMB-STATE] bot task=gather_wood goal=BlockPos{x=-36, y=75, z=79} pillar=IDLE mining=true seeking=none stuck=0/0 awareness=[headClear=false obstructor=BlockPos{x=-36, y=75, z=79} soft=false logs=22 leaves=93 toolOK=false]
+[13:50:11] [Server thread/INFO] [minecraft/MinecraftServer]: [Dev: [AMB] Removed bot: bot]
 [AMB] Bot removed: bot
-[14:06:48] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: bot
-[14:07:04] [Server thread/INFO] [minecraft/IntegratedServer]: Saving and pausing game...
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:overworld
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_nether
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_end
-[14:07:04] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Dev lost connection: Disconnected
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Dev left the game
-[14:07:04] [Server thread/INFO] [minecraft/ServerCommonPacketListenerImpl]: Stopping singleplayer server as player logged out
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:overworld
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_nether
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_end
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (AutoBots): All chunks are saved
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
-[14:07:04] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
-[14:07:05] [Render thread/INFO] [minecraft/Minecraft]: Stopping!
+[13:50:11] [Render thread/INFO] [minecraft/ChatComponent]: [System] [CHAT] [AMB] Removed bot: bot
+[13:50:40] [Server thread/INFO] [minecraft/IntegratedServer]: Saving and pausing game...
+[13:50:40] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:overworld
+[13:50:40] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_nether
+[13:50:40] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_end
+[13:50:41] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: Dev lost connection: Disconnected
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: Dev left the game
+[13:50:41] [Server thread/INFO] [minecraft/ServerCommonPacketListenerImpl]: Stopping singleplayer server as player logged out
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:overworld
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_nether
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[AutoBots]'/minecraft:the_end
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (AutoBots): All chunks are saved
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[13:50:41] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+[13:50:42] [Render thread/INFO] [minecraft/Minecraft]: Stopping!
 
-BUILD SUCCESSFUL in 3m 3s
+BUILD SUCCESSFUL in 3m 19s
 6 actionable tasks: 4 executed, 2 up-to-date
 Configuration cache entry reused.
