@@ -714,16 +714,32 @@ public class AmbNpcEntity extends FakePlayer {
                             executeCurrentTask();
                             return;
                         }
-                        // If headroom directly above is blocked by a soft obstacle, clear it before
-                        // entering pillar mode — the BUILDING phase also does this, but catching it
-                        // here avoids entering pillar mode unnecessarily.
-                        if (!aw.headroomClear && aw.headroomIsSoft && navBreakCooldown == 0
-                                && level() instanceof ServerLevel sl) {
-                            System.out.printf("[AMB-PILLAR] %s pre-pillar: clearing headroom leaf at %s%n",
-                                getName().getString(), aw.headroomObstructor);
-                            sl.destroyBlock(aw.headroomObstructor, true, this);
-                            navBreakCooldown = 5;
-                            return; // recheck next tick
+                        // If headroom above is blocked, clear it before entering pillar mode.
+                        // Leaves and natural terrain: use timed mining (not instant destroyBlock).
+                        // Bedrock / non-natural hard block: cannot pillar here — re-target.
+                        if (!aw.headroomClear) {
+                            BlockPos obs = aw.headroomObstructor;
+                            BlockState obsState = level().getBlockState(obs);
+                            if (obsState.is(Blocks.BEDROCK)
+                                    || (!aw.headroomIsSoft && !isNaturalTerrainBlock(obsState))) {
+                                System.out.printf("[AMB-PILLAR] %s headroom blocked by %s (unbreakable) — blacklisting goal, re-targeting%n",
+                                    getName().getString(), obsState.getBlock());
+                                unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
+                                currentGoal = BlockPos.ZERO;
+                                executeCurrentTask();
+                                return;
+                            }
+                            // Breakable — mine with proper timing instead of instant destroy
+                            if (navBreakCooldown == 0 && !miningState.isMining) {
+                                int approxTicks = Math.max(1, (int) Math.ceil(
+                                    obsState.getDestroySpeed(level(), obs) * 30.0f));
+                                System.out.printf("[AMB-PILLAR] %s clearing headroom %s at %s via timed mining (~%d ticks)%n",
+                                    getName().getString(), aw.headroomIsSoft ? "leaf" : "block", obs, approxTicks);
+                                RealisticActions.equipBestTool(this, obsState);
+                                RealisticActions.startMining(this, obs, miningState);
+                                navBreakCooldown = miningState.requiredTicks + 2;
+                            }
+                            return; // wait for headroom to clear before entering pillar
                         }
                         enterPillarMode(currentGoal);
                         return; // pillar system takes over next tick
@@ -924,12 +940,17 @@ public class AmbNpcEntity extends FakePlayer {
                         if (level().getBlockState(chk).is(BlockTags.LEAVES)) { headLeaf = chk; break; }
                     }
                 }
-                if (headLeaf != null && navBreakCooldown == 0 && level() instanceof ServerLevel sl) {
-                    System.out.printf("[AMB-LEAF] %s clearing headroom leaf at %s before jump%n",
-                        getName().getString(), headLeaf);
-                    RealisticActions.equipBestTool(this, level().getBlockState(headLeaf));
-                    sl.destroyBlock(headLeaf, true, this);
-                    navBreakCooldown = 5;
+                if (headLeaf != null && navBreakCooldown == 0 && !miningState.isMining) {
+                    // Mine the blocking leaf with proper timing — no instant destroy.
+                    // navBreakCooldown = requiredTicks+2 suppresses re-triggering while in progress.
+                    BlockState leafState = level().getBlockState(headLeaf);
+                    int leafTicks = Math.max(1, (int) Math.ceil(
+                        leafState.getDestroySpeed(level(), headLeaf) * 30.0f));
+                    System.out.printf("[AMB-LEAF] %s mining jump-path leaf at %s (~%d ticks)%n",
+                        getName().getString(), headLeaf, leafTicks);
+                    RealisticActions.equipBestTool(this, leafState);
+                    RealisticActions.startMining(this, headLeaf, miningState);
+                    navBreakCooldown = miningState.requiredTicks + 2;
                 } else if (headLeaf == null) {
                     // Headroom is clear — safe to jump
                     double horizDist = 0;
@@ -949,19 +970,46 @@ public class AmbNpcEntity extends FakePlayer {
             // ─────────────────────────────────────────────────────────────────────────
 
             // ── Jump-loop bail ────────────────────────────────────────────────────────
-            // If we've jumped JUMP_LOOP_LIMIT times without forward progress the obstacle
-            // is unbreakable (bedrock, obsidian, player wall, etc.). Blacklist the goal
-            // so findNearestTreeLog / findNearestHarvestTarget skip it, then retarget.
+            // After JUMP_LOOP_LIMIT unproductive jumps, try practical escape options before
+            // blacklisting — a human player would try to walk around or place a block first.
             if (jumpsSinceProgress >= JUMP_LOOP_LIMIT && !currentGoal.equals(BlockPos.ZERO)) {
-                System.out.printf("[AMB-STUCK] %s jump loop: %d jumps with no progress toward %s — blacklisting goal for 60 s%n",
-                    getName().getString(), jumpsSinceProgress, currentGoal);
-                unreachableGoalBlacklist.put(currentGoal, tickCount + GOAL_BLACKLIST_TICKS);
-                currentGoal = BlockPos.ZERO;
-                currentPath.clear();
-                jumpsSinceProgress = 0;
-                stopMovement();
-                executeCurrentTask();
-                return;
+                LocalAwareness baleAw = captureLocalAwareness();
+                System.out.printf("[AMB-STUCK] %s jump-loop bail: jumps=%d goal=%s terrain=[%s]%n",
+                    getName().getString(), jumpsSinceProgress, currentGoal, baleAw.summary);
+
+                // Option A: safe drop — ground or water within 3 blocks below → just walk forward
+                if (baleAw.safeDropBelow && baleAw.dropDepth > 0) {
+                    System.out.printf("[AMB-STUCK] %s escape A: safe drop (depth=%d water=%b) — stepping forward%n",
+                        getName().getString(), baleAw.dropDepth, baleAw.waterBelow);
+                    jumpsSinceProgress = 0;
+                    noProgressTicks = 0;
+                    // Don't blacklist — let forward motion drop the bot naturally
+                } else if (tryPlatformEscape()) {
+                    // Option B: placed a block to create a step — reset counter and retry
+                    System.out.printf("[AMB-STUCK] %s escape B: platform block placed — resetting jump counter%n",
+                        getName().getString());
+                    jumpsSinceProgress = 0;
+                    noProgressTicks = 0;
+                } else if (avoidTicks <= 0) {
+                    // Option C: lateral strafe to try a different approach angle
+                    avoidTicks = 25;
+                    avoidDir = (random.nextBoolean()) ? 1 : -1;
+                    moveTarget = Vec3.atCenterOf(currentGoal);
+                    jumpsSinceProgress = 0;
+                    System.out.printf("[AMB-STUCK] %s escape C: lateral strafe %s for 25 ticks%n",
+                        getName().getString(), avoidDir > 0 ? "right" : "left");
+                } else {
+                    // Option D: nothing worked — blacklist this goal
+                    System.out.printf("[AMB-STUCK] %s escape D: all options failed — blacklisting %s for 60s%n",
+                        getName().getString(), currentGoal);
+                    unreachableGoalBlacklist.put(currentGoal, tickCount + GOAL_BLACKLIST_TICKS);
+                    currentGoal = BlockPos.ZERO;
+                    currentPath.clear();
+                    jumpsSinceProgress = 0;
+                    stopMovement();
+                    executeCurrentTask();
+                    return;
+                }
             }
             // Expire old blacklist entries every 20 seconds
             if (tickCount % 400 == 0 && !unreachableGoalBlacklist.isEmpty()) {
@@ -1564,12 +1612,18 @@ public class AmbNpcEntity extends FakePlayer {
         final boolean chestNear;           // chest within 12 blocks
         final int droppedItemCount;        // dropped item entities within 8 blocks
         final String miningProgress;       // "ticks/required@pos" or "none"
+        // ── Terrain / risk fields ────────────────────────────────────────────────
+        final boolean safeDropBelow;  // solid or water landing within 3 blocks below
+        final boolean waterBelow;     // water detected within drop zone
+        final int dropDepth;          // air blocks below bot before landing (0 = on ground)
+        final int walkableExitCount;  // how many of 4 cardinal directions are walkable at same Y
         final String summary;
 
         LocalAwareness(boolean headroomClear, BlockPos headroomObstructor, boolean headroomIsSoft,
                        int nearbyLogCount, int nearbyLeafCount, boolean toolSuitable,
                        boolean craftingTableNear, BlockPos nearestTable, boolean chestNear,
-                       int droppedItemCount, String miningProgress) {
+                       int droppedItemCount, String miningProgress,
+                       boolean safeDropBelow, boolean waterBelow, int dropDepth, int walkableExitCount) {
             this.headroomClear      = headroomClear;
             this.headroomObstructor = headroomObstructor;
             this.headroomIsSoft     = headroomIsSoft;
@@ -1581,12 +1635,17 @@ public class AmbNpcEntity extends FakePlayer {
             this.chestNear          = chestNear;
             this.droppedItemCount   = droppedItemCount;
             this.miningProgress     = miningProgress;
+            this.safeDropBelow      = safeDropBelow;
+            this.waterBelow         = waterBelow;
+            this.dropDepth          = dropDepth;
+            this.walkableExitCount  = walkableExitCount;
             this.summary = String.format(
-                "headClear=%b obstructor=%s soft=%b logs=%d leaves=%d toolOK=%b table=%s chest=%b drops=%d mining=%s",
+                "headClear=%b obstructor=%s soft=%b logs=%d leaves=%d toolOK=%b table=%s chest=%b drops=%d mining=%s drop=%d water=%b exits=%d",
                 headroomClear, headroomObstructor, headroomIsSoft,
                 nearbyLogCount, nearbyLeafCount, toolSuitable,
                 nearestTable != null ? nearestTable.toString() : "none",
-                chestNear, droppedItemCount, miningProgress);
+                chestNear, droppedItemCount, miningProgress,
+                dropDepth, waterBelow, walkableExitCount);
         }
     }
 
@@ -1655,8 +1714,34 @@ public class AmbNpcEntity extends FakePlayer {
             ? miningState.miningTicks + "/" + miningState.requiredTicks + "@" + miningState.targetBlock
             : "none";
 
+        // ── Safe-drop / water detection ────────────────────────────────────────
+        // Scan downward from the bot's feet to find the first solid landing.
+        int dropDepth = 0;
+        boolean waterBelow = false;
+        for (int d = 1; d <= 10; d++) {
+            BlockPos dCheck = blockPosition().below(d);
+            BlockState dState = level().getBlockState(dCheck);
+            if (dState.is(Blocks.WATER)) { waterBelow = true; dropDepth = d; break; }
+            if (dState.canOcclude()) { dropDepth = d - 1; break; } // landed at d-1 air blocks
+            dropDepth = d;
+        }
+        boolean safeDropBelow = waterBelow || dropDepth <= 3;
+
+        // ── Walkable exits in the 4 cardinal directions ────────────────────────
+        int walkExits = 0;
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            BlockPos adj = blockPosition().relative(dir);
+            BlockState adjFeet = level().getBlockState(adj);
+            BlockState adjHead = level().getBlockState(adj.above());
+            BlockState adjFloor = level().getBlockState(adj.below());
+            boolean adjPassable = !adjFeet.canOcclude() && !adjHead.canOcclude()
+                    && (adjFloor.canOcclude() || adjFloor.is(Blocks.WATER));
+            if (adjPassable) walkExits++;
+        }
+
         return new LocalAwareness(obstructor == null, obstructor, isSoft, logs, leaves, toolOK,
-            nearestTable != null, nearestTable, chestNear, drops, miningProg);
+            nearestTable != null, nearestTable, chestNear, drops, miningProg,
+            safeDropBelow, waterBelow, dropDepth, walkExits);
     }
 
     // ==================== A* PATHFINDING ====================
@@ -3118,6 +3203,94 @@ public class AmbNpcEntity extends FakePlayer {
      */
     // Break cooldown: allow at most one block break every N ticks to emulate survival mining speed
     private int navBreakCooldown = 0;
+
+    // ==================== PLATFORM ESCAPE ====================
+    /**
+     * When A* is repeatedly blocked (jump-loop bail), attempt to place one building block
+     * adjacent to the bot to create a step-up surface. Targets the direction toward the goal
+     * first, then falls back to all 4 cardinals.
+     *
+     * Typical use: bot is 1 block below a ledge; places dirt/cobble to step up.
+     * Returns true if a block was successfully placed and a jump initiated.
+     */
+    private boolean tryPlatformEscape() {
+        if (!(level() instanceof ServerLevel sl)) return false;
+        if (currentGoal.equals(BlockPos.ZERO)) return false;
+
+        ItemStack buildStack = findPlaceableBlock();
+        if (buildStack.isEmpty()) {
+            System.out.printf("[AMB-PLATFORM] %s has no building blocks — platform escape skipped%n",
+                getName().getString());
+            return false;
+        }
+        Block blockType = Block.byItem(buildStack.getItem());
+        if (blockType == Blocks.AIR) return false;
+
+        // Determine goal direction as primary candidate
+        Vec3 toGoal = Vec3.atCenterOf(currentGoal).subtract(position());
+        Direction goalDir = Direction.getNearest((int) Math.round(toGoal.x), 0, (int) Math.round(toGoal.z), Direction.NORTH);
+
+        // Try goal direction first, then all cardinals
+        java.util.LinkedHashSet<Direction> tryDirs = new java.util.LinkedHashSet<>();
+        tryDirs.add(goalDir);
+        tryDirs.add(Direction.NORTH); tryDirs.add(Direction.SOUTH);
+        tryDirs.add(Direction.EAST);  tryDirs.add(Direction.WEST);
+
+        BlockPos me = blockPosition();
+        for (Direction dir : tryDirs) {
+            BlockPos adj = me.relative(dir);
+
+            // Case 1: place at adj (same Y) to fill a gap and create walkable surface
+            // Support below adj must be solid, and the space at adj and adj+1 must be clear
+            if (sl.getBlockState(adj).isAir() && sl.getBlockState(adj.below()).canOcclude()
+                    && sl.getBlockState(adj.above()).isAir()) {
+                sl.setBlock(adj, blockType.defaultBlockState(), 3);
+                buildStack.shrink(1);
+                System.out.printf("[AMB-PLATFORM] %s placed %s at %s (bridge at same-Y) dir=%s%n",
+                    getName().getString(), blockType.getName().getString(), adj, dir.getName());
+                if (onGround() && jumpCooldown == 0) { jumpFromGround(); jumpCooldown = 15; }
+                currentPath.clear(); pathIndex = 0;
+                return true;
+            }
+
+            // Case 2: place at adj.above() to create an elevated step
+            // (useful when adjacent is solid wall and there's air one block above it)
+            BlockPos adjUp = adj.above();
+            if (sl.getBlockState(adjUp).isAir() && sl.getBlockState(adj).canOcclude()
+                    && sl.getBlockState(adjUp.above()).isAir()) {
+                sl.setBlock(adjUp, blockType.defaultBlockState(), 3);
+                buildStack.shrink(1);
+                System.out.printf("[AMB-PLATFORM] %s placed %s at %s (step atop wall) dir=%s%n",
+                    getName().getString(), blockType.getName().getString(), adjUp, dir.getName());
+                if (onGround() && jumpCooldown == 0) { jumpFromGround(); jumpCooldown = 15; }
+                currentPath.clear(); pathIndex = 0;
+                return true;
+            }
+        }
+
+        System.out.printf("[AMB-PLATFORM] %s no valid platform spot in any direction — giving up%n",
+            getName().getString());
+        return false;
+    }
+
+    /**
+     * Find a solid block in inventory suitable for navigation platform placement.
+     * Prefers expendable terrain items (dirt, cobble) over crafting materials.
+     */
+    private ItemStack findPlaceableBlock() {
+        Item[] preferred = {
+            Items.DIRT, Items.COBBLESTONE, Items.GRAVEL, Items.SAND,
+            Items.OAK_LOG, Items.SPRUCE_LOG, Items.BIRCH_LOG,
+            Items.OAK_PLANKS, Items.SPRUCE_PLANKS, Items.BIRCH_PLANKS
+        };
+        for (Item item : preferred) {
+            for (int i = 0; i < getInventory().getContainerSize(); i++) {
+                ItemStack s = getInventory().getItem(i);
+                if (!s.isEmpty() && s.is(item)) return s;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
 
     private void tryBreakPathBlock(int wpDY) {
         if (!(level() instanceof ServerLevel sl)) return;
