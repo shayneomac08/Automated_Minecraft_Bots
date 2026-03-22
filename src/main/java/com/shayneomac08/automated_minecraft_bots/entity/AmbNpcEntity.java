@@ -626,10 +626,15 @@ public class AmbNpcEntity extends FakePlayer {
             // Throttle A* retries on failure to avoid re-running 2500 nodes every tick
             if (pathRetryTimer > 0) pathRetryTimer--;
 
-            // Recompute path when: empty and retry timer expired, path exhausted, or stuck
-            boolean needNewPath = (currentPath.isEmpty() && pathRetryTimer == 0)
+            // Recompute path when: empty and retry timer expired, path exhausted, or stuck.
+            // Exception: never trigger a recompute while actively mining within reach — A* cannot
+            // path into a solid block, so the path will always appear exhausted during mining.
+            boolean activeMiningInRange = miningState.isMining
+                    && position().distanceTo(Vec3.atCenterOf(miningState.targetBlock)) < 4.5;
+            boolean needNewPath = !activeMiningInRange && (
+                    (currentPath.isEmpty() && pathRetryTimer == 0)
                     || (!currentPath.isEmpty() && pathIndex >= currentPath.size())
-                    || stuckTimer > 20;
+                    || stuckTimer > 20);
             // Reset fail counter AND retry timer when goal changes externally
             // (interior exit redirects to door, task switch, etc.)
             if (!currentGoal.equals(lastAStarGoal)) {
@@ -807,6 +812,11 @@ public class AmbNpcEntity extends FakePlayer {
                     // Don't count no-progress while airborne — horizontal movement is
                     // constrained by physics mid-jump, not by a wall. Accumulating here
                     // would trigger a spurious jump the instant the bot lands.
+                    noProgressTicks = 0;
+                } else if (miningState.isMining) {
+                    // Bot is intentionally stationary while breaking a block.
+                    // Letting noProgressTicks accumulate here would fire a spurious jump
+                    // every ~5 ticks even when no navigation obstacle exists.
                     noProgressTicks = 0;
                 } else if (horizProgress < 0.05) {
                     noProgressTicks++;
@@ -1138,7 +1148,12 @@ public class AmbNpcEntity extends FakePlayer {
         // detection can falsely fire inside a tree canopy and must not suppress active harvest.
         boolean miningInRange = miningState.isMining &&
             position().distanceTo(Vec3.atCenterOf(miningState.targetBlock)) < 4.5;
-        if (miningState.isMining && (!exitingNow || miningInRange)) {
+        if (miningState.isMining && exitingNow && !miningInRange) {
+            // Interior-exit logic fired while we were out of reach of the target block.
+            // Cancel mining and clear the client-side break overlay so it doesn't freeze
+            // at whatever stage it had reached when exiting triggered.
+            RealisticActions.stopMining(this, miningState);
+        } else if (miningState.isMining && (!exitingNow || miningInRange)) {
             BlockPos minedPos = miningState.targetBlock; // save before continueMining resets it
             boolean blockBroken = RealisticActions.continueMining(this, miningState);
             if (blockBroken && !minedPos.equals(BlockPos.ZERO)) {

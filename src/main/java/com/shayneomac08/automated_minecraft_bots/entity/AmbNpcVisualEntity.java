@@ -69,6 +69,12 @@ public class AmbNpcVisualEntity extends PathfinderMob {
     public void tick() {
         super.tick();
 
+        // setNoAi(true) causes isEffectiveAi()=false → LivingEntity.tick() skips aiStep()
+        // → updateSwingTime() is never called → attackAnim stays 0 → arm never swings.
+        // Manually driving updateSwingTime() here ensures that ClientboundAnimatePacket
+        // (sent from AmbNpcEntity.swing → visualEntity.swing) produces a visible arm swing.
+        updateSwingTime();
+
         // Mirror the FakePlayer's position, rotation, and state
         if (logicEntity != null && !logicEntity.isRemoved()) {
             this.setPos(logicEntity.getX(), logicEntity.getY(), logicEntity.getZ());
