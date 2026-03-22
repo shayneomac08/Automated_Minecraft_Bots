@@ -191,6 +191,22 @@ public class AmbNpcEntity extends FakePlayer {
     private int airborneTicks = 0;
     private static final int AIRBORNE_RECOVERY_THRESHOLD = 20; // 1 s
 
+    // ── Jump-loop prevention ─────────────────────────────────────────────────
+    // When the bot jumps repeatedly from the same area without advancing toward
+    // the goal, the obstacle is unbreakable (bedrock, player wall, etc.).
+    // After JUMP_LOOP_LIMIT consecutive jumps without horizontal progress, the
+    // current goal is blacklisted so target-finders skip it for ~60 seconds.
+    private int jumpsSinceProgress = 0;
+    private static final int JUMP_LOOP_LIMIT = 8;
+    private static final int GOAL_BLACKLIST_TICKS = 1200; // 60 s at 20 TPS
+    // goal BlockPos → tick at which the blacklist entry expires
+    private final java.util.Map<BlockPos, Integer> unreachableGoalBlacklist = new java.util.HashMap<>();
+
+    // ── Progression self-advancement guard ──────────────────────────────────
+    // Prevents re-entrant calls to evaluateProgressionTask() when it causes a
+    // recursive call to executeCurrentTask().
+    private boolean inProgressionEval = false;
+
     // A* pathfinding state
     private List<BlockPos> currentPath = new ArrayList<>();
     private int pathIndex = 0;
@@ -822,6 +838,7 @@ public class AmbNpcEntity extends FakePlayer {
                     noProgressTicks++;
                 } else {
                     noProgressTicks = 0;
+                    jumpsSinceProgress = 0; // real forward movement — not looping at a wall
                 }
             }
             lastExactMovingPos = nowPos;
@@ -917,10 +934,33 @@ public class AmbNpcEntity extends FakePlayer {
                     }
                     jumpFromGround();
                     jumpCooldown = 15;
-                    System.out.printf("[AMB-JUMP] %s jump: hColl=%s waypointDY=%d horizDist=%.2f%n",
-                        getName().getString(), horizontalCollision, wpDY, horizDist);
+                    jumpsSinceProgress++;
+                    System.out.printf("[AMB-JUMP] %s jump: hColl=%s waypointDY=%d horizDist=%.2f loopCount=%d%n",
+                        getName().getString(), horizontalCollision, wpDY, horizDist, jumpsSinceProgress);
                 }
                 // else: leaf found but navBreakCooldown > 0 — wait for previous break to clear
+            }
+            // ─────────────────────────────────────────────────────────────────────────
+
+            // ── Jump-loop bail ────────────────────────────────────────────────────────
+            // If we've jumped JUMP_LOOP_LIMIT times without forward progress the obstacle
+            // is unbreakable (bedrock, obsidian, player wall, etc.). Blacklist the goal
+            // so findNearestTreeLog / findNearestHarvestTarget skip it, then retarget.
+            if (jumpsSinceProgress >= JUMP_LOOP_LIMIT && !currentGoal.equals(BlockPos.ZERO)) {
+                System.out.printf("[AMB-STUCK] %s jump loop: %d jumps with no progress toward %s — blacklisting goal for 60 s%n",
+                    getName().getString(), jumpsSinceProgress, currentGoal);
+                unreachableGoalBlacklist.put(currentGoal, tickCount + GOAL_BLACKLIST_TICKS);
+                currentGoal = BlockPos.ZERO;
+                currentPath.clear();
+                jumpsSinceProgress = 0;
+                stopMovement();
+                executeCurrentTask();
+                return;
+            }
+            // Expire old blacklist entries every 20 seconds
+            if (tickCount % 400 == 0 && !unreachableGoalBlacklist.isEmpty()) {
+                int now = tickCount;
+                unreachableGoalBlacklist.entrySet().removeIf(e -> now >= e.getValue());
             }
             // ─────────────────────────────────────────────────────────────────────────
 
@@ -2194,6 +2234,9 @@ public class AmbNpcEntity extends FakePlayer {
                 getName().getString(), knownCraftingTable, Math.sqrt(tableDist), hasActiveGoal);
         }
 
+        // Chest lifecycle: place if in inventory, deposit excess if near one
+        manageCraftedChest();
+
         // Furnace pipeline (basic): ensure, move to, smelt inputs, collect outputs
         ensureFurnaceAvailable();
         BlockPos furnacePos = chooseFurnaceForPendingSmelts();
@@ -2205,6 +2248,89 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             } else {
                 serviceFurnaceAt(furnacePos);
+            }
+        }
+    }
+
+    // ==================== CHEST / STORAGE ====================
+
+    /**
+     * Chest lifecycle manager — called from manageStationsAndCrafting() every 100 ticks.
+     *
+     * Phase A: If we have a chest item in inventory and no known chest location, place it.
+     * Phase B: Purge known chest list of entries whose block was removed by other means.
+     * Phase C: If bot is adjacent to a known chest, deposit excess materials.
+     */
+    private void manageCraftedChest() {
+        // Phase A: Place a chest we're carrying
+        if (knownChests.isEmpty() && getInventory().countItem(Items.CHEST) > 0) {
+            BlockPos place = findPlacementNear(blockPosition(), 4);
+            if (place != null && removeItems(Items.CHEST, 1) == 1) {
+                level().setBlock(place, Blocks.CHEST.defaultBlockState(), 3);
+                knownChests.add(place);
+                broadcastGroupChat("Placed a chest for storage at " + place + ".");
+                System.out.printf("[AMB-STORAGE] %s placed chest at %s%n", getName().getString(), place);
+            }
+            return;
+        }
+
+        // Phase B: Validate known chest positions
+        knownChests.removeIf(pos -> !level().getBlockState(pos).is(Blocks.CHEST));
+
+        // Phase C: Deposit excess items when adjacent to a chest
+        if (!knownChests.isEmpty()) {
+            BlockPos chestPos = knownChests.get(0);
+            if (blockPosition().closerThan(chestPos, 3.0)) {
+                depositExcessItems(chestPos);
+            }
+        }
+    }
+
+    /**
+     * Deposit items that exceed the bot's "keep" threshold into the given chest.
+     * Keeps a working supply of wood and stone; stores surpluses.
+     */
+    private void depositExcessItems(BlockPos chestPos) {
+        BlockEntity be = level().getBlockEntity(chestPos);
+        if (!(be instanceof ChestBlockEntity chest)) return;
+
+        // Deposit excess logs (keep 16 for planks + crafting)
+        Item[] logTypes = {Items.OAK_LOG, Items.SPRUCE_LOG, Items.BIRCH_LOG, Items.JUNGLE_LOG,
+            Items.ACACIA_LOG, Items.DARK_OAK_LOG, Items.MANGROVE_LOG, Items.CHERRY_LOG, Items.BAMBOO_BLOCK};
+        for (Item log : logTypes) depositItemExcess(chest, log, 16);
+
+        // Deposit excess cobblestone (keep 32 for crafting)
+        depositItemExcess(chest, Items.COBBLESTONE, 32);
+
+        // Deposit extra tools (keep 1 of each kind)
+        depositItemExcess(chest, Items.WOODEN_PICKAXE, 1);
+        depositItemExcess(chest, Items.WOODEN_AXE, 1);
+        depositItemExcess(chest, Items.STONE_PICKAXE, 1);
+        depositItemExcess(chest, Items.STONE_AXE, 1);
+
+        System.out.printf("[AMB-STORAGE] %s deposited excess items into chest at %s%n",
+            getName().getString(), chestPos);
+    }
+
+    /** Move items in excess of keepCount from bot inventory into the given chest. */
+    private void depositItemExcess(ChestBlockEntity chest, Item item, int keepCount) {
+        int have = countItemInInventory(item);
+        if (have <= keepCount) return;
+        int toDeposit = have - keepCount;
+        for (int i = 0; i < chest.getContainerSize() && toDeposit > 0; i++) {
+            ItemStack slot = chest.getItem(i);
+            if (slot.isEmpty()) {
+                int amount = Math.min(toDeposit, item.getDefaultMaxStackSize());
+                chest.setItem(i, new ItemStack(item, amount));
+                removeItems(item, amount);
+                toDeposit -= amount;
+            } else if (slot.is(item) && slot.getCount() < slot.getMaxStackSize()) {
+                int space = slot.getMaxStackSize() - slot.getCount();
+                int amount = Math.min(toDeposit, space);
+                slot.grow(amount);
+                chest.setItem(i, slot);
+                removeItems(item, amount);
+                toDeposit -= amount;
             }
         }
     }
@@ -2381,6 +2507,52 @@ public class AmbNpcEntity extends FakePlayer {
                 addToInventory(new ItemStack(Items.WOODEN_SWORD, 1));
                 broadcastGroupChat("Crafted a wooden sword.");
                 System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: wooden_sword%n", botName);
+            }
+        }
+
+        // === STONE TIER — upgrade tools when cobblestone is available ===
+        int cobble = countItemInInventory(Items.COBBLESTONE);
+        sticks = countItemInInventory(Items.STICK); // re-read — may have just been crafted
+
+        // Extra sticks for stone tools if needed
+        if (sticks < 4 && countTotalPlanks() >= 2) {
+            if (removeAnyPlanks(2) == 2) {
+                addToInventory(new ItemStack(Items.STICK, 4));
+                sticks += 4;
+                System.out.printf("[AMB-CRAFT] %s table craft: extra sticks for stone tools%n", botName);
+            }
+        }
+
+        // Stone pickaxe: 3 cobble + 2 sticks (3x3 — table required)
+        if (getInventory().countItem(Items.STONE_PICKAXE) == 0 && cobble >= 3 && sticks >= 2) {
+            System.out.printf("[AMB-CRAFT] %s table craft: stone_pickaxe (cobble=%d sticks=%d)%n",
+                botName, cobble, sticks);
+            if (removeItems(Items.COBBLESTONE, 3) == 3 && removeItems(Items.STICK, 2) == 2) {
+                addToInventory(new ItemStack(Items.STONE_PICKAXE, 1));
+                broadcastGroupChat("Crafted a stone pickaxe! Upgrading from wood tier.");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: stone_pickaxe%n", botName);
+                cobble -= 3; sticks -= 2;
+            }
+        }
+
+        // Stone axe: 3 cobble + 2 sticks
+        if (getInventory().countItem(Items.STONE_AXE) == 0 && cobble >= 3 && sticks >= 2) {
+            if (removeItems(Items.COBBLESTONE, 3) == 3 && removeItems(Items.STICK, 2) == 2) {
+                addToInventory(new ItemStack(Items.STONE_AXE, 1));
+                broadcastGroupChat("Crafted a stone axe!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: stone_axe%n", botName);
+                cobble -= 3; sticks -= 2;
+            }
+        }
+
+        // === STORAGE — chest (8 planks in 3x3, table required) ===
+        // Only craft if we have no chest and no known chest location.
+        if (knownChests.isEmpty() && getInventory().countItem(Items.CHEST) == 0 && countTotalPlanks() >= 8) {
+            System.out.printf("[AMB-CRAFT] %s table craft: chest (8 planks)%n", botName);
+            if (removeAnyPlanks(8) == 8) {
+                addToInventory(new ItemStack(Items.CHEST, 1));
+                broadcastGroupChat("Crafted a chest for storage!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: chest%n", botName);
             }
         }
     }
@@ -3198,6 +3370,66 @@ public class AmbNpcEntity extends FakePlayer {
 
     // ==================== TASK EXECUTION ====================
 
+    // ==================== PROGRESSION FRAMEWORK ====================
+
+    /** Count all log-type items in inventory (all wood species). */
+    private int countLogsInInventory() {
+        return countItemInInventory(Items.OAK_LOG) + countItemInInventory(Items.SPRUCE_LOG)
+            + countItemInInventory(Items.BIRCH_LOG) + countItemInInventory(Items.JUNGLE_LOG)
+            + countItemInInventory(Items.ACACIA_LOG) + countItemInInventory(Items.DARK_OAK_LOG)
+            + countItemInInventory(Items.MANGROVE_LOG) + countItemInInventory(Items.CHERRY_LOG)
+            + countItemInInventory(Items.BAMBOO_BLOCK);
+    }
+
+    /**
+     * Rule-based progression advisor.
+     *
+     * Evaluates the bot's current inventory against survival tech-tree thresholds
+     * and returns the task the bot SHOULD be doing, or null if the current task
+     * is already appropriate.
+     *
+     * Priority order (highest first):
+     *   1. No tools + enough wood → craft
+     *   2. Wooden pickaxe but no stone pickaxe + low cobble → mine_stone
+     *   3. Enough cobble but no stone pickaxe → craft (stone tools)
+     *   4. Otherwise → null (keep current task)
+     */
+    private String evaluateProgressionTask() {
+        int logs   = countLogsInInventory();
+        int planks = countTotalPlanks();
+        int woodEquiv = logs * 4 + planks; // total plank-equivalent
+
+        boolean hasWoodPick  = getInventory().countItem(Items.WOODEN_PICKAXE) > 0;
+        boolean hasStonePick = getInventory().countItem(Items.STONE_PICKAXE) > 0
+                            || getInventory().countItem(Items.IRON_PICKAXE) > 0
+                            || getInventory().countItem(Items.DIAMOND_PICKAXE) > 0;
+        boolean hasAnyPick   = hasWoodPick || hasStonePick;
+        int cobble = countItemInInventory(Items.COBBLESTONE);
+
+        // Stage 1: Have enough wood for table + tools but no pickaxe → craft
+        if (!hasAnyPick && woodEquiv >= 12) {
+            System.out.printf("[AMB-PROG] %s stage=NEED_TOOLS wood=%d — switching gather_wood→craft%n",
+                getName().getString(), woodEquiv);
+            return "craft";
+        }
+
+        // Stage 2: Have wooden pick, no stone pick, and low cobble → mine stone
+        if (hasWoodPick && !hasStonePick && cobble < 8) {
+            System.out.printf("[AMB-PROG] %s stage=NEED_STONE cobble=%d — switching→mine_stone%n",
+                getName().getString(), cobble);
+            return "mine_stone";
+        }
+
+        // Stage 3: Have 8+ cobble but no stone pick → craft stone tools
+        if (cobble >= 8 && !hasStonePick) {
+            System.out.printf("[AMB-PROG] %s stage=NEED_STONE_TOOLS cobble=%d — switching→craft%n",
+                getName().getString(), cobble);
+            return "craft";
+        }
+
+        return null; // current task is appropriate
+    }
+
     private void executeCurrentTask() {
         if (currentTask == null || currentTask.isEmpty()) {
             // No task - just wander
@@ -3215,6 +3447,20 @@ public class AmbNpcEntity extends FakePlayer {
 
         switch (currentTask) {
             case "gather_wood" -> {
+                // Progression check: self-advance when enough resources are available.
+                // Guard: inProgressionEval prevents re-entrant call from the recursive executeCurrentTask().
+                if (!inProgressionEval) {
+                    inProgressionEval = true;
+                    String nextTask = evaluateProgressionTask();
+                    inProgressionEval = false;
+                    if (nextTask != null && !nextTask.equals("gather_wood")) {
+                        System.out.printf("[AMB-PROG] %s gather_wood quota met → switching to %s%n",
+                            getName().getString(), nextTask);
+                        currentTask = nextTask;
+                        executeCurrentTask();
+                        return;
+                    }
+                }
                 // Only target logs that are part of a natural tree (have leaves nearby).
                 // This prevents mining logs in player structures.
                 // FIX D: log local perception snapshot before choosing target.
@@ -3245,6 +3491,19 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
             case "mine_stone" -> {
+                // Progression check: if we've gathered enough cobble to upgrade tools, craft.
+                if (!inProgressionEval) {
+                    inProgressionEval = true;
+                    String nextTask = evaluateProgressionTask();
+                    inProgressionEval = false;
+                    if (nextTask != null && !nextTask.equals("mine_stone")) {
+                        System.out.printf("[AMB-PROG] %s mine_stone quota met → switching to %s%n",
+                            getName().getString(), nextTask);
+                        currentTask = nextTask;
+                        executeCurrentTask();
+                        return;
+                    }
+                }
                 BlockPos stone = findNearestHarvestTarget(new net.minecraft.world.level.block.Block[]{
                     Blocks.STONE, Blocks.COBBLESTONE, Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE}, 32);
                 if (stone != null) {
@@ -3618,6 +3877,8 @@ public class AmbNpcEntity extends FakePlayer {
                         if (st.is(b)) { matches = true; break; }
                     }
                     if (!matches) continue;
+                    // Skip goals that recently caused a jump loop (unbreakable terrain)
+                    if (unreachableGoalBlacklist.getOrDefault(check, 0) > tickCount) continue;
                     double dist = myPos.distSqr(check);
                     if (dist < nearestDist) { nearestDist = dist; nearest = check; }
                 }
@@ -3640,7 +3901,8 @@ public class AmbNpcEntity extends FakePlayer {
                 for (int z = -radius; z <= radius; z++) {
                     BlockPos check = myPos.offset(x, y, z);
                     if (!level().getBlockState(check).is(BlockTags.LOGS)) continue;
-
+                    // Skip goals that recently caused a jump loop (unbreakable terrain between bot and block)
+                    if (unreachableGoalBlacklist.getOrDefault(check, 0) > tickCount) continue;
                     // Verify this log has leaves nearby (radius=10 catches tall trees)
                     if (!hasLeavesNearby(check, 10)) continue;
 
