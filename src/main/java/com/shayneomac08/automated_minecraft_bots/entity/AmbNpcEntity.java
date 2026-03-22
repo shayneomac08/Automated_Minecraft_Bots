@@ -197,7 +197,7 @@ public class AmbNpcEntity extends FakePlayer {
     // After JUMP_LOOP_LIMIT consecutive jumps without horizontal progress, the
     // current goal is blacklisted so target-finders skip it for ~60 seconds.
     private int jumpsSinceProgress = 0;
-    private static final int JUMP_LOOP_LIMIT = 8;
+    private static final int JUMP_LOOP_LIMIT = 5; // 5 unproductive jumps → blacklist goal (was 8)
     private static final int GOAL_BLACKLIST_TICKS = 1200; // 60 s at 20 TPS
     // goal BlockPos → tick at which the blacklist entry expires
     private final java.util.Map<BlockPos, Integer> unreachableGoalBlacklist = new java.util.HashMap<>();
@@ -836,9 +836,15 @@ public class AmbNpcEntity extends FakePlayer {
                     noProgressTicks = 0;
                 } else if (horizProgress < 0.05) {
                     noProgressTicks++;
-                } else {
+                } else if (horizProgress >= 0.15 && !horizontalCollision) {
+                    // Genuine forward movement (not wall-bounce) — reset both stuck counters
                     noProgressTicks = 0;
-                    jumpsSinceProgress = 0; // real forward movement — not looping at a wall
+                    jumpsSinceProgress = 0;
+                } else {
+                    // Small movement (0.05–0.14) or movement-with-collision (wall bounce).
+                    // Reset no-progress so we don't spam jumps, but keep jumpsSinceProgress
+                    // so the jump-loop bail fires after repeated unproductive jumps.
+                    noProgressTicks = 0;
                 }
             }
             lastExactMovingPos = nowPos;
@@ -1156,6 +1162,28 @@ public class AmbNpcEntity extends FakePlayer {
                         currentPath.clear();
                         pathIndex = 0;
                         System.out.println("[AMB-TASK] " + getName().getString() + " reached position but found mineable block nearby at " + nearbyMineable);
+                    } else if ("craft".equals(currentTask) && !knownCraftingTable.equals(BlockPos.ZERO)
+                            && level().getBlockState(knownCraftingTable).is(Blocks.CRAFTING_TABLE)
+                            && blockPosition().closerThan(knownCraftingTable, 3.0)) {
+                        // Arrived at crafting table — craft immediately (don't wait for 40-tick timer)
+                        System.out.printf("[AMB-CRAFT] %s arrived at table — crafting immediately%n",
+                            getName().getString());
+                        RealisticMovement.lookAt(this, Vec3.atCenterOf(knownCraftingTable));
+                        swing(InteractionHand.MAIN_HAND);
+                        craftStarterToolsAtTable();
+                        currentGoal = BlockPos.ZERO;
+                        // Re-evaluate progression now that tools may have been crafted
+                        if (!inProgressionEval) {
+                            inProgressionEval = true;
+                            String nextTask = evaluateProgressionTask();
+                            inProgressionEval = false;
+                            if (nextTask != null && !"craft".equals(nextTask)) {
+                                System.out.printf("[AMB-PROGRESS] %s tools crafted → switching to %s%n",
+                                    getName().getString(), nextTask);
+                                currentTask = nextTask;
+                                executeCurrentTask();
+                            }
+                        }
                     } else {
                         // No mineable blocks nearby - clear goal and find next target
                         if (tickCount % 40 == 0) {
@@ -1310,18 +1338,19 @@ public class AmbNpcEntity extends FakePlayer {
 
         // (Passive pickup moved to doPassivePickup() — called unconditionally at top of runAllPlayerActions)
 
-        // Lightweight auto-crafting for basics: planks and sticks (2x2 inventory recipes — always valid)
-        if (tickCount % 100 == 0) {
+        // 2x2 auto-crafting (planks from logs, sticks) — run every 20 ticks so materials
+        // are ready quickly when the bot switches to the craft task.
+        if (tickCount % 20 == 0) {
             tryAutoCraftBasics();
-            // Station management (table placement, tool crafting) ONLY during craft tasks.
-            // Running this during gather_wood/mine_stone sets knownCraftingTable as currentGoal on
-            // the brief zero-goal tick between log harvests, hijacking the gathering task.
-            // 3x3 tool recipes require a crafting table — enforce that rule here by only running
-            // station logic when the task explicitly calls for it.
-            if (!exitingNow && !escapeHelper.isActive()
-                    && ("craft".equals(currentTask) || "place_crafting_table".equals(currentTask))) {
-                manageStationsAndCrafting();
-            }
+        }
+        // Station management (table placement, tool crafting) ONLY during craft tasks.
+        // Running this during gather_wood/mine_stone sets knownCraftingTable as currentGoal on
+        // the brief zero-goal tick between log harvests, hijacking the gathering task.
+        // 3x3 tool recipes require a crafting table — enforce that rule here by only running
+        // station logic when the task explicitly calls for it.
+        if (tickCount % 40 == 0 && !exitingNow && !escapeHelper.isActive()
+                && ("craft".equals(currentTask) || "place_crafting_table".equals(currentTask))) {
+            manageStationsAndCrafting();
         }
 
         // Cooldowns
@@ -2115,13 +2144,14 @@ public class AmbNpcEntity extends FakePlayer {
     private void craftPlanksFromLog(Item log, Item planks) {
         int logs = countItemInInventory(log);
         if (logs > 0) {
-            int removed = removeItems(log, 1);
-            if (removed == 1) {
-                addToInventory(new ItemStack(planks, 4));
-                broadcastGroupChat("Crafted 4 planks from a log.");
-                System.out.printf("[AMB-CRAFT] %s 2x2 craft: 1x%s → 4x%s (no table needed)%n",
-                    getName().getString(),
-                    log.getDescriptionId(), planks.getDescriptionId());
+            // Process ALL logs of this type at once — one-at-a-time was too slow (100-tick timer)
+            int removed = removeItems(log, logs);
+            if (removed > 0) {
+                int produced = 4 * removed;
+                addToInventory(new ItemStack(planks, produced));
+                System.out.printf("[AMB-CRAFT] %s 2x2 craft: %dx%s → %dx%s (no table needed)%n",
+                    getName().getString(), removed,
+                    log.getDescriptionId(), produced, planks.getDescriptionId());
             }
         }
     }
@@ -2360,14 +2390,19 @@ public class AmbNpcEntity extends FakePlayer {
             System.out.printf("[AMB-STATION] %s no table in world — planks=%d tableInInv=%d%n",
                 getName().getString(), planks, tableInInv);
 
-            // No table placed: craft one then place it nearby
-            if (planks >= 4) {
+            // No table placed: craft one then place it nearby.
+            // Require 16 planks before crafting the table — ensures enough material remains
+            // for wooden tools (pick=3, axe=3, sticks=2 planks) after the table takes 4.
+            if (planks >= 16) {
                 if (removeAnyPlanks(4) == 4) {
                     addToInventory(new ItemStack(Blocks.CRAFTING_TABLE.asItem(), 1));
-                    System.out.printf("[AMB-STATION] %s crafted 1 crafting table from planks%n",
-                        getName().getString());
+                    System.out.printf("[AMB-STATION] %s crafted 1 crafting table from planks (had %d planks)%n",
+                        getName().getString(), planks);
                     broadcastGroupChat("Crafted a crafting table.");
                 }
+            } else {
+                System.out.printf("[AMB-STATION] %s waiting for more planks to craft table — have %d, need 16%n",
+                    getName().getString(), planks);
             }
 
             if (getInventory().countItem(Blocks.CRAFTING_TABLE.asItem()) > 0) {
@@ -2467,7 +2502,11 @@ public class AmbNpcEntity extends FakePlayer {
     private void craftStarterToolsAtTable() {
         // Guard: must be adjacent to a real crafting table in the world (enforced by caller)
         String botName = getName().getString();
-        System.out.printf("[AMB-CRAFT] %s table craft attempt at %s%n", botName, knownCraftingTable);
+        System.out.printf("[AMB-CRAFT] %s table craft attempt at %s — planks=%d sticks=%d cobble=%d woodPick=%d stonePick=%d%n",
+            botName, knownCraftingTable, countTotalPlanks(), countItemInInventory(Items.STICK),
+            countItemInInventory(Items.COBBLESTONE),
+            getInventory().countItem(Items.WOODEN_PICKAXE),
+            getInventory().countItem(Items.STONE_PICKAXE));
 
         int sticks = countItemInInventory(Items.STICK);
         // Sticks are a 2x2 recipe but also fine to craft at table for convenience
@@ -3443,7 +3482,13 @@ public class AmbNpcEntity extends FakePlayer {
             return;
         }
 
-        System.out.println("[AMB] " + getName().getString() + " executing task: " + currentTask);
+        // Inventory snapshot at every task-execute call — essential for diagnosing progression failures
+        System.out.printf("[AMB-TASK] %s executeCurrentTask(%s) inv: logs=%d planks=%d sticks=%d cobble=%d woodPick=%d stonePick=%d%n",
+            getName().getString(), currentTask,
+            countLogsInInventory(), countTotalPlanks(), countItemInInventory(Items.STICK),
+            countItemInInventory(Items.COBBLESTONE),
+            getInventory().countItem(Items.WOODEN_PICKAXE),
+            getInventory().countItem(Items.STONE_PICKAXE));
 
         switch (currentTask) {
             case "gather_wood" -> {
