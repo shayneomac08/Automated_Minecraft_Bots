@@ -54,7 +54,9 @@ public class AmbNpcVisualEntity extends PathfinderMob {
      * Call this immediately after the entity is added to the world (UUID is then stable).
      */
     public void initSkinFromUUID() {
-        int variant = (int)(Math.abs(getUUID().getMostSignificantBits()) % SKIN_COUNT);
+        // Math.floorMod always returns 0..SKIN_COUNT-1 regardless of sign — no overflow risk.
+        // UUID.hashCode() combines MSB ^ LSB for better distribution than MSB alone.
+        int variant = Math.floorMod(getUUID().hashCode(), SKIN_COUNT);
         entityData.set(SKIN_VARIANT, variant);
         System.out.printf("[AMB-SKIN] visualEntity id=%d → skinVariant=%d (UUID=%s)%n",
             getId(), variant, getUUID());

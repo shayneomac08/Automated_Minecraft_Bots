@@ -755,23 +755,28 @@ public class AmbNpcEntity extends FakePlayer {
                 BlockState mineCheck = level().getBlockState(currentGoal);
                 if (shouldMineBlock(mineCheck) && distMine < 4.5) {
                     if (!miningState.isMining) {
-                        // Obstruction check: a log may not be mined through intervening leaf blocks.
-                        // Find the first leaf on the ray from the bot's eye to the log center.
+                        // Obstruction check: cannot mine through intervening solid blocks.
+                        // Find the first solid block on the ray from eye to target.
                         BlockPos startTarget = currentGoal;
                         BlockState startState = mineCheck;
-                        if (mineCheck.is(BlockTags.LOGS)) {
-                            BlockPos leaf = findObstructingLeaf(currentGoal);
-                            if (leaf != null) {
-                                System.out.printf("[AMB-FOLIAGE] %s log at %s obstructed by leaf at %s — clearing foliage%n",
-                                    getName().getString(), currentGoal, leaf);
-                                foliageClearTarget = leaf;
-                                startTarget = leaf;
-                                startState = level().getBlockState(leaf);
-                            } else {
-                                foliageClearTarget = BlockPos.ZERO;
-                                System.out.printf("[AMB-FOLIAGE] %s log at %s is unobstructed — harvesting%n",
-                                    getName().getString(), currentGoal);
+                        BlockPos obs = findSolidObstruction(currentGoal);
+                        if (obs != null) {
+                            BlockState obsState = level().getBlockState(obs);
+                            if (obsState.getDestroySpeed(level(), obs) < 0) {
+                                System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
+                                    getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
+                                unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
+                                currentGoal = BlockPos.ZERO;
+                                executeCurrentTask();
+                                return;
                             }
+                            System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by %s at %s — clearing first%n",
+                                getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
+                            foliageClearTarget = obs;
+                            startTarget = obs;
+                            startState = obsState;
+                        } else {
+                            foliageClearTarget = BlockPos.ZERO;
                         }
                         RealisticActions.equipBestTool(this, startState);
                         RealisticActions.startMining(this, startTarget, miningState);
@@ -1182,21 +1187,28 @@ public class AmbNpcEntity extends FakePlayer {
                 // Check if we should mine the block at goal
                 BlockState targetState = level().getBlockState(currentGoal);
                 if (shouldMineBlock(targetState)) {
-                    // Start mining — with obstruction check for logs
+                    // Start mining — with general solid-block obstruction check
                     if (!miningState.isMining) {
                         BlockPos reachTarget = currentGoal;
                         BlockState reachState = targetState;
-                        if (targetState.is(BlockTags.LOGS)) {
-                            BlockPos leaf = findObstructingLeaf(currentGoal);
-                            if (leaf != null) {
-                                System.out.printf("[AMB-FOLIAGE] %s log at %s obstructed by leaf at %s — clearing foliage%n",
-                                    getName().getString(), currentGoal, leaf);
-                                foliageClearTarget = leaf;
-                                reachTarget = leaf;
-                                reachState = level().getBlockState(leaf);
-                            } else {
-                                foliageClearTarget = BlockPos.ZERO;
+                        BlockPos obs = findSolidObstruction(currentGoal);
+                        if (obs != null) {
+                            BlockState obsState = level().getBlockState(obs);
+                            if (obsState.getDestroySpeed(level(), obs) < 0) {
+                                System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
+                                    getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
+                                unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
+                                currentGoal = BlockPos.ZERO;
+                                executeCurrentTask();
+                                return;
                             }
+                            System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by %s at %s — clearing first%n",
+                                getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
+                            foliageClearTarget = obs;
+                            reachTarget = obs;
+                            reachState = obsState;
+                        } else {
+                            foliageClearTarget = BlockPos.ZERO;
                         }
                         RealisticActions.equipBestTool(this, reachState);
                         RealisticActions.startMining(this, reachTarget, miningState);
@@ -1291,7 +1303,7 @@ public class AmbNpcEntity extends FakePlayer {
                 // the mining-start check re-fires next tick and either finds another leaf or
                 // starts mining the (now unobstructed) log.
                 if (!foliageClearTarget.equals(BlockPos.ZERO)) {
-                    System.out.printf("[AMB-FOLIAGE] %s cleared leaf at %s — reevaluating access to log at %s%n",
+                    System.out.printf("[AMB-OBSTRUCT] %s cleared obstruction at %s — reevaluating access to %s%n",
                         getName().getString(), foliageClearTarget, currentGoal);
                     foliageClearTarget = BlockPos.ZERO;
                     if (pillarPhase == PillarPhase.MINING) {
@@ -3155,6 +3167,35 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
+     * General-purpose obstruction check: ray-march from the bot's eye to the target block.
+     * Returns the first block on the ray that is solid (canOcclude OR leaves) and is NOT
+     * the target itself. Returns null when the target is directly accessible.
+     *
+     * Replaces the leaf-only findObstructingLeaf() for all mining operations so the bot
+     * cannot break blocks through intervening terrain (stone, dirt, other logs, etc.).
+     */
+    private BlockPos findSolidObstruction(BlockPos target) {
+        Vec3 from = new Vec3(getX(), getEyeY(), getZ());
+        Vec3 to   = Vec3.atCenterOf(target);
+        Vec3 delta = to.subtract(from);
+        double totalDist = delta.length();
+        if (totalDist < 0.5) return null;
+
+        Vec3 stepVec = delta.normalize().scale(0.5);
+        int maxSteps = (int)(totalDist / 0.5) + 2;
+        for (int i = 1; i <= maxSteps; i++) {
+            Vec3 pos = from.add(stepVec.x * i, stepVec.y * i, stepVec.z * i);
+            BlockPos check = BlockPos.containing(pos);
+            if (check.equals(target)) return null; // first solid hit is the target — accessible
+            BlockState bs = level().getBlockState(check);
+            if (bs.canOcclude() || bs.is(BlockTags.LEAVES)) {
+                return check;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Fix C: Find the lowest leaf block in the column directly above the bot (within maxHeight).
      * Used to clear leaves before and during pillar jumps so they don't cap the jump arc.
      */
@@ -3618,8 +3659,10 @@ public class AmbNpcEntity extends FakePlayer {
         boolean hasAnyPick   = hasWoodPick || hasStonePick;
         int cobble = countItemInInventory(Items.COBBLESTONE);
 
-        // Stage 1: Have enough wood for table + tools but no pickaxe → craft
-        if (!hasAnyPick && woodEquiv >= 12) {
+        // Stage 1: Have enough wood for table + tools but no pickaxe → craft.
+        // Threshold 16 (4 logs) matches ensureCraftingTableAvailable's 16-plank requirement:
+        // table(4) + sticks(2) + pick(3+2sticks) + axe(3+2sticks) + sword(2+1stick) = 16 planks.
+        if (!hasAnyPick && woodEquiv >= 16) {
             System.out.printf("[AMB-PROG] %s stage=NEED_TOOLS wood=%d — switching gather_wood→craft%n",
                 getName().getString(), woodEquiv);
             return "craft";
@@ -3833,10 +3876,14 @@ public class AmbNpcEntity extends FakePlayer {
                     pathRetryTimer = 0;
                     System.out.println("[AMB] " + getName().getString() + " navigating to crafting table at " + knownCraftingTable);
                 } else {
-                    // No table and can't place one yet (not enough planks) — retry soon
+                    // No table and can't place one yet (not enough planks) — fall back to gathering
+                    // so the bot doesn't spin idle waiting for materials it can't get in craft mode.
+                    int haveWoodEquiv = countLogsInInventory() * 4 + countTotalPlanks();
+                    System.out.printf("[AMB-STALL] %s craft: no table, woodEquiv=%d < 16 — falling back to gather_wood%n",
+                        getName().getString(), haveWoodEquiv);
+                    currentTask = "gather_wood";
                     currentGoal = BlockPos.ZERO;
-                    goalLockTimer = 60;
-                    System.out.println("[AMB] " + getName().getString() + " no crafting table available yet, need more planks");
+                    executeCurrentTask();
                 }
             }
             default -> {
