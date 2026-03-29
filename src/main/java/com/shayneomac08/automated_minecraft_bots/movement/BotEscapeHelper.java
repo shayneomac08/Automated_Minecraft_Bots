@@ -35,6 +35,14 @@ public class BotEscapeHelper {
     private int enclosedTicks = 0;
     private static final int ENCLOSE_CONFIRM_TICKS  = 60;   // 3 s continuously enclosed
 
+    // Structure protection — ticks spent encountering ONLY protected blocks while trying to escape.
+    // After EMERGENCY_BREAK_THRESHOLD ticks, emergency breaks are authorized as a last resort.
+    // All emergency breaks are recorded in the bot's repairQueue for post-escape restoration.
+    private int protectedBlocksTicks = 0;
+    private static final int EMERGENCY_BREAK_THRESHOLD = 200; // 10 s of failing non-destructively
+    // Track whether DIG_HORIZONTAL has been tried from the current DIG_UP activation.
+    private boolean hasTriedHorizontal = false;
+
     public BotEscapeHelper(AmbNpcEntity bot) {
         this.bot = bot;
     }
@@ -169,6 +177,25 @@ public class BotEscapeHelper {
                 BlockState aboveState = level.getBlockState(above);
 
                 if (!aboveState.isAir()) {
+                    if (!BotNavigationHelper.isNaturalTerrainBlock(aboveState)) {
+                        // Protected (player-placed) block above — only break as a last resort
+                        protectedBlocksTicks++;
+                        if (protectedBlocksTicks < EMERGENCY_BREAK_THRESHOLD) {
+                            System.out.printf("[ESCAPE] %s DIG_UP: protected %s above at %s — avoiding (%d/%d). Trying horizontal.%n",
+                                bot.getName().getString(), aboveState.getBlock().getName().getString(),
+                                above, protectedBlocksTicks, EMERGENCY_BREAK_THRESHOLD);
+                            if (!hasTriedHorizontal) {
+                                hasTriedHorizontal = true;
+                                transitionTo(Phase.DIG_HORIZONTAL);
+                            }
+                            // else: already tried horizontal, just wait for emergency threshold
+                            return true;
+                        }
+                        // Emergency authorized after extended failed escape
+                        System.out.printf("[ESCAPE] %s EMERGENCY BREAK authorized: %s at %s — adding to repair queue%n",
+                            bot.getName().getString(), aboveState.getBlock().getName().getString(), above);
+                        bot.recordEmergencyBreak(above, aboveState, "DIG_UP escape (last resort)");
+                    }
                     bot.gameMode.destroyBlock(above);
                     digProgress++;
                     System.out.println("[ESCAPE] " + bot.getName().getString()
@@ -200,14 +227,26 @@ public class BotEscapeHelper {
                     return true;
                 }
 
-                // Find a dig target in a cardinal direction toward open sky
+                // Find a dig target — only use protected blocks if emergency is authorized
+                boolean emergencyAllowed = protectedBlocksTicks >= EMERGENCY_BREAK_THRESHOLD;
                 if (digTarget == null || level.getBlockState(digTarget).isAir()) {
-                    digTarget = findHorizontalDigTarget(level);
+                    digTarget = findHorizontalDigTarget(level, emergencyAllowed);
                 }
 
                 if (digTarget != null) {
                     BlockState state = level.getBlockState(digTarget);
                     if (!state.isAir()) {
+                        if (!BotNavigationHelper.isNaturalTerrainBlock(state)) {
+                            // Protected block — must be emergency-authorized to reach here
+                            System.out.printf("[ESCAPE] %s EMERGENCY horizontal break: %s at %s — adding to repair queue%n",
+                                bot.getName().getString(), state.getBlock().getName().getString(), digTarget);
+                            bot.recordEmergencyBreak(digTarget, state, "DIG_HORIZONTAL escape (last resort)");
+                            BlockPos digAbove = digTarget.above();
+                            BlockState aboveState = level.getBlockState(digAbove);
+                            if (!aboveState.isAir() && !BotNavigationHelper.isNaturalTerrainBlock(aboveState)) {
+                                bot.recordEmergencyBreak(digAbove, aboveState, "DIG_HORIZONTAL clearance (last resort)");
+                            }
+                        }
                         bot.gameMode.destroyBlock(digTarget);
                         // Also break the block above (2-tall clearance)
                         BlockPos digAbove = digTarget.above();
@@ -223,8 +262,15 @@ public class BotEscapeHelper {
                         digTarget = null; // Will re-evaluate next tick
                     }
                 } else {
-                    // No horizontal target found — fall back to dig up
-                    transitionTo(Phase.DIG_UP);
+                    // No natural exit found — accumulate ticks toward emergency threshold
+                    protectedBlocksTicks++;
+                    if (!emergencyAllowed) {
+                        System.out.printf("[ESCAPE] %s DIG_HORIZONTAL: no natural exit found (%d/%d toward emergency)%n",
+                            bot.getName().getString(), protectedBlocksTicks, EMERGENCY_BREAK_THRESHOLD);
+                    } else {
+                        // Emergency allowed but no target found at all — give up, fall back to DIG_UP
+                        transitionTo(Phase.DIG_UP);
+                    }
                 }
                 return true;
             }
@@ -244,13 +290,15 @@ public class BotEscapeHelper {
 
     /** Force-resets the escape helper (e.g., when the bot receives a new LLM task). */
     public void reset() {
-        phase        = Phase.IDLE;
-        exitTarget   = null;
-        digTarget    = null;
-        phaseTicks   = 0;
-        digProgress  = 0;
-        enclosedTicks = 0;
-        cooldownTicks = 0;
+        phase               = Phase.IDLE;
+        exitTarget          = null;
+        digTarget           = null;
+        phaseTicks          = 0;
+        digProgress         = 0;
+        enclosedTicks       = 0;
+        cooldownTicks       = 0;
+        protectedBlocksTicks = 0;
+        hasTriedHorizontal  = false;
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────
@@ -259,21 +307,30 @@ public class BotEscapeHelper {
         phase = next;
         phaseTicks = 0;
         digTarget = null;
+        if (next == Phase.DIG_UP) {
+            hasTriedHorizontal = false; // Fresh DIG_UP attempt — allow one horizontal fallback
+        }
 
         if (next == Phase.COMPLETE) {
             cooldownTicks = COMPLETE_HOLD_TICKS;
             enclosedTicks = 0;
             exitTarget = null;
             digProgress = 0;
+            protectedBlocksTicks = 0;
+            hasTriedHorizontal = false;
             bot.stopMovement();
         }
     }
 
     /**
-     * Finds the first solid block in a cardinal direction that, if broken,
-     * would move the bot closer to open sky.
+     * Finds the first solid block in a cardinal direction that, if broken, would move
+     * the bot closer to open sky.
+     *
+     * @param emergencyAllowed when false, protected (player-placed) blocks are skipped —
+     *                         only natural terrain blocks are returned as dig candidates.
+     *                         When true (emergency authorized), any solid block is returned.
      */
-    private BlockPos findHorizontalDigTarget(ServerLevel level) {
+    private BlockPos findHorizontalDigTarget(ServerLevel level, boolean emergencyAllowed) {
         net.minecraft.core.Direction[] cardinals = {
             net.minecraft.core.Direction.NORTH,
             net.minecraft.core.Direction.SOUTH,
@@ -289,7 +346,11 @@ public class BotEscapeHelper {
                 BlockState state = level.getBlockState(check);
 
                 if (!BotNavigationHelper.isPassableBlock(state)) {
-                    // This is a solid block to dig through
+                    // Solid block — check if we're allowed to break it
+                    if (!emergencyAllowed && !BotNavigationHelper.isNaturalTerrainBlock(state)) {
+                        // Protected block, emergency not authorized — skip this direction
+                        break;
+                    }
                     return check;
                 }
 

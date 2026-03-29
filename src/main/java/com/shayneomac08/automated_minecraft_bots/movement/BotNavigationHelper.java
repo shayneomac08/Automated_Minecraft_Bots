@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -234,6 +235,32 @@ public final class BotNavigationHelper {
     }
 
     // ── Shared helpers ────────────────────────────────────────────────────────
+
+    /**
+     * Returns true for blocks that are naturally generated in the world.
+     * Returns false for any block a player would craft or place as part of a structure.
+     *
+     * This is the single authoritative classification used by all break-permission checks
+     * across BotEscapeHelper, BotNavigationHelper (tryBreakPathBlock), and AmbNpcEntity
+     * (obstruction clearing, interior-exit wall counting).
+     *
+     * If this returns false, the block is treated as LIKELY_PROTECTED and must not be
+     * broken without emergency authorization and repair queuing.
+     */
+    public static boolean isNaturalTerrainBlock(BlockState state) {
+        net.minecraft.world.level.block.Block b = state.getBlock();
+        return b == Blocks.DIRT          || b == Blocks.GRASS_BLOCK  || b == Blocks.GRAVEL
+            || b == Blocks.SAND          || b == Blocks.RED_SAND      || b == Blocks.CLAY
+            || b == Blocks.MUD           || b == Blocks.DIRT_PATH     || b == Blocks.COARSE_DIRT
+            || b == Blocks.ROOTED_DIRT   || b == Blocks.PODZOL        || b == Blocks.MYCELIUM
+            || b == Blocks.SNOW          || b == Blocks.SNOW_BLOCK     || b == Blocks.ICE
+            || b == Blocks.PACKED_ICE    || b == Blocks.BLUE_ICE
+            || b == Blocks.STONE         || b == Blocks.DEEPSLATE      || b == Blocks.TUFF
+            || b == Blocks.GRANITE       || b == Blocks.DIORITE        || b == Blocks.ANDESITE
+            || b == Blocks.CALCITE       || b == Blocks.SMOOTH_BASALT
+            || state.is(BlockTags.LEAVES)
+            || state.is(BlockTags.LOGS); // tree logs = natural, not structural walls
+    }
 
     /**
      * A block is passable for navigation if it does not fully occlude,

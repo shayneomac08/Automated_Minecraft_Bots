@@ -202,6 +202,24 @@ public class AmbNpcEntity extends FakePlayer {
     // goal BlockPos → tick at which the blacklist entry expires
     private final java.util.Map<BlockPos, Integer> unreachableGoalBlacklist = new java.util.HashMap<>();
 
+    // ── Emergency break / structure repair ───────────────────────────────────
+    /**
+     * Records a protected block that was broken during an emergency escape so it can
+     * be restored afterward. Stored by BotEscapeHelper via recordEmergencyBreak().
+     */
+    public record EmergencyBreak(BlockPos pos, BlockState state, String reason) {}
+    private final List<EmergencyBreak> repairQueue = new ArrayList<>();
+
+    /**
+     * Called by BotEscapeHelper when it must break a protected block as a last resort.
+     * Records the block type/state so the bot can restore it after escaping.
+     */
+    public void recordEmergencyBreak(BlockPos pos, BlockState state, String reason) {
+        repairQueue.add(new EmergencyBreak(pos, state, reason));
+        System.out.printf("[AMB-REPAIR] %s emergency break queued: %s at %s — reason: %s (queue=%d)%n",
+            getName().getString(), state.getBlock().getName().getString(), pos, reason, repairQueue.size());
+    }
+
     // ── Progression self-advancement guard ──────────────────────────────────
     // Prevents re-entrant calls to evaluateProgressionTask() when it causes a
     // recursive call to executeCurrentTask().
@@ -763,14 +781,23 @@ public class AmbNpcEntity extends FakePlayer {
                         if (obs != null) {
                             BlockState obsState = level().getBlockState(obs);
                             if (obsState.getDestroySpeed(level(), obs) < 0) {
-                                System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
+                                System.out.printf("[AMB-PROTECTED] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
                                     getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
                                 unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
                                 currentGoal = BlockPos.ZERO;
                                 executeCurrentTask();
                                 return;
                             }
-                            System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by %s at %s — clearing first%n",
+                            if (!isNaturalTerrainBlock(obsState)) {
+                                // Protected/player-placed block is on the path — cannot casually mine through it.
+                                System.out.printf("[AMB-PROTECTED] %s target %s blocked by player-placed %s at %s — skipping, finding new target%n",
+                                    getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
+                                unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
+                                currentGoal = BlockPos.ZERO;
+                                executeCurrentTask();
+                                return;
+                            }
+                            System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by natural %s at %s — clearing first%n",
                                 getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
                             foliageClearTarget = obs;
                             startTarget = obs;
@@ -1184,6 +1211,27 @@ public class AmbNpcEntity extends FakePlayer {
             BlockState _preCheck = level().getBlockState(currentGoal);
             double arrivalDist = shouldMineBlock(_preCheck) ? 4.5 : 2.5;
             if (distToGoal < arrivalDist) {
+                // REPAIR QUEUE: if the current goal is a repair site, restore the block now
+                if (!repairQueue.isEmpty() && currentGoal.equals(repairQueue.get(0).pos)) {
+                    EmergencyBreak repair = repairQueue.get(0);
+                    BlockState atSite = level().getBlockState(repair.pos);
+                    if (atSite.isAir()) {
+                        level().setBlock(repair.pos, repair.state, 3);
+                        System.out.printf("[AMB-REPAIR] %s restored %s at %s — original reason: %s (remaining=%d)%n",
+                            getName().getString(), repair.state.getBlock().getName().getString(),
+                            repair.pos, repair.reason, repairQueue.size() - 1);
+                    } else {
+                        System.out.printf("[AMB-REPAIR] %s site %s already filled — skipping repair%n",
+                            getName().getString(), repair.pos);
+                    }
+                    repairQueue.remove(0);
+                    currentGoal = BlockPos.ZERO;
+                    if (repairQueue.isEmpty()) {
+                        broadcastGroupChat("Done restoring what I broke escaping. Sorry about that!");
+                    }
+                    return;
+                }
+
                 // Check if we should mine the block at goal
                 BlockState targetState = level().getBlockState(currentGoal);
                 if (shouldMineBlock(targetState)) {
@@ -1195,14 +1243,22 @@ public class AmbNpcEntity extends FakePlayer {
                         if (obs != null) {
                             BlockState obsState = level().getBlockState(obs);
                             if (obsState.getDestroySpeed(level(), obs) < 0) {
-                                System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
+                                System.out.printf("[AMB-PROTECTED] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
                                     getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
                                 unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
                                 currentGoal = BlockPos.ZERO;
                                 executeCurrentTask();
                                 return;
                             }
-                            System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by %s at %s — clearing first%n",
+                            if (!isNaturalTerrainBlock(obsState)) {
+                                System.out.printf("[AMB-PROTECTED] %s target %s blocked by player-placed %s at %s — skipping target%n",
+                                    getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
+                                unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
+                                currentGoal = BlockPos.ZERO;
+                                executeCurrentTask();
+                                return;
+                            }
+                            System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by natural %s at %s — clearing first%n",
                                 getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
                             foliageClearTarget = obs;
                             reachTarget = obs;
@@ -1260,7 +1316,15 @@ public class AmbNpcEntity extends FakePlayer {
                 // Clear stale seekingItem immediately
                 if (seekingItem != null && seekingItem.isRemoved()) seekingItem = null;
 
-                if (seekingItem != null) {
+                // REPAIR QUEUE takes priority — navigate to restore any emergency-broken blocks
+                if (!repairQueue.isEmpty()) {
+                    EmergencyBreak nextRepair = repairQueue.get(0);
+                    System.out.printf("[AMB-REPAIR] %s navigating to repair site at %s (%d block(s) to restore)%n",
+                        getName().getString(), nextRepair.pos, repairQueue.size());
+                    currentGoal = nextRepair.pos;
+                    currentPath.clear();
+                    pathIndex = 0;
+                } else if (seekingItem != null) {
                     // Still seeking — keep navigating to the item
                     currentGoal = seekingItem.blockPosition();
                     currentPath.clear();
@@ -3379,19 +3443,9 @@ public class AmbNpcEntity extends FakePlayer {
      * Returns true for naturally-generated terrain blocks that the bot may clear during navigation.
      * Never returns true for player-craftable/placeable blocks (planks, bricks, cobblestone, etc.)
      */
+    /** Delegates to the single authoritative classification in BotNavigationHelper. */
     private static boolean isNaturalTerrainBlock(BlockState bs) {
-        Block b = bs.getBlock();
-        return b == Blocks.DIRT || b == Blocks.GRASS_BLOCK || b == Blocks.GRAVEL
-            || b == Blocks.SAND || b == Blocks.RED_SAND || b == Blocks.CLAY
-            || b == Blocks.MUD || b == Blocks.DIRT_PATH || b == Blocks.COARSE_DIRT
-            || b == Blocks.ROOTED_DIRT || b == Blocks.PODZOL || b == Blocks.MYCELIUM
-            || b == Blocks.SNOW || b == Blocks.SNOW_BLOCK || b == Blocks.ICE
-            || b == Blocks.PACKED_ICE || b == Blocks.BLUE_ICE
-            || b == Blocks.STONE || b == Blocks.DEEPSLATE || b == Blocks.TUFF
-            || b == Blocks.GRANITE || b == Blocks.DIORITE || b == Blocks.ANDESITE
-            || b == Blocks.CALCITE || b == Blocks.SMOOTH_BASALT
-            || bs.is(BlockTags.LEAVES)
-            || bs.is(BlockTags.LOGS);  // tree logs are natural — not structural walls
+        return BotNavigationHelper.isNaturalTerrainBlock(bs);
     }
 
     /**
