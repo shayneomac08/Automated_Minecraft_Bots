@@ -84,6 +84,18 @@ public class AmbNpcEntity extends FakePlayer {
     /** Global queue of bots waiting to respawn. Survives entity removal. */
     public static final Queue<RespawnRequest> RESPAWN_QUEUE = new ConcurrentLinkedQueue<>();
 
+    // ==================== MULTI-BOT TARGET CLAIMING ====================
+    /**
+     * Cross-bot resource claim registry.
+     * Maps each claimed BlockPos to a long[2]: [0]=hashCode of owning bot name, [1]=expiry ms.
+     * Bots skip positions claimed by another bot when selecting their next harvest target,
+     * preventing multiple bots from dogpiling the same tree or stone outcrop.
+     */
+    private static final java.util.concurrent.ConcurrentHashMap<BlockPos, long[]> CLAIMED_TARGETS =
+            new java.util.concurrent.ConcurrentHashMap<>();
+    /** How long a claim is valid before it auto-expires (milliseconds). */
+    private static final long CLAIM_TTL_MS = 15_000L; // 15 seconds
+
     public static class RespawnRequest {
         public final String name;
         public final String llmGroup;
@@ -218,6 +230,44 @@ public class AmbNpcEntity extends FakePlayer {
         repairQueue.add(new EmergencyBreak(pos, state, reason));
         System.out.printf("[AMB-REPAIR] %s emergency break queued: %s at %s — reason: %s (queue=%d)%n",
             getName().getString(), state.getBlock().getName().getString(), pos, reason, repairQueue.size());
+    }
+
+    // ── Multi-bot target claiming helpers ─────────────────────────────────────
+
+    /**
+     * Claims a resource target for this bot, preventing peer bots from selecting the same block.
+     * Claims auto-expire after CLAIM_TTL_MS. Safe to call on every target selection.
+     */
+    private void claimTarget(BlockPos pos) {
+        if (pos == null || pos.equals(BlockPos.ZERO)) return;
+        long[] entry = new long[]{ (long) getName().getString().hashCode(), System.currentTimeMillis() + CLAIM_TTL_MS };
+        CLAIMED_TARGETS.put(pos, entry);
+        System.out.printf("[AMB-CLAIM] %s claimed target %s (active claims=%d)%n",
+            getName().getString(), pos, CLAIMED_TARGETS.size());
+    }
+
+    /**
+     * Releases any claim this bot holds on pos. Called when a goal is abandoned or mined.
+     */
+    private void releaseTarget(BlockPos pos) {
+        if (pos == null || pos.equals(BlockPos.ZERO)) return;
+        long[] entry = CLAIMED_TARGETS.get(pos);
+        if (entry != null && entry[0] == (long) getName().getString().hashCode()) {
+            CLAIMED_TARGETS.remove(pos);
+        }
+    }
+
+    /**
+     * Returns true if pos is currently claimed by a different bot (and the claim hasn't expired).
+     */
+    private boolean isClaimedByOther(BlockPos pos) {
+        long[] entry = CLAIMED_TARGETS.get(pos);
+        if (entry == null) return false;
+        if (entry[1] < System.currentTimeMillis()) {
+            CLAIMED_TARGETS.remove(pos); // expired — clean up
+            return false;
+        }
+        return entry[0] != (long) getName().getString().hashCode();
     }
 
     // ── Progression self-advancement guard ──────────────────────────────────
@@ -688,6 +738,21 @@ public class AmbNpcEntity extends FakePlayer {
                             System.out.println("[AMB-NAV] " + getName().getString() + " A* blocked — door rescue initiated toward " + doorPos);
                         }
                     }
+                    // At 3rd consecutive A* failure, try scanning for a lateral wall gap as a detour waypoint
+                    if (aStarFailCount == 3 && doorPhase == 0) {
+                        BlockPos gap = findLateralGap(currentGoal, 8);
+                        if (gap != null) {
+                            System.out.printf("[AMB-NAV] %s A* blocked — lateral gap found at %s, routing through it%n",
+                                getName().getString(), gap);
+                            // Route through the gap as a temporary intermediate waypoint
+                            currentPath = computeAStarPath(blockPosition(), gap);
+                            pathIndex = 0;
+                            if (!currentPath.isEmpty()) {
+                                pathRetryTimer = 0;
+                                // Don't increment aStarFailCount further this attempt
+                            }
+                        }
+                    }
                     if (aStarFailCount >= 5) {
                         // Don't abandon goal if we're actively mining the target (A* can't path to a solid block)
                         if (miningState.isMining &&
@@ -697,6 +762,7 @@ public class AmbNpcEntity extends FakePlayer {
                             aStarFailCount = 0;
                         } else {
                             System.out.println("[AMB-NAV] " + getName().getString() + " abandoning unreachable goal " + currentGoal + " after 5 A* failures");
+                            releaseTarget(currentGoal);
                             currentGoal = BlockPos.ZERO;
                             currentPath.clear();
                             aStarFailCount = 0;
@@ -1358,6 +1424,8 @@ public class AmbNpcEntity extends FakePlayer {
                 // world-drop → fly-to-bot animation.
                 System.out.printf("[AMB-HARVEST] %s broke block at %s — drops are world-spawned, awaiting natural pickup (10-tick delay)%n",
                     getName().getString(), minedPos);
+                // Release claim so peer bots can now target blocks in this same cluster
+                releaseTarget(minedPos);
                 // Clear stuck counters: a successful break is progress, not a stuck state.
                 stuckState.reset();
             }
@@ -3699,7 +3767,8 @@ public class AmbNpcEntity extends FakePlayer {
      *   1. No tools + enough wood → craft
      *   2. Wooden pickaxe but no stone pickaxe + low cobble → mine_stone
      *   3. Enough cobble but no stone pickaxe → craft (stone tools)
-     *   4. Otherwise → null (keep current task)
+     *   4. Stone pick obtained → mine_stone (keep being productive)
+     *   5. Otherwise → null (keep current task)
      */
     private String evaluateProgressionTask() {
         int logs   = countLogsInInventory();
@@ -3734,6 +3803,14 @@ public class AmbNpcEntity extends FakePlayer {
             System.out.printf("[AMB-PROG] %s stage=NEED_STONE_TOOLS cobble=%d — switching→craft%n",
                 getName().getString(), cobble);
             return "craft";
+        }
+
+        // Stage 4: Stone tools obtained — advance to mining stone (keep being productive).
+        // This prevents the bot from looping forever in the "craft" task after tools are done.
+        if (hasStonePick) {
+            System.out.printf("[AMB-PROG] %s stage=TOOLS_COMPLETE — advancing to mine_stone%n",
+                getName().getString());
+            return "mine_stone";
         }
 
         return null; // current task is appropriate
@@ -3916,6 +3993,21 @@ public class AmbNpcEntity extends FakePlayer {
             }
 
             case "craft", "place_crafting_table" -> {
+                // Guard: if progression says we should be doing something else (e.g. stone tools
+                // already crafted → mine_stone), switch immediately instead of looping to the table.
+                if (!inProgressionEval) {
+                    inProgressionEval = true;
+                    String nextTask = evaluateProgressionTask();
+                    inProgressionEval = false;
+                    if (nextTask != null && !"craft".equals(nextTask)) {
+                        System.out.printf("[AMB-PROG] %s craft: progression says %s — switching%n",
+                            getName().getString(), nextTask);
+                        currentTask = nextTask;
+                        executeCurrentTask();
+                        return;
+                    }
+                }
+
                 // Ensure a crafting table exists (find nearby, or craft one from planks and place it)
                 ensureCraftingTableAvailable(false);
 
@@ -4178,6 +4270,63 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     /**
+     * Scans laterally (perpendicular to the direction toward goal) for a 2-tall passable gap
+     * in the blocking wall, up to maxScan blocks to each side.
+     *
+     * When A* repeatedly fails because the direct path is blocked by a wall with only a narrow
+     * opening to the side, this method finds that opening so the bot can route through it as
+     * a detour waypoint instead of running headfirst into the wall.
+     *
+     * @param goal     the navigation goal the bot is trying to reach
+     * @param maxScan  how many blocks to scan laterally on each side (typically 8)
+     * @return a passable BlockPos adjacent to the wall opening, or null if none found
+     */
+    private BlockPos findLateralGap(BlockPos goal, int maxScan) {
+        if (!(level() instanceof ServerLevel sl)) return null;
+        BlockPos myPos = blockPosition();
+
+        // Approximate direction toward goal
+        double dx = goal.getX() - myPos.getX();
+        double dz = goal.getZ() - myPos.getZ();
+
+        // Primary move direction (dominant axis)
+        Direction forward;
+        Direction lateral;
+        if (Math.abs(dx) >= Math.abs(dz)) {
+            forward = dx > 0 ? Direction.EAST : Direction.WEST;
+            lateral = dz >= 0 ? Direction.SOUTH : Direction.NORTH;
+        } else {
+            forward = dz > 0 ? Direction.SOUTH : Direction.NORTH;
+            lateral = dx >= 0 ? Direction.EAST : Direction.WEST;
+        }
+
+        Direction lateralOpp = lateral.getOpposite();
+
+        // Scan forward a few steps then laterally on both sides to find a passable gap
+        for (int fwd = 1; fwd <= 4; fwd++) {
+            BlockPos fwdBase = myPos.relative(forward, fwd);
+            for (int side = 1; side <= maxScan; side++) {
+                // Check both left and right sides
+                for (Direction scanDir : new Direction[]{ lateral, lateralOpp }) {
+                    BlockPos candidate = fwdBase.relative(scanDir, side);
+                    BlockState feet = sl.getBlockState(candidate);
+                    BlockState head = sl.getBlockState(candidate.above());
+                    if (BotNavigationHelper.isPassableBlock(feet) && BotNavigationHelper.isPassableBlock(head)) {
+                        // Requires solid floor to stand on
+                        if (sl.getBlockState(candidate.below()).canOcclude()) {
+                            return candidate;
+                        }
+                    } else {
+                        // Solid wall — no gap in this lateral direction beyond here
+                        break;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Find the nearest block that is one of the specified block types.
      * Searches a y range of ±10, same as findNearestBlock(Block, int).
      * Used by mine_stone, mine_dirt, mine_ore task selection.
@@ -4198,11 +4347,14 @@ public class AmbNpcEntity extends FakePlayer {
                     if (!matches) continue;
                     // Skip goals that recently caused a jump loop (unbreakable terrain)
                     if (unreachableGoalBlacklist.getOrDefault(check, 0) > tickCount) continue;
+                    // Skip targets already claimed by a peer bot
+                    if (isClaimedByOther(check)) continue;
                     double dist = myPos.distSqr(check);
                     if (dist < nearestDist) { nearestDist = dist; nearest = check; }
                 }
             }
         }
+        if (nearest != null) claimTarget(nearest);
         return nearest;
     }
 
@@ -4222,6 +4374,8 @@ public class AmbNpcEntity extends FakePlayer {
                     if (!level().getBlockState(check).is(BlockTags.LOGS)) continue;
                     // Skip goals that recently caused a jump loop (unbreakable terrain between bot and block)
                     if (unreachableGoalBlacklist.getOrDefault(check, 0) > tickCount) continue;
+                    // Skip targets already claimed by a peer bot
+                    if (isClaimedByOther(check)) continue;
                     // Verify this log has leaves nearby (radius=10 catches tall trees)
                     if (!hasLeavesNearby(check, 10)) continue;
 
@@ -4234,6 +4388,7 @@ public class AmbNpcEntity extends FakePlayer {
                 }
             }
         }
+        if (nearest != null) claimTarget(nearest);
         return nearest;
     }
 
