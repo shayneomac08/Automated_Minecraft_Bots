@@ -270,6 +270,14 @@ public class AmbNpcEntity extends FakePlayer {
         return entry[0] != (long) getName().getString().hashCode();
     }
 
+    // ── Self-placed navigation blocks ────────────────────────────────────────
+    /**
+     * Tracks positions where the bot placed blocks as temporary navigation aids
+     * (via tryPlatformEscape). These must be excluded from harvest target searches
+     * to prevent the bot from chasing its own placed blocks as mining targets.
+     */
+    private final Set<BlockPos> selfPlacedNavigationBlocks = new HashSet<>();
+
     // ── Progression self-advancement guard ──────────────────────────────────
     // Prevents re-entrant calls to evaluateProgressionTask() when it causes a
     // recursive call to executeCurrentTask().
@@ -846,28 +854,47 @@ public class AmbNpcEntity extends FakePlayer {
                         BlockPos obs = findSolidObstruction(currentGoal);
                         if (obs != null) {
                             BlockState obsState = level().getBlockState(obs);
+                            // ── Obstruction legality — only leaves are auto-cleared. ────────────
+                            // Everything else (stone, dirt, player-placed, etc.) requires the bot
+                            // to reposition or find a different target. This prevents mining
+                            // through walls of any material, including natural stone walls.
                             if (obsState.getDestroySpeed(level(), obs) < 0) {
-                                System.out.printf("[AMB-PROTECTED] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
+                                System.out.printf("[AMB-ILLEGAL] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
                                     getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
                                 unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
                                 currentGoal = BlockPos.ZERO;
                                 executeCurrentTask();
                                 return;
                             }
-                            if (!isNaturalTerrainBlock(obsState)) {
-                                // Protected/player-placed block is on the path — cannot casually mine through it.
-                                System.out.printf("[AMB-PROTECTED] %s target %s blocked by player-placed %s at %s — skipping, finding new target%n",
+                            if (obsState.is(BlockTags.LEAVES)) {
+                                // Leaf foliage blocking access — safe to clear (tree canopy)
+                                System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by leaves %s at %s — clearing foliage%n",
                                     getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
+                                foliageClearTarget = obs;
+                                startTarget = obs;
+                                startState = obsState;
+                            } else if (obsState.is(BlockTags.LOGS) && "gather_wood".equals(currentTask)) {
+                                // Log obstructing another log during wood gathering — redirect to
+                                // the nearer log (trunk traversal) rather than trying to reach through
+                                System.out.printf("[AMB-OBSTRUCT] %s target log %s blocked by log at %s — redirecting to nearer log%n",
+                                    getName().getString(), currentGoal, obs);
+                                currentGoal = obs;
+                                currentPath.clear();
+                                pathIndex = 0;
+                                foliageClearTarget = BlockPos.ZERO;
+                                return;
+                            } else {
+                                // All other obstructions: natural stone/dirt/gravel or player-placed.
+                                // Never auto-clear — this would mine through walls, floors, and structures.
+                                System.out.printf("[AMB-ILLEGAL] %s target %s obstructed by %s at %s (%s) — blacklisting, finding new target%n",
+                                    getName().getString(), currentGoal,
+                                    obsState.getBlock().getName().getString(), obs,
+                                    isNaturalTerrainBlock(obsState) ? "natural-wall" : "player-placed");
                                 unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
                                 currentGoal = BlockPos.ZERO;
                                 executeCurrentTask();
                                 return;
                             }
-                            System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by natural %s at %s — clearing first%n",
-                                getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
-                            foliageClearTarget = obs;
-                            startTarget = obs;
-                            startState = obsState;
                         } else {
                             foliageClearTarget = BlockPos.ZERO;
                         }
@@ -1070,7 +1097,8 @@ public class AmbNpcEntity extends FakePlayer {
             // ── Jump-loop bail ────────────────────────────────────────────────────────
             // After JUMP_LOOP_LIMIT unproductive jumps, try practical escape options before
             // blacklisting — a human player would try to walk around or place a block first.
-            if (jumpsSinceProgress >= JUMP_LOOP_LIMIT && !currentGoal.equals(BlockPos.ZERO)) {
+            // Guard: skip when BotEscapeHelper is in control — it manages its own movement.
+            if (!exitingNow && jumpsSinceProgress >= JUMP_LOOP_LIMIT && !currentGoal.equals(BlockPos.ZERO)) {
                 LocalAwareness baleAw = captureLocalAwareness();
                 System.out.printf("[AMB-STUCK] %s jump-loop bail: jumps=%d goal=%s terrain=[%s]%n",
                     getName().getString(), jumpsSinceProgress, currentGoal, baleAw.summary);
@@ -1113,6 +1141,10 @@ public class AmbNpcEntity extends FakePlayer {
             if (tickCount % 400 == 0 && !unreachableGoalBlacklist.isEmpty()) {
                 int now = tickCount;
                 unreachableGoalBlacklist.entrySet().removeIf(e -> now >= e.getValue());
+            }
+            // Clean up self-placed navigation blocks that have been mined/broken already
+            if (tickCount % 200 == 0 && !selfPlacedNavigationBlocks.isEmpty()) {
+                selfPlacedNavigationBlocks.removeIf(pos -> level().getBlockState(pos).isAir());
             }
             // ─────────────────────────────────────────────────────────────────────────
 
@@ -1308,27 +1340,39 @@ public class AmbNpcEntity extends FakePlayer {
                         BlockPos obs = findSolidObstruction(currentGoal);
                         if (obs != null) {
                             BlockState obsState = level().getBlockState(obs);
+                            // Same leaf-only auto-clear rule as the primary reach check.
                             if (obsState.getDestroySpeed(level(), obs) < 0) {
-                                System.out.printf("[AMB-PROTECTED] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
+                                System.out.printf("[AMB-ILLEGAL] %s target %s blocked by unbreakable %s at %s — blacklisting%n",
                                     getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
                                 unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
                                 currentGoal = BlockPos.ZERO;
                                 executeCurrentTask();
                                 return;
                             }
-                            if (!isNaturalTerrainBlock(obsState)) {
-                                System.out.printf("[AMB-PROTECTED] %s target %s blocked by player-placed %s at %s — skipping target%n",
-                                    getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
+                            if (obsState.is(BlockTags.LEAVES)) {
+                                System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by leaves at %s — clearing foliage%n",
+                                    getName().getString(), currentGoal, obs);
+                                foliageClearTarget = obs;
+                                reachTarget = obs;
+                                reachState = obsState;
+                            } else if (obsState.is(BlockTags.LOGS) && "gather_wood".equals(currentTask)) {
+                                System.out.printf("[AMB-OBSTRUCT] %s target log %s blocked by log at %s — redirecting to nearer log%n",
+                                    getName().getString(), currentGoal, obs);
+                                currentGoal = obs;
+                                currentPath.clear();
+                                pathIndex = 0;
+                                foliageClearTarget = BlockPos.ZERO;
+                                return;
+                            } else {
+                                System.out.printf("[AMB-ILLEGAL] %s target %s obstructed by %s at %s (%s) — blacklisting%n",
+                                    getName().getString(), currentGoal,
+                                    obsState.getBlock().getName().getString(), obs,
+                                    isNaturalTerrainBlock(obsState) ? "natural-wall" : "player-placed");
                                 unreachableGoalBlacklist.put(currentGoal, tickCount + 400);
                                 currentGoal = BlockPos.ZERO;
                                 executeCurrentTask();
                                 return;
                             }
-                            System.out.printf("[AMB-OBSTRUCT] %s target %s blocked by natural %s at %s — clearing first%n",
-                                getName().getString(), currentGoal, obsState.getBlock().getName().getString(), obs);
-                            foliageClearTarget = obs;
-                            reachTarget = obs;
-                            reachState = obsState;
                         } else {
                             foliageClearTarget = BlockPos.ZERO;
                         }
@@ -1426,6 +1470,8 @@ public class AmbNpcEntity extends FakePlayer {
                     getName().getString(), minedPos);
                 // Release claim so peer bots can now target blocks in this same cluster
                 releaseTarget(minedPos);
+                // Also clear self-placed navigation tracking if we mined one of our own blocks
+                selfPlacedNavigationBlocks.remove(minedPos);
                 // Clear stuck counters: a successful break is progress, not a stuck state.
                 stuckState.reset();
             }
@@ -3390,6 +3436,14 @@ public class AmbNpcEntity extends FakePlayer {
         if (!(level() instanceof ServerLevel sl)) return false;
         if (currentGoal.equals(BlockPos.ZERO)) return false;
 
+        // Safety check: don't use platform blocks at all if already enclosed — the
+        // BotEscapeHelper handles structural escape and using blocks here causes self-trapping.
+        if (BotNavigationHelper.isEnclosed(sl, blockPosition())) {
+            System.out.printf("[AMB-PLATFORM] %s enclosed — platform escape suppressed (BotEscapeHelper should handle this)%n",
+                getName().getString());
+            return false;
+        }
+
         ItemStack buildStack = findPlaceableBlock();
         if (buildStack.isEmpty()) {
             System.out.printf("[AMB-PLATFORM] %s has no building blocks — platform escape skipped%n",
@@ -3413,35 +3467,43 @@ public class AmbNpcEntity extends FakePlayer {
         for (Direction dir : tryDirs) {
             BlockPos adj = me.relative(dir);
 
-            // Case 1: place at adj (same Y) to fill a gap and create walkable surface
-            // Support below adj must be solid, and the space at adj and adj+1 must be clear
-            if (sl.getBlockState(adj).isAir() && sl.getBlockState(adj.below()).canOcclude()
-                    && sl.getBlockState(adj.above()).isAir()) {
-                sl.setBlock(adj, blockType.defaultBlockState(), 3);
-                buildStack.shrink(1);
-                System.out.printf("[AMB-PLATFORM] %s placed %s at %s (bridge at same-Y) dir=%s%n",
-                    getName().getString(), blockType.getName().getString(), adj, dir.getName());
-                if (onGround() && jumpCooldown == 0) { jumpFromGround(); jumpCooldown = 15; }
-                currentPath.clear(); pathIndex = 0;
-                return true;
+            // Case 1 only: place at adj (same Y) to fill a gap and create walkable surface.
+            // Requirements: adj must be air, support below adj solid, head clearance above adj clear.
+            // Case 2 (place atop wall at head level) is REMOVED — it places blocks at head height
+            // adjacent to the bot, blocking movement in that direction and causing self-enclosure.
+            if (!sl.getBlockState(adj).isAir()) continue;
+            if (!sl.getBlockState(adj.below()).canOcclude()) continue;
+            if (!sl.getBlockState(adj.above()).isAir()) continue;
+
+            // Placement safety: after placing here, verify the bot still has at least one
+            // other adjacent direction that is passable (2-tall). This prevents the last
+            // exit being blocked off and creating a 1×1 prison.
+            int remainingExits = 0;
+            for (Direction checkDir : new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST}) {
+                if (checkDir == dir) continue; // the direction being filled
+                BlockPos checkAdj = me.relative(checkDir);
+                if (BotNavigationHelper.isPassableBlock(sl.getBlockState(checkAdj))
+                        && BotNavigationHelper.isPassableBlock(sl.getBlockState(checkAdj.above()))) {
+                    remainingExits++;
+                }
+            }
+            if (remainingExits == 0) {
+                System.out.printf("[AMB-PLATFORM] %s safety reject: placing at %s would leave 0 exits — skipping dir=%s%n",
+                    getName().getString(), adj, dir.getName());
+                continue;
             }
 
-            // Case 2: place at adj.above() to create an elevated step
-            // (useful when adjacent is solid wall and there's air one block above it)
-            BlockPos adjUp = adj.above();
-            if (sl.getBlockState(adjUp).isAir() && sl.getBlockState(adj).canOcclude()
-                    && sl.getBlockState(adjUp.above()).isAir()) {
-                sl.setBlock(adjUp, blockType.defaultBlockState(), 3);
-                buildStack.shrink(1);
-                System.out.printf("[AMB-PLATFORM] %s placed %s at %s (step atop wall) dir=%s%n",
-                    getName().getString(), blockType.getName().getString(), adjUp, dir.getName());
-                if (onGround() && jumpCooldown == 0) { jumpFromGround(); jumpCooldown = 15; }
-                currentPath.clear(); pathIndex = 0;
-                return true;
-            }
+            sl.setBlock(adj, blockType.defaultBlockState(), 3);
+            buildStack.shrink(1);
+            selfPlacedNavigationBlocks.add(adj); // Track so harvest searches skip this block
+            System.out.printf("[AMB-PLATFORM] %s placed %s at %s (bridge at same-Y) dir=%s exits_remaining=%d%n",
+                getName().getString(), blockType.getName().getString(), adj, dir.getName(), remainingExits);
+            if (onGround() && jumpCooldown == 0) { jumpFromGround(); jumpCooldown = 15; }
+            currentPath.clear(); pathIndex = 0;
+            return true;
         }
 
-        System.out.printf("[AMB-PLATFORM] %s no valid platform spot in any direction — giving up%n",
+        System.out.printf("[AMB-PLATFORM] %s no safe platform spot — giving up%n",
             getName().getString());
         return false;
     }
@@ -4349,6 +4411,8 @@ public class AmbNpcEntity extends FakePlayer {
                     if (unreachableGoalBlacklist.getOrDefault(check, 0) > tickCount) continue;
                     // Skip targets already claimed by a peer bot
                     if (isClaimedByOther(check)) continue;
+                    // Skip blocks the bot itself placed as temporary navigation aids
+                    if (selfPlacedNavigationBlocks.contains(check)) continue;
                     double dist = myPos.distSqr(check);
                     if (dist < nearestDist) { nearestDist = dist; nearest = check; }
                 }

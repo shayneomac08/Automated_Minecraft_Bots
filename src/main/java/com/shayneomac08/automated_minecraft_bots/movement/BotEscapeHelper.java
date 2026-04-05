@@ -201,8 +201,15 @@ public class BotEscapeHelper {
                     System.out.println("[ESCAPE] " + bot.getName().getString()
                             + " digging up at " + above + " (block " + digProgress + ")");
                 } else {
-                    // Air above — jump/move upward
-                    bot.jumpFromGround();
+                    // Air above — move upward.
+                    // CRITICAL: only apply jump impulse when grounded. jumpFromGround() has no
+                    // internal onGround check, so calling it every tick while airborne stacks
+                    // 0.42 upward impulse every tick → bot "flies" upward indefinitely.
+                    if (bot.onGround()) {
+                        System.out.printf("[ESCAPE] %s DIG_UP: air above, jumping from ground%n",
+                            bot.getName().getString());
+                        bot.jumpFromGround();
+                    }
                     bot.setMoveTarget(
                         net.minecraft.world.phys.Vec3.atCenterOf(above), 0.1f
                     );
