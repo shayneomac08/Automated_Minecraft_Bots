@@ -270,6 +270,15 @@ public class AmbNpcEntity extends FakePlayer {
         return entry[0] != (long) getName().getString().hashCode();
     }
 
+    // ── Recent-position breadcrumbs (backtrack / local escape) ───────────────
+    /**
+     * Rolling buffer of the last BREADCRUMB_MAX positions where the bot had ≥2 walkable
+     * exits and was not stuck. Used to backtrack to an open space when trapped in a pocket.
+     * Most-recent position is at the front of the deque.
+     */
+    private final java.util.ArrayDeque<BlockPos> recentOpenPositions = new java.util.ArrayDeque<>();
+    private static final int BREADCRUMB_MAX = 12;
+
     // ── Self-placed navigation blocks ────────────────────────────────────────
     /**
      * Tracks positions where the bot placed blocks as temporary navigation aids
@@ -660,6 +669,20 @@ public class AmbNpcEntity extends FakePlayer {
                 stuckState.stuckTicks,
                 pathIndex, currentPath.size(),
                 awareness.summary);
+
+            // Breadcrumb recording: when the bot has ≥2 walkable exits and is not escaping,
+            // record this position as a known-open space.  Used by jump-loop bail Option R
+            // to retreat to an accessible position when the bot gets pocket-trapped.
+            if (!exitingNow && awareness.walkableExitCount >= 2 && noProgressTicks < 20) {
+                BlockPos here = blockPosition();
+                // Only add if not already the most recent entry (dedup adjacent ticks)
+                if (recentOpenPositions.isEmpty() || !recentOpenPositions.peekFirst().equals(here)) {
+                    recentOpenPositions.addFirst(here);
+                    if (recentOpenPositions.size() > BREADCRUMB_MAX) {
+                        recentOpenPositions.pollLast();
+                    }
+                }
+            }
         }
 
         // CRITICAL SURVIVAL - Eat if hungry
@@ -1125,16 +1148,48 @@ public class AmbNpcEntity extends FakePlayer {
                     System.out.printf("[AMB-STUCK] %s escape C: lateral strafe %s for 25 ticks%n",
                         getName().getString(), avoidDir > 0 ? "right" : "left");
                 } else {
-                    // Option D: nothing worked — blacklist this goal
-                    System.out.printf("[AMB-STUCK] %s escape D: all options failed — blacklisting %s for 60s%n",
-                        getName().getString(), currentGoal);
-                    unreachableGoalBlacklist.put(currentGoal, tickCount + GOAL_BLACKLIST_TICKS);
-                    currentGoal = BlockPos.ZERO;
-                    currentPath.clear();
-                    jumpsSinceProgress = 0;
-                    stopMovement();
-                    executeCurrentTask();
-                    return;
+                    // Option L: pocket leaf — if exits are limited and adjacent leaves exist,
+                    // clear one to open a passage.  Common fix when the bot is surrounded by
+                    // canopy on all sides and can't jump out.
+                    BlockPos adjLeaf = findAdjacentLeaf();
+                    if (adjLeaf != null && navBreakCooldown == 0 && baleAw.walkableExitCount < 2) {
+                        System.out.printf("[AMB-STUCK] %s escape L: clearing adjacent leaf at %s (exits=%d)%n",
+                            getName().getString(), adjLeaf, baleAw.walkableExitCount);
+                        RealisticActions.equipBestTool(this, level().getBlockState(adjLeaf));
+                        this.gameMode.destroyBlock(adjLeaf);
+                        navBreakCooldown = 10;
+                        jumpsSinceProgress = 0;
+                        noProgressTicks = 0;
+                    } else if (!recentOpenPositions.isEmpty()) {
+                        // Option R: retreat to the most recent breadcrumb where the bot had
+                        // open space.  This un-traps the bot from a pocket by backtracking
+                        // along the path it used to enter.
+                        BlockPos crumb = recentOpenPositions.peekFirst();
+                        System.out.printf("[AMB-STUCK] %s escape R: retreating to breadcrumb %s (crumbs=%d)%n",
+                            getName().getString(), crumb, recentOpenPositions.size());
+                        // Set the crumb as the new goal rather than overwriting currentGoal directly,
+                        // so normal A* navigation drives the retreat.
+                        BlockPos originalGoal = currentGoal;
+                        currentGoal = crumb;
+                        currentPath = computeAStarPath(blockPosition(), crumb);
+                        pathIndex = 0;
+                        jumpsSinceProgress = 0;
+                        noProgressTicks = 0;
+                        // After reaching the crumb, executeCurrentTask() will re-choose the real goal.
+                        // Blacklist the original goal briefly so it's not immediately re-selected.
+                        unreachableGoalBlacklist.put(originalGoal, tickCount + 200);
+                    } else {
+                        // Option D: nothing worked — blacklist this goal
+                        System.out.printf("[AMB-STUCK] %s escape D: all options failed — blacklisting %s for 60s%n",
+                            getName().getString(), currentGoal);
+                        unreachableGoalBlacklist.put(currentGoal, tickCount + GOAL_BLACKLIST_TICKS);
+                        currentGoal = BlockPos.ZERO;
+                        currentPath.clear();
+                        jumpsSinceProgress = 0;
+                        stopMovement();
+                        executeCurrentTask();
+                        return;
+                    }
                 }
             }
             // Expire old blacklist entries every 20 seconds
@@ -1516,11 +1571,23 @@ public class AmbNpcEntity extends FakePlayer {
                             if (level().getBlockState(above).canOcclude()) break;
                         }
                         if (nextLog != null) {
-                            System.out.printf("[AMB-WOOD] %s trunk follow: next log at %s (was %s)%n",
-                                getName().getString(), nextLog, currentGoal);
-                            currentGoal = nextLog;
-                            currentPath.clear();
-                            pathIndex = 0;
+                            // Height limit: don't follow trunk if the next log is more than 4 blocks
+                            // above the bot's current feet position.  A log that high requires pillar
+                            // climbing and the bot may already be in a canopy pocket — better to search
+                            // for a reachable ground-level log instead.
+                            int nextLogAboveBot = nextLog.getY() - blockPosition().getY();
+                            if (nextLogAboveBot > 4) {
+                                System.out.printf("[AMB-WOOD] %s trunk follow: next log at %s is %d blocks up — height limit, searching new tree%n",
+                                    getName().getString(), nextLog, nextLogAboveBot);
+                                currentGoal = BlockPos.ZERO;
+                                executeCurrentTask();
+                            } else {
+                                System.out.printf("[AMB-WOOD] %s trunk follow: next log at %s (was %s, +%d Y)%n",
+                                    getName().getString(), nextLog, currentGoal, nextLogAboveBot);
+                                currentGoal = nextLog;
+                                currentPath.clear();
+                                pathIndex = 0;
+                            }
                         } else {
                             System.out.printf("[AMB-WOOD] %s trunk exhausted at %s — searching for new tree%n",
                                 getName().getString(), currentGoal);
@@ -3527,6 +3594,24 @@ public class AmbNpcEntity extends FakePlayer {
         return ItemStack.EMPTY;
     }
 
+    /**
+     * Scan 2 blocks in each cardinal direction (plus one block up) for leaf blocks.
+     * Returns the first leaf found, or null.  Used by jump-loop bail Option L to clear
+     * leaf obstructions that are trapping the bot in a canopy pocket.
+     */
+    private BlockPos findAdjacentLeaf() {
+        BlockPos botPos = blockPosition();
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            for (int dist = 1; dist <= 2; dist++) {
+                BlockPos check = botPos.relative(dir, dist);
+                if (level().getBlockState(check).is(BlockTags.LEAVES)) return check;
+                BlockPos checkAbove = check.above();
+                if (level().getBlockState(checkAbove).is(BlockTags.LEAVES)) return checkAbove;
+            }
+        }
+        return null;
+    }
+
     private void tryBreakPathBlock(int wpDY) {
         if (!(level() instanceof ServerLevel sl)) return;
         if (navBreakCooldown > 0) return; // wait for previous break to "complete"
@@ -4443,10 +4528,15 @@ public class AmbNpcEntity extends FakePlayer {
                     // Verify this log has leaves nearby (radius=10 catches tall trees)
                     if (!hasLeavesNearby(check, 10)) continue;
 
-                    // Pure 3D distance: prefers literally closest log regardless of direction
-                    double dist = Math.sqrt((double)(x * x + y * y + z * z));
-                    if (dist < nearestDist) {
-                        nearestDist = dist;
+                    // Height-penalized score: each block upward costs 3× a horizontal block.
+                    // This strongly prefers same-level or lower logs over high canopy logs,
+                    // preventing the bot from committing to an unreachable high trunk when
+                    // accessible ground-level logs exist.
+                    int heightAboveBot = Math.max(0, y);
+                    double horzDist = Math.sqrt((double)(x * x + z * z));
+                    double score = horzDist + heightAboveBot * 3.0;
+                    if (score < nearestDist) {
+                        nearestDist = score;
                         nearest = check;
                     }
                 }
