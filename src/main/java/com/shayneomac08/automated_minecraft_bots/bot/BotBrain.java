@@ -498,6 +498,67 @@ public final class BotBrain {
         st.lastError = "";
     }
 
+    /**
+     * Classify the conversational tone of a message on a 5-point scale.
+     * Uses simple keyword heuristics on the message and up to the last 3 history lines.
+     * Returns one of: "hostile", "rude", "playful", "friendly", "neutral".
+     */
+    private static String classifyUserTone(String message, List<String> history) {
+        // Combine current message with last 3 chat lines for trend awareness
+        StringBuilder ctx = new StringBuilder(message.toLowerCase());
+        int start = Math.max(0, history.size() - 3);
+        for (int i = start; i < history.size(); i++) {
+            ctx.append(' ').append(history.get(i).toLowerCase());
+        }
+        String lower = ctx.toString();
+
+        // Strong hostility
+        if (lower.contains("fuck off") || lower.contains("kill yourself")
+                || lower.contains("die") && (lower.contains("you") || lower.contains("bot"))
+                || lower.contains("piece of shit") || lower.contains("worthless")
+                || lower.contains("trash bot") || lower.contains("scrap") && lower.contains("you")) {
+            return "hostile";
+        }
+        // Mild rudeness
+        if (lower.contains("stupid") || lower.contains("dumb") || lower.contains("useless")
+                || lower.contains("idiot") || lower.contains("moron") || lower.contains("awful")
+                || lower.contains("worst") || lower.contains("sucks") || lower.contains("garbage")) {
+            return "rude";
+        }
+        // Playful / joking
+        if (lower.contains("lol") || lower.contains("lmao") || lower.contains("haha")
+                || lower.contains("xd") || lower.contains(";)") || lower.contains(":p")
+                || lower.contains("jk") || lower.contains("just kidding")) {
+            return "playful";
+        }
+        // Friendly / cooperative
+        if (lower.contains("please") || lower.contains("thank") || lower.contains("could you")
+                || lower.contains("would you") || lower.contains("help me") || lower.contains("nice")
+                || lower.contains("great") || lower.contains("awesome") || lower.contains("good job")
+                || lower.contains("love") && lower.contains("you")) {
+            return "friendly";
+        }
+        return "neutral";
+    }
+
+    /**
+     * Build a tone-proportional instruction string for the chat prompt.
+     * Personality is preserved; this CONSTRAINS unprovoked aggression while allowing
+     * proportional edge when the user earns it.
+     */
+    private static String buildToneInstruction(String toneClass) {
+        return switch (toneClass) {
+            case "hostile"  -> "The player is being outright hostile. Proportional pushback, sarcasm, or " +
+                               "matching directness is acceptable. Don't hold back, but don't spiral into endless insults.";
+            case "rude"     -> "The player is being somewhat rude. Be terse, blunt, or mildly annoyed. " +
+                               "Don't be aggressively hostile — just clearly unimpressed.";
+            case "playful"  -> "The player is joking around. Match the energy: banter, be light, play along.";
+            case "friendly" -> "The player is being friendly or cooperative. Respond warmly and helpfully.";
+            default         -> "The player is speaking neutrally or practically. Respond helpfully and matter-of-factly. " +
+                               "Do NOT be hostile, aggressive, or rude — there is no justification for it.";
+        };
+    }
+
     private static String norm(String s) {
         return (s == null) ? "" : s.trim().toLowerCase();
     }
@@ -567,15 +628,25 @@ public final class BotBrain {
 
                 // Get personality based on LLM type (HUMAN-LIKE FEATURE)
                 String personality = switch (st.llmProvider) {
-                    case GROK   -> "Be sassy and funny. Say 'fuck' sometimes. You're a rebellious bot.";
+                    case GROK   -> "Be sassy and funny. You're a rebellious, sharp-tongued bot.";
                     case GEMINI -> "Be friendly and optimistic. You love helping and exploring.";
                     case CLAUDE -> "Be thoughtful and precise. You reason carefully before acting.";
                     case OLLAMA -> "Be concise and direct. You prefer simple, efficient actions.";
                     case OPENAI -> "Be polite and helpful. You're professional and efficient.";
                 };
 
+                // Classify the player's tone and build a proportional response instruction.
+                // This prevents unprovoked hostility: the bot only gets sharp/aggressive
+                // when the player actually earns it. Tone is evaluated on recent history too.
+                String toneClass = classifyUserTone(command, st.chatHistory);
+                String toneInstruction = buildToneInstruction(toneClass);
+                System.out.printf("[AMB-TONE] %s: user-tone=%s provider=%s%n",
+                    botName, toneClass, st.llmProvider.name());
+
                 String prompt = "You are " + botName + ", an autonomous AI entity in Minecraft.\n" +
                         "PERSONALITY: " + personality + "\n\n" +
+                        "TONE RULE (mandatory — overrides default style):\n" +
+                        toneInstruction + "\n\n" +
                         "A player named '" + sender + "' just said: \"" + command + "\"\n\n" +
                         verificationContext + "\n" +
                         "You have free will and can choose whether to obey commands. Consider:\n" +

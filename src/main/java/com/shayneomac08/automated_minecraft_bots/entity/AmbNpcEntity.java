@@ -126,6 +126,8 @@ public class AmbNpcEntity extends FakePlayer {
     public BlockPos baseLocation = BlockPos.ZERO;
     public BlockPos knownCraftingTable = BlockPos.ZERO;
     private boolean craftingTableSelfPlaced = false; // true if this bot placed the table (so it can pick it up)
+    /** Consecutive "craft" task invocations that ended without a usable table found or placed. */
+    private int craftStallCount = 0;
 
     // Legacy compatibility fields
     private boolean brainEnabled = true;
@@ -2718,14 +2720,20 @@ public class AmbNpcEntity extends FakePlayer {
         }
 
         if (knownCraftingTable.equals(BlockPos.ZERO)) {
-            // search nearby
-            BlockPos found = findNearestBlockExact(Blocks.CRAFTING_TABLE, 12);
+            // Search up to 24 blocks horizontally, ±5 vertically — catches tables placed by
+            // players anywhere on the same floor or on nearby elevated surfaces.
+            System.out.printf("[AMB-STATION] %s searching for crafting table (radius=24, dy=-5..+8)...%n",
+                getName().getString());
+            BlockPos found = findNearestTableWide();
             if (found != null) {
                 knownCraftingTable = found;
-                System.out.printf("[AMB-STATION] %s found existing crafting table at %s%n",
-                    getName().getString(), found);
+                System.out.printf("[AMB-STATION] %s found existing crafting table at %s (dist=%.1f)%n",
+                    getName().getString(), found,
+                    Math.sqrt(blockPosition().distSqr(found)));
+                craftStallCount = 0;
                 return;
             }
+            System.out.printf("[AMB-STATION] %s no crafting table found in range%n", getName().getString());
 
             int planks = countTotalPlanks();
             int tableInInv = getInventory().countItem(Blocks.CRAFTING_TABLE.asItem());
@@ -2751,19 +2759,28 @@ public class AmbNpcEntity extends FakePlayer {
                 // Place table 5-8 blocks away so the bot must visibly walk to it before crafting.
                 // The craft threshold is closerThan(2.0), so 5+ blocks guarantees movement.
                 BlockPos place = findPlacementAway(5, 8);
-                if (place == null) place = findPlacementNear(blockPosition(), 3); // fallback: closer if terrain is cramped
+                // Fallback 1: within 6 blocks (cramped terrain)
+                if (place == null) place = findPlacementNear(blockPosition(), 6);
+                // Fallback 2: directly at feet+1 in the facing direction (last resort, guaranteed placement)
+                if (place == null) {
+                    BlockPos adj = blockPosition().relative(getDirection());
+                    if (level().getBlockState(adj).isAir() && level().getBlockState(adj.below()).canOcclude()) {
+                        place = adj;
+                    }
+                }
                 if (place != null) {
                     if (removeItems(Blocks.CRAFTING_TABLE.asItem(), 1) == 1) {
                         level().setBlock(place, Blocks.CRAFTING_TABLE.defaultBlockState(), 3);
                         knownCraftingTable = place;
                         craftingTableSelfPlaced = true; // remember we placed this so we can pick it up later
-                        System.out.printf("[AMB-STATION] %s placed crafting table at %s%n",
+                        craftStallCount = 0;
+                        System.out.printf("[AMB-STATION] %s placed crafting table at %s (stall reset)%n",
                             getName().getString(), place);
                         broadcastGroupChat("Placed a crafting table at " + place + ".");
                     }
                 } else {
-                    System.out.printf("[AMB-STATION] %s has table in inv but found no valid placement spot%n",
-                        getName().getString());
+                    System.out.printf("[AMB-STATION] %s has table in inv but found no valid placement spot — stall=%d%n",
+                        getName().getString(), craftStallCount);
                 }
             } else {
                 // Only redirect to placement area if bot has no active goal
@@ -2822,6 +2839,29 @@ public class AmbNpcEntity extends FakePlayer {
             }
         }
         return null;
+    }
+
+    /**
+     * Wide-radius crafting-table search: scans 24 blocks horizontally and -5..+8 vertically.
+     * Used by ensureCraftingTableAvailable() so player-placed tables on elevated surfaces or
+     * slightly different floor levels are always detected before the bot crafts its own.
+     */
+    private BlockPos findNearestTableWide() {
+        BlockPos best = null;
+        double bestD2 = Double.MAX_VALUE;
+        BlockPos c = blockPosition();
+        for (int dx = -24; dx <= 24; dx++) {
+            for (int dy = -5; dy <= 8; dy++) {
+                for (int dz = -24; dz <= 24; dz++) {
+                    BlockPos p = c.offset(dx, dy, dz);
+                    if (level().getBlockState(p).is(Blocks.CRAFTING_TABLE)) {
+                        double d2 = p.distSqr(c);
+                        if (d2 < bestD2) { bestD2 = d2; best = p; }
+                    }
+                }
+            }
+        }
+        return best;
     }
 
     private BlockPos findNearestBlockExact(Block block, int radius) {
@@ -2923,6 +2963,110 @@ public class AmbNpcEntity extends FakePlayer {
                 broadcastGroupChat("Crafted a stone axe!");
                 System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: stone_axe%n", botName);
                 cobble -= 3; sticks -= 2;
+            }
+        }
+
+        // === IRON TIER — upgrade tools when iron ingots are available ===
+        int iron = countItemInInventory(Items.IRON_INGOT);
+        sticks = countItemInInventory(Items.STICK);
+        if (sticks < 2 && countTotalPlanks() >= 2) {
+            if (removeAnyPlanks(2) == 2) { addToInventory(new ItemStack(Items.STICK, 4)); sticks += 4; }
+        }
+        if (getInventory().countItem(Items.IRON_PICKAXE) == 0 && iron >= 3 && sticks >= 2) {
+            System.out.printf("[AMB-CRAFT] %s table craft: iron_pickaxe (iron=%d sticks=%d)%n", botName, iron, sticks);
+            if (removeItems(Items.IRON_INGOT, 3) == 3 && removeItems(Items.STICK, 2) == 2) {
+                addToInventory(new ItemStack(Items.IRON_PICKAXE, 1));
+                broadcastGroupChat("Crafted an iron pickaxe!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: iron_pickaxe%n", botName);
+                iron -= 3; sticks -= 2;
+            }
+        }
+        if (getInventory().countItem(Items.IRON_AXE) == 0 && iron >= 3 && sticks >= 2) {
+            System.out.printf("[AMB-CRAFT] %s table craft: iron_axe%n", botName);
+            if (removeItems(Items.IRON_INGOT, 3) == 3 && removeItems(Items.STICK, 2) == 2) {
+                addToInventory(new ItemStack(Items.IRON_AXE, 1));
+                broadcastGroupChat("Crafted an iron axe!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: iron_axe%n", botName);
+                iron -= 3; sticks -= 2;
+            }
+        }
+        if (getInventory().countItem(Items.IRON_SWORD) == 0 && iron >= 2 && sticks >= 1) {
+            System.out.printf("[AMB-CRAFT] %s table craft: iron_sword%n", botName);
+            if (removeItems(Items.IRON_INGOT, 2) == 2 && removeItems(Items.STICK, 1) == 1) {
+                addToInventory(new ItemStack(Items.IRON_SWORD, 1));
+                broadcastGroupChat("Crafted an iron sword!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: iron_sword%n", botName);
+                iron -= 2; sticks -= 1;
+            }
+        }
+
+        // === DIAMOND TIER — upgrade to diamond gear when diamonds are available ===
+        int diamonds = countItemInInventory(Items.DIAMOND);
+        sticks = countItemInInventory(Items.STICK);
+        if (sticks < 2 && countTotalPlanks() >= 2) {
+            if (removeAnyPlanks(2) == 2) { addToInventory(new ItemStack(Items.STICK, 4)); sticks += 4; }
+        }
+        if (getInventory().countItem(Items.DIAMOND_PICKAXE) == 0 && diamonds >= 3 && sticks >= 2) {
+            System.out.printf("[AMB-CRAFT] %s table craft: diamond_pickaxe (diamonds=%d sticks=%d)%n", botName, diamonds, sticks);
+            if (removeItems(Items.DIAMOND, 3) == 3 && removeItems(Items.STICK, 2) == 2) {
+                addToInventory(new ItemStack(Items.DIAMOND_PICKAXE, 1));
+                broadcastGroupChat("Crafted a diamond pickaxe!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: diamond_pickaxe%n", botName);
+                diamonds -= 3; sticks -= 2;
+            }
+        }
+        if (getInventory().countItem(Items.DIAMOND_AXE) == 0 && diamonds >= 3 && sticks >= 2) {
+            System.out.printf("[AMB-CRAFT] %s table craft: diamond_axe%n", botName);
+            if (removeItems(Items.DIAMOND, 3) == 3 && removeItems(Items.STICK, 2) == 2) {
+                addToInventory(new ItemStack(Items.DIAMOND_AXE, 1));
+                broadcastGroupChat("Crafted a diamond axe!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: diamond_axe%n", botName);
+                diamonds -= 3; sticks -= 2;
+            }
+        }
+        if (getInventory().countItem(Items.DIAMOND_SWORD) == 0 && diamonds >= 2 && sticks >= 1) {
+            System.out.printf("[AMB-CRAFT] %s table craft: diamond_sword%n", botName);
+            if (removeItems(Items.DIAMOND, 2) == 2 && removeItems(Items.STICK, 1) == 1) {
+                addToInventory(new ItemStack(Items.DIAMOND_SWORD, 1));
+                broadcastGroupChat("Crafted a diamond sword!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: diamond_sword%n", botName);
+                diamonds -= 2; sticks -= 1;
+            }
+        }
+        if (getInventory().countItem(Items.DIAMOND_HELMET) == 0 && diamonds >= 5) {
+            System.out.printf("[AMB-CRAFT] %s table craft: diamond_helmet (diamonds=%d)%n", botName, diamonds);
+            if (removeItems(Items.DIAMOND, 5) == 5) {
+                addToInventory(new ItemStack(Items.DIAMOND_HELMET, 1));
+                broadcastGroupChat("Crafted a diamond helmet!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: diamond_helmet%n", botName);
+                diamonds -= 5;
+            }
+        }
+        if (getInventory().countItem(Items.DIAMOND_CHESTPLATE) == 0 && diamonds >= 8) {
+            System.out.printf("[AMB-CRAFT] %s table craft: diamond_chestplate (diamonds=%d)%n", botName, diamonds);
+            if (removeItems(Items.DIAMOND, 8) == 8) {
+                addToInventory(new ItemStack(Items.DIAMOND_CHESTPLATE, 1));
+                broadcastGroupChat("Crafted a diamond chestplate!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: diamond_chestplate%n", botName);
+                diamonds -= 8;
+            }
+        }
+        if (getInventory().countItem(Items.DIAMOND_LEGGINGS) == 0 && diamonds >= 7) {
+            System.out.printf("[AMB-CRAFT] %s table craft: diamond_leggings (diamonds=%d)%n", botName, diamonds);
+            if (removeItems(Items.DIAMOND, 7) == 7) {
+                addToInventory(new ItemStack(Items.DIAMOND_LEGGINGS, 1));
+                broadcastGroupChat("Crafted diamond leggings!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: diamond_leggings%n", botName);
+                diamonds -= 7;
+            }
+        }
+        if (getInventory().countItem(Items.DIAMOND_BOOTS) == 0 && diamonds >= 4) {
+            System.out.printf("[AMB-CRAFT] %s table craft: diamond_boots (diamonds=%d)%n", botName, diamonds);
+            if (removeItems(Items.DIAMOND, 4) == 4) {
+                addToInventory(new ItemStack(Items.DIAMOND_BOOTS, 1));
+                broadcastGroupChat("Crafted diamond boots!");
+                System.out.printf("[AMB-CRAFT] %s table craft SUCCESS: diamond_boots%n", botName);
+                diamonds -= 4;
             }
         }
 
@@ -3952,9 +4096,29 @@ public class AmbNpcEntity extends FakePlayer {
             return "craft";
         }
 
-        // Stage 4: Stone tools obtained — advance to mining stone (keep being productive).
-        // This prevents the bot from looping forever in the "craft" task after tools are done.
+        // Stage 4: Stone tools obtained — but check if there's higher-tier gear to craft first.
+        // If iron ingots or diamonds are available, stay in "craft" so the bot can make iron/diamond gear.
+        // Only advance to mine_stone when the current materials have been fully converted to items.
         if (hasStonePick) {
+            int iron     = countItemInInventory(Items.IRON_INGOT);
+            int diamonds = countItemInInventory(Items.DIAMOND);
+            boolean hasCraftableIron    = iron >= 3 &&
+                (getInventory().countItem(Items.IRON_PICKAXE) == 0
+                 || getInventory().countItem(Items.IRON_AXE) == 0
+                 || getInventory().countItem(Items.IRON_SWORD) == 0);
+            boolean hasCraftableDiamonds = diamonds >= 3 &&
+                (getInventory().countItem(Items.DIAMOND_PICKAXE) == 0
+                 || getInventory().countItem(Items.DIAMOND_SWORD) == 0
+                 || getInventory().countItem(Items.DIAMOND_AXE) == 0
+                 || getInventory().countItem(Items.DIAMOND_HELMET) == 0
+                 || getInventory().countItem(Items.DIAMOND_CHESTPLATE) == 0
+                 || getInventory().countItem(Items.DIAMOND_LEGGINGS) == 0
+                 || getInventory().countItem(Items.DIAMOND_BOOTS) == 0);
+            if (hasCraftableIron || hasCraftableDiamonds) {
+                System.out.printf("[AMB-PROG] %s stage=TOOLS_COMPLETE iron=%d diamonds=%d — staying in craft for gear upgrade%n",
+                    getName().getString(), iron, diamonds);
+                return "craft";
+            }
             System.out.printf("[AMB-PROG] %s stage=TOOLS_COMPLETE — advancing to mine_stone%n",
                 getName().getString());
             return "mine_stone";
@@ -4159,24 +4323,39 @@ public class AmbNpcEntity extends FakePlayer {
                 ensureCraftingTableAvailable(false);
 
                 if (!knownCraftingTable.equals(BlockPos.ZERO)) {
-                    // Always navigate to the table — crafting only happens via the 100-tick timer
-                    // once the bot has physically walked there. This ensures the player can see the
-                    // bot walk up to the table before tools appear in inventory.
+                    // Navigate to the table — crafting fires once the bot is adjacent.
+                    craftStallCount = 0;
                     currentGoal = knownCraftingTable;
                     goalLockTimer = 400;
                     currentPath.clear();
                     pathIndex = 0;
                     pathRetryTimer = 0;
-                    System.out.println("[AMB] " + getName().getString() + " navigating to crafting table at " + knownCraftingTable);
+                    System.out.printf("[AMB-STATION] %s craft: navigating to table at %s%n",
+                        getName().getString(), knownCraftingTable);
                 } else {
-                    // No table and can't place one yet (not enough planks) — fall back to gathering
-                    // so the bot doesn't spin idle waiting for materials it can't get in craft mode.
+                    // No table found and placement failed.
+                    craftStallCount++;
                     int haveWoodEquiv = countLogsInInventory() * 4 + countTotalPlanks();
-                    System.out.printf("[AMB-STALL] %s craft: no table, woodEquiv=%d < 16 — falling back to gather_wood%n",
-                        getName().getString(), haveWoodEquiv);
-                    currentTask = "gather_wood";
-                    currentGoal = BlockPos.ZERO;
-                    executeCurrentTask();
+                    System.out.printf("[AMB-STALL] %s craft: no table available stall=%d woodEquiv=%d%n",
+                        getName().getString(), craftStallCount, haveWoodEquiv);
+
+                    if (haveWoodEquiv < 16) {
+                        // Genuinely need more wood — gather it.
+                        System.out.printf("[AMB-STALL] %s craft: insufficient wood — gathering more%n", getName().getString());
+                        currentTask = "gather_wood";
+                        craftStallCount = 0;
+                        currentGoal = BlockPos.ZERO;
+                        executeCurrentTask();
+                    } else if (craftStallCount >= 3) {
+                        // Have enough materials but still can't place — wander to find open ground.
+                        craftStallCount = 0;
+                        currentGoal = blockPosition().offset(random.nextInt(16) - 8, 0, random.nextInt(16) - 8);
+                        System.out.printf("[AMB-STALL] %s craft stall limit: wandering to find placement space → %s%n",
+                            getName().getString(), currentGoal);
+                    } else {
+                        // Stay in craft task — will retry placement on next 40-tick cycle.
+                        currentGoal = BlockPos.ZERO;
+                    }
                 }
             }
             default -> {
