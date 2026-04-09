@@ -4247,10 +4247,20 @@ public class AmbNpcEntity extends FakePlayer {
                 System.out.println("[AMB] " + getName().getString() + " exploring to " + currentGoal);
             }
             case "idle" -> {
-                // Do nothing
+                // Light ambient roam — bot stays responsive but drifts slowly rather than freezing.
+                // Pick a random nearby position; goalLockTimer is short so commands interrupt quickly.
+                int rx = random.nextInt(16) - 8;
+                int rz = random.nextInt(16) - 8;
+                currentGoal = blockPosition().offset(rx, 0, rz);
+                goalLockTimer = 80; // ~4 s between roam picks — short enough to react to commands
+                System.out.println("[AMB] " + getName().getString() + " idling — roaming to " + currentGoal);
+            }
+            case "follow_nearest" -> {
+                // BotTicker drives the actual follow movement when followRequested=true.
+                // Clear our goal so A* navigation doesn't compete with it.
                 currentGoal = BlockPos.ZERO;
-                goalLockTimer = 100;
-                System.out.println("[AMB] " + getName().getString() + " idling");
+                goalLockTimer = 0;
+                System.out.println("[AMB] " + getName().getString() + " follow_nearest — BotTicker will handle movement");
             }
             case "build_underground_base" -> {
                 if (baseConstructionPhase == 0 || (baseConstructionPhase == 1 && baseDigQueue.isEmpty())) {

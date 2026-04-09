@@ -5,7 +5,6 @@ import com.shayneomac08.automated_minecraft_bots.bot.BotPair;
 import com.shayneomac08.automated_minecraft_bots.bot.BotSubGoal;
 import com.shayneomac08.automated_minecraft_bots.entity.AmbNpcEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -66,10 +65,21 @@ public final class ActionExecutor {
                         case "place_crafting_table", "place_table" -> "place_crafting_table";
                         case "build_underground_base", "dig_base", "underground_base" -> "build_underground_base";
                         case "idle", "stop", "wait" -> "idle";
+                        case "follow", "follow_nearest", "follow_player" -> "follow_nearest";
                         default -> g; // Pass through unknown tasks
                     };
 
                     ambBot.setTask(task);
+
+                    // Follow goals: activate followRequested so BotTicker picks it up
+                    if ("follow_nearest".equals(task)) {
+                        st.followRequested = true;
+                        st.mode = BotBrain.Mode.FOLLOW_NEAREST;
+                        st.goalUntilTick = 0; // No timer — follow is indefinite until interrupted
+                        ambBot.stopMovement();
+                        System.out.println("[AMB-ACTION] " + botKeyName + " set_goal: follow requested");
+                    }
+
                     System.out.println("[AMB-ACTION] " + botKeyName
                         + " set_goal: task=" + task + " duration=" + minutes + "m"
                         + " goalUntilTick=" + st.goalUntilTick);
@@ -87,10 +97,12 @@ public final class ActionExecutor {
                 String text = a.text() == null ? "" : a.text();
                 st.lastThought = text;
                 st.lastError = "";
-                server.getPlayerList().broadcastSystemMessage(
-                        Component.literal("[AMB] " + botKeyName + ": " + text),
-                        false
-                );
+                // Route through the canonical pendingChatMessages path (throttled, <botname> prefix)
+                // to prevent duplicate output when processChatCommand also queues a reply.
+                if (!text.isBlank()) {
+                    st.pendingChatMessages.add(text);
+                    System.out.println("[AMB-CHAT] " + botKeyName + " say → pendingChatMessages: \"" + text + "\"");
+                }
                 st.mode = BotBrain.Mode.FOLLOW_NEAREST;
                 clearGoal(st);
             }
@@ -108,8 +120,14 @@ public final class ActionExecutor {
 
             case "follow_nearest" -> {
                 st.mode = BotBrain.Mode.FOLLOW_NEAREST;
+                st.followRequested = true;
                 st.lastError = "";
                 clearGoal(st);
+                if (body instanceof AmbNpcEntity ambBot) {
+                    ambBot.stopMovement();
+                    ambBot.setTask("idle");
+                    System.out.println("[AMB-ACTION] " + botKeyName + " follow_nearest: followRequested=true, task=idle");
+                }
             }
 
             case "wander" -> {
@@ -235,10 +253,10 @@ public final class ActionExecutor {
                     + " queued=" + st.subGoalQueue.size()
                     + " goalUntilTick=" + st.goalUntilTick);
 
-                // Optional say message
+                // Optional say message — route through canonical pendingChatMessages path
                 if (a.text() != null && !a.text().isBlank()) {
-                    server.getPlayerList().broadcastSystemMessage(
-                        net.minecraft.network.chat.Component.literal("[AMB] " + botKeyName + ": " + a.text()), false);
+                    st.pendingChatMessages.add(a.text());
+                    System.out.println("[AMB-CHAT] " + botKeyName + " plan_queue say → pendingChatMessages: \"" + a.text() + "\"");
                 }
             }
 
