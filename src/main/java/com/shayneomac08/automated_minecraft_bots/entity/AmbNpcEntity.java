@@ -335,7 +335,12 @@ public class AmbNpcEntity extends FakePlayer {
 
     // Constructor for programmatic spawning
     public AmbNpcEntity(ServerLevel level, String name) {
-        super(level, new GameProfile(UUID.randomUUID(), name));
+        // Deterministic UUID from bot name — stable across restarts so player data
+        // (inventory, recipe book) can be saved/loaded under the same UUID.
+        super(level, new GameProfile(
+            UUID.nameUUIDFromBytes(("AmbBot:" + name.toLowerCase()).getBytes(java.nio.charset.StandardCharsets.UTF_8)),
+            name
+        ));
         this.setGameMode(GameType.SURVIVAL);
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
         this.setHealth(20.0F);
@@ -2519,61 +2524,94 @@ public class AmbNpcEntity extends FakePlayer {
     }
 
     // ==================== RECIPE UNLOCKING (like a real player) ====================
+    // Called per-bot on every passive pickup — `this` is the AmbNpcEntity so awardRecipes
+    // updates ONLY this bot's recipe book (not shared between bots).
     private void unlockRecipesForItem(Item item) {
         try {
             if (!(level() instanceof ServerLevel sl)) return;
             RecipeManager rm = sl.getServer().getRecipeManager();
             java.util.ArrayList<RecipeHolder<?>> toAward = new java.util.ArrayList<>();
 
-            // Helper to add by id if present
+            // Helper: add recipe by bare id (minecraft: prefix added automatically)
             java.util.function.Consumer<String> add = (id) -> {
                 ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, Identifier.withDefaultNamespace(id));
                 rm.byKey(key).ifPresent(toAward::add);
             };
 
-            if (item == Items.OAK_LOG || item == Items.SPRUCE_LOG || item == Items.BIRCH_LOG || item == Items.JUNGLE_LOG
-                    || item == Items.ACACIA_LOG || item == Items.DARK_OAK_LOG || item == Items.MANGROVE_LOG || item == Items.CHERRY_LOG
-                    || item == Items.BAMBOO_BLOCK) {
-                // Planks for each wood type
-                add.accept("oak_planks");
-                add.accept("spruce_planks");
-                add.accept("birch_planks");
-                add.accept("jungle_planks");
-                add.accept("acacia_planks");
-                add.accept("dark_oak_planks");
-                add.accept("mangrove_planks");
-                add.accept("cherry_planks");
-                add.accept("bamboo_planks");
-                // crafting table and sticks
+            // ── Logs → wood tier ─────────────────────────────────────────────────────
+            boolean isLog = item == Items.OAK_LOG || item == Items.SPRUCE_LOG || item == Items.BIRCH_LOG
+                    || item == Items.JUNGLE_LOG || item == Items.ACACIA_LOG || item == Items.DARK_OAK_LOG
+                    || item == Items.MANGROVE_LOG || item == Items.CHERRY_LOG || item == Items.BAMBOO_BLOCK;
+            if (isLog) {
+                add.accept("oak_planks"); add.accept("spruce_planks"); add.accept("birch_planks");
+                add.accept("jungle_planks"); add.accept("acacia_planks"); add.accept("dark_oak_planks");
+                add.accept("mangrove_planks"); add.accept("cherry_planks"); add.accept("bamboo_planks");
                 add.accept("crafting_table");
-                add.accept("sticks");
-                // wooden tools
-                add.accept("wooden_pickaxe");
-                add.accept("wooden_axe");
-                add.accept("wooden_sword");
+                add.accept("stick"); // correct recipe ID (not "sticks")
+                add.accept("wooden_pickaxe"); add.accept("wooden_axe");
+                add.accept("wooden_sword"); add.accept("wooden_shovel"); add.accept("wooden_hoe");
             }
 
-            if (item == Items.OAK_PLANKS || item == Items.SPRUCE_PLANKS || item == Items.BIRCH_PLANKS || item == Items.JUNGLE_PLANKS
-                    || item == Items.ACACIA_PLANKS || item == Items.DARK_OAK_PLANKS || item == Items.MANGROVE_PLANKS
-                    || item == Items.CHERRY_PLANKS || item == Items.BAMBOO_PLANKS) {
-                add.accept("sticks");
+            // ── Any planks → wood tier ────────────────────────────────────────────────
+            boolean isPlanks = item == Items.OAK_PLANKS || item == Items.SPRUCE_PLANKS
+                    || item == Items.BIRCH_PLANKS || item == Items.JUNGLE_PLANKS
+                    || item == Items.ACACIA_PLANKS || item == Items.DARK_OAK_PLANKS
+                    || item == Items.MANGROVE_PLANKS || item == Items.CHERRY_PLANKS
+                    || item == Items.BAMBOO_PLANKS;
+            if (isPlanks) {
                 add.accept("crafting_table");
-                add.accept("wooden_pickaxe");
-                add.accept("wooden_axe");
-                add.accept("wooden_sword");
+                add.accept("stick");
+                add.accept("wooden_pickaxe"); add.accept("wooden_axe");
+                add.accept("wooden_sword"); add.accept("wooden_shovel"); add.accept("wooden_hoe");
             }
 
-            if (item == Items.COBBLESTONE) {
+            // ── Cobblestone / stone → stone tier ─────────────────────────────────────
+            if (item == Items.COBBLESTONE || item == Items.STONE || item == Items.COBBLED_DEEPSLATE) {
+                add.accept("furnace");
+                add.accept("stone_pickaxe"); add.accept("stone_axe");
+                add.accept("stone_sword"); add.accept("stone_shovel"); add.accept("stone_hoe");
+                add.accept("stone_button"); add.accept("stone_pressure_plate");
+                add.accept("cobblestone_stairs"); add.accept("cobblestone_slab"); add.accept("cobblestone_wall");
+                add.accept("lever");
+            }
+
+            // ── Raw ores / ore blocks → furnace ──────────────────────────────────────
+            if (item == Items.RAW_IRON || item == Items.IRON_ORE || item == Items.DEEPSLATE_IRON_ORE
+                    || item == Items.RAW_GOLD || item == Items.GOLD_ORE || item == Items.DEEPSLATE_GOLD_ORE
+                    || item == Items.RAW_COPPER || item == Items.COPPER_ORE || item == Items.DEEPSLATE_COPPER_ORE) {
                 add.accept("furnace");
             }
 
-            if (item == Items.RAW_IRON || item == Items.IRON_ORE || item == Items.RAW_GOLD || item == Items.GOLD_ORE
-                    || item == Items.RAW_COPPER || item == Items.COPPER_ORE) {
-                add.accept("furnace");
+            // ── Iron ingot → iron tier ────────────────────────────────────────────────
+            if (item == Items.IRON_INGOT) {
+                add.accept("iron_pickaxe"); add.accept("iron_axe");
+                add.accept("iron_sword"); add.accept("iron_shovel"); add.accept("iron_hoe");
+                add.accept("iron_helmet"); add.accept("iron_chestplate");
+                add.accept("iron_leggings"); add.accept("iron_boots");
+                add.accept("bucket"); add.accept("iron_bars"); add.accept("iron_door");
+                add.accept("iron_trapdoor"); add.accept("compass"); add.accept("anvil");
+                add.accept("cauldron"); add.accept("shears"); add.accept("lantern");
             }
 
-            if (!toAward.isEmpty()) this.awardRecipes(toAward);
-        } catch (Exception ignored) {}
+            // ── Diamond → diamond tier ────────────────────────────────────────────────
+            if (item == Items.DIAMOND) {
+                add.accept("diamond_pickaxe"); add.accept("diamond_axe");
+                add.accept("diamond_sword"); add.accept("diamond_shovel"); add.accept("diamond_hoe");
+                add.accept("diamond_helmet"); add.accept("diamond_chestplate");
+                add.accept("diamond_leggings"); add.accept("diamond_boots");
+                add.accept("diamond_block"); add.accept("enchanting_table"); add.accept("jukebox");
+            }
+
+            if (!toAward.isEmpty()) {
+                this.awardRecipes(toAward);
+                System.out.printf("[AMB-RECIPE] %s unlocked %d recipe(s) for %s%n",
+                    getName().getString(), toAward.size(),
+                    net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item));
+            }
+        } catch (Exception e) {
+            System.err.printf("[AMB-RECIPE] %s recipe unlock error for %s: %s%n",
+                getName().getString(), item, e.getMessage());
+        }
     }
 
     // ==================== STATION MANAGEMENT ====================
@@ -4806,6 +4844,8 @@ public class AmbNpcEntity extends FakePlayer {
                 System.out.printf("[AMB-PICKUP] %s collected %dx%s (remaining=%d)%n",
                     getName().getString(), grabbed,
                     stack.getHoverName().getString(), stack.getCount());
+                // Per-bot recipe unlock — same as a real player picking up an item
+                unlockRecipesForItem(stack.getItem());
             } else {
                 System.out.printf("[AMB-PICKUP] %s passive pickup BLOCKED (inventory full?) item=%s%n",
                     getName().getString(), stack.getHoverName().getString());

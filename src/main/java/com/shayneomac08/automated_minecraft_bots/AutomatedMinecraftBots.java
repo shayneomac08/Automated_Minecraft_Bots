@@ -61,6 +61,10 @@ public class AutomatedMinecraftBots {
         NeoForge.EVENT_BUS.register(new com.shayneomac08.automated_minecraft_bots.bot.BotTicker());
         NeoForge.EVENT_BUS.register(new com.shayneomac08.automated_minecraft_bots.event.ChatEventHandler());
 
+        // Bot persistence: save on shutdown, restore on startup
+        NeoForge.EVENT_BUS.addListener(this::onServerStarted);
+        NeoForge.EVENT_BUS.addListener(this::onServerStopping);
+
         // Config
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         modContainer.registerConfig(ModConfig.Type.COMMON, BotConfig.SPEC, "automated_minecraft_bots-bot.toml");
@@ -85,6 +89,14 @@ public class AutomatedMinecraftBots {
     private void onRegisterCommands(RegisterCommandsEvent event) {
         AmbCommands.register(event.getDispatcher(), event.getBuildContext());
         LOGGER.info("Registered AMB commands");
+    }
+
+    private void onServerStarted(net.neoforged.neoforge.event.server.ServerStartedEvent event) {
+        com.shayneomac08.automated_minecraft_bots.bot.BotPersistenceManager.onServerStarted(event.getServer());
+    }
+
+    private void onServerStopping(net.neoforged.neoforge.event.server.ServerStoppingEvent event) {
+        com.shayneomac08.automated_minecraft_bots.bot.BotPersistenceManager.onServerStopping(event.getServer());
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {

@@ -22,6 +22,16 @@ public final class BotTicker {
         // Handle bot chat messages
         com.shayneomac08.automated_minecraft_bots.event.ChatEventHandler.tickBotChat(server);
 
+        // Apply deferred NBT restores (inventory + recipes) for bots loaded from persistence.
+        // Runs before respawn queue so state is always applied to live entities.
+        BotPersistenceManager.PENDING_RESTORES.removeIf(restore -> {
+            BotPair rPair = BotRegistry.get(restore.botName());
+            if (rPair == null || rPair.body() == null || rPair.body().isRemoved()) return true; // give up
+            if (!(rPair.body() instanceof AmbNpcEntity rBot)) return true;
+            BotPersistenceManager.applyPendingRestore(rBot, restore);
+            return true; // always remove — either applied or failed
+        });
+
         // Process bot respawn queue
         AmbNpcEntity.RESPAWN_QUEUE.removeIf(req -> {
             req.remainingTicks--;
